@@ -1,7 +1,29 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import {
+  ArrowRight,
+  BadgeCheck,
+  Banknote,
+  Building2,
+  CalendarDays,
+  Check,
+  CircleDollarSign,
+  Clock3,
+  Handshake,
+  Landmark,
+  Leaf,
+  MapPin,
+  ShieldCheck,
+  Sparkles,
+  Users2,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import heroAsset from "@/assets/fesa-hero.jpg.asset.json";
 import partnersAsset from "@/assets/fesa-partenaires.png.asset.json";
 import logoAsset from "@/assets/fesa-logo.png.asset.json";
+import { Button } from "@/components/ui/button";
+import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
+import { eventQuery } from "@/lib/event";
 
 const TITLE = "FESA 2026 — Forum entrepreneuriat & souveraineté alimentaire | Dakar";
 const DESCRIPTION =
@@ -195,6 +217,30 @@ const FOOTER_COLS = [
 ];
 
 function Landing() {
+  const { data: event } = useQuery(eventQuery);
+
+  const countdownTarget = useMemo(() => {
+    if (event?.start_date) {
+      return new Date(`${event.start_date}T00:00:00`);
+    }
+
+    return new Date("2026-09-21T00:00:00");
+  }, [event?.start_date]);
+
+  const [daysRemaining, setDaysRemaining] = useState(0);
+
+  useEffect(() => {
+    function updateCountdown() {
+      const now = new Date();
+      const diffDays = Math.ceil((countdownTarget.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      setDaysRemaining(Math.max(0, diffDays));
+    }
+
+    updateCountdown();
+    const interval = window.setInterval(updateCountdown, 60 * 1000);
+
+    return () => window.clearInterval(interval);
+  }, [countdownTarget]);
   return (
     <div className="min-h-screen bg-[#fbf7f0] font-[Manrope,ui-sans-serif,system-ui] text-[#0d3d21]">
       {/* Top bar */}
@@ -259,7 +305,7 @@ function Landing() {
               21 &amp; 22 SEPTEMBRE 2026 · DAKAR
             </span>
             <span className="rounded-full bg-[#0d3d21] px-[14px] py-[7px] text-[12px] font-extrabold tracking-[.04em] text-[#fbf7f0]">
-              J − 41
+              J − {daysRemaining}
             </span>
           </div>
           <h1 className="mt-6 text-[40px] font-extrabold leading-[1.02] tracking-[-.038em] text-[#0d3d21] sm:text-[52px] lg:text-[58px]">
