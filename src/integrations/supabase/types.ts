@@ -52,35 +52,6 @@ export type Database = {
           },
         ]
       }
-      checkins: {
-        Row: {
-          id: string
-          participant_id: string
-          scanned_at: string
-          scanned_by: string | null
-        }
-        Insert: {
-          id?: string
-          participant_id: string
-          scanned_at?: string
-          scanned_by?: string | null
-        }
-        Update: {
-          id?: string
-          participant_id?: string
-          scanned_at?: string
-          scanned_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "checkins_participant_id_fkey"
-            columns: ["participant_id"]
-            isOneToOne: false
-            referencedRelation: "participants"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       delegations: {
         Row: {
           created_at: string
@@ -234,7 +205,6 @@ export type Database = {
           provider: string
           provider_transaction_id: string | null
           status: string
-          webhook_payload: Json | null
         }
         Insert: {
           amount: number
@@ -244,7 +214,6 @@ export type Database = {
           provider: string
           provider_transaction_id?: string | null
           status?: string
-          webhook_payload?: Json | null
         }
         Update: {
           amount?: number
@@ -254,7 +223,6 @@ export type Database = {
           provider?: string
           provider_transaction_id?: string | null
           status?: string
-          webhook_payload?: Json | null
         }
         Relationships: [
           {
@@ -265,33 +233,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      staff_profiles: {
-        Row: {
-          approved: boolean
-          created_at: string
-          email: string
-          full_name: string | null
-          id: string
-          user_id: string
-        }
-        Insert: {
-          approved?: boolean
-          created_at?: string
-          email: string
-          full_name?: string | null
-          id?: string
-          user_id: string
-        }
-        Update: {
-          approved?: boolean
-          created_at?: string
-          email?: string
-          full_name?: string | null
-          id?: string
-          user_id?: string
-        }
-        Relationships: []
       }
       profile_types: {
         Row: {
@@ -339,43 +280,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_registration: {
-        Args: { p_registration_id: string }
-        Returns: {
-          full_name: string
-          function: string
-          company: string
-          profile_label: string
-          profile_color: string
-          registration_id: string
-          status: string
-          qr_payload: string
-          badge_url: string
-        }[]
-      }
-      is_approved_staff: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      list_delegation_names: {
-        Args: { p_event_id: string }
-        Returns: { id: string; primary_contact_name: string }[]
-      }
-      register_participant: {
-        Args: {
-          p_event_id: string
-          p_profile_type_id: string
-          p_delegation_id: string | null
-          p_full_name: string
-          p_email: string
-          p_phone: string
-          p_company: string | null
-          p_function: string | null
-          p_sector: string | null
-          p_status: string
-        }
-        Returns: { id: string; registration_id: string }[]
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
