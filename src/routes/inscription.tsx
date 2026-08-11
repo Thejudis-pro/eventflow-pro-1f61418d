@@ -243,7 +243,7 @@ function RegistrationPage() {
                     id="full_name"
                     label="Nom complet"
                     value={form.full_name}
-                    error={errors.full_name}
+                    error={errors["full_name"]}
                     onChange={(v) => set("full_name", v)}
                   />
                   <Field
@@ -251,34 +251,34 @@ function RegistrationPage() {
                     label="E-mail"
                     type="email"
                     value={form.email}
-                    error={errors.email}
+                    error={errors["email"]}
                     onChange={(v) => set("email", v)}
                   />
                   <Field
                     id="phone"
                     label="Téléphone (WhatsApp)"
                     value={form.phone}
-                    error={errors.phone}
+                    error={errors["phone"]}
                     onChange={(v) => set("phone", v)}
                   />
                   <Field
                     id="function"
                     label="Fonction"
                     value={form.function ?? ""}
-                    error={errors.function}
+                    error={errors["function"]}
                     onChange={(v) => set("function", v)}
                   />
                   <Field
                     id="company"
                     label={isInstitution(profile) ? "Nom de l'organisation" : "Structure / entreprise"}
                     value={form.company ?? ""}
-                    error={errors.company}
+                    error={errors["company"]}
                     onChange={(v) => set("company", v)}
                   />
                   {isEntrepreneur(profile) && (
                     <div className="space-y-2">
                       <Label htmlFor="sector">Secteur d'activité</Label>
-                      <Select value={form.sector} onValueChange={(v) => set("sector", v)}>
+                      <Select value={form.sector ?? ""} onValueChange={(v) => set("sector", v)}>
                         <SelectTrigger id="sector">
                           <SelectValue placeholder="Choisir un secteur" />
                         </SelectTrigger>
@@ -290,8 +290,8 @@ function RegistrationPage() {
                           ))}
                         </SelectContent>
                       </Select>
-                      {errors.sector && (
-                        <p className="text-xs text-destructive">{errors.sector}</p>
+                      {errors["sector"] && (
+                        <p className="text-xs text-destructive">{errors["sector"]}</p>
                       )}
                     </div>
                   )}
@@ -408,8 +408,8 @@ function Field({
   label: string;
   value: string;
   onChange: (v: string) => void;
-  error?: string;
-  type?: string;
+  error?: string | undefined;
+  type?: string | undefined;
 }) {
   return (
     <div className="space-y-2">

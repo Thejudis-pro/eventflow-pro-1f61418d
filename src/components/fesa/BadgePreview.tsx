@@ -5,8 +5,8 @@ export type BadgeData = {
   eventDates: string;
   location: string;
   fullName: string;
-  functionLabel?: string | null;
-  company?: string | null;
+  functionLabel?: string | null | undefined;
+  company?: string | null | undefined;
   profileLabel: string;
   profileColor: string;
   registrationId: string;
