@@ -15,12 +15,6 @@ export function SiteHeader() {
           </span>
         </Link>
         <nav className="flex items-center gap-1 sm:gap-3">
-          <Link
-            to="/dashboard"
-            className="hidden rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:block"
-          >
-            Tableau de bord
-          </Link>
           <Button asChild variant="institutional" size="sm">
             <Link to="/inscription">S'inscrire</Link>
           </Button>

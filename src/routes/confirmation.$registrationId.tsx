@@ -4,8 +4,7 @@ import { CheckCircle2, Mail, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
 import { BadgePreview } from "@/components/fesa/BadgePreview";
-import { supabase } from "@/integrations/supabase/client";
-import { badgeQuery, eventQuery, profileTypesQuery } from "@/lib/event";
+import { eventQuery, registrationQuery } from "@/lib/event";
 
 const TITLE = "Inscription confirmée — FESA 2026";
 const DESCRIPTION =
@@ -27,23 +26,7 @@ export const Route = createFileRoute("/confirmation/$registrationId")({
 function ConfirmationPage() {
   const { registrationId } = Route.useParams();
   const { data: event } = useQuery(eventQuery);
-  const { data: profiles } = useQuery(profileTypesQuery(event?.id));
-
-  const { data: participant, isLoading } = useQuery({
-    queryKey: ["participant", registrationId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("participants")
-        .select("*")
-        .eq("registration_id", registrationId)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const profile = profiles?.find((p) => p.id === participant?.profile_type_id);
-  const { data: badge } = useQuery(badgeQuery(participant?.id));
+  const { data: registration, isLoading } = useQuery(registrationQuery(registrationId));
 
   return (
     <div className="min-h-screen bg-surface">
@@ -58,8 +41,8 @@ function ConfirmationPage() {
             <p className="mt-3 text-muted-foreground">
               {isLoading
                 ? "Chargement de votre inscription…"
-                : participant
-                  ? `${participant.full_name}, votre inscription au ${event?.name ?? "forum"} est confirmée.`
+                : registration
+                  ? `${registration.full_name}, votre inscription au ${event?.name ?? "forum"} est confirmée.`
                   : "Inscription introuvable pour cet identifiant."}
             </p>
 
@@ -91,9 +74,6 @@ function ConfirmationPage() {
               <Button asChild variant="institutional" size="lg">
                 <Link to="/">Retour à l'accueil</Link>
               </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link to="/dashboard">Voir le tableau de bord</Link>
-              </Button>
             </div>
           </div>
 
@@ -104,13 +84,13 @@ function ConfirmationPage() {
                 eventName: event?.name ?? "FESA 2026",
                 eventDates: "21 – 22 septembre 2026",
                 location: event?.location ?? "Dakar, Sénégal",
-                fullName: participant?.full_name ?? "—",
-                functionLabel: participant?.function,
-                company: participant?.company,
-                profileLabel: profile?.label ?? "Participant",
-                profileColor: profile?.color_code ?? "#2E7D32",
+                fullName: registration?.full_name ?? "—",
+                functionLabel: registration?.function,
+                company: registration?.company,
+                profileLabel: registration?.profile_label ?? "Participant",
+                profileColor: registration?.profile_color ?? "#2E7D32",
                 registrationId,
-                qrValue: badge?.qr_payload,
+                qrValue: registration?.qr_payload,
               }}
             />
           </aside>

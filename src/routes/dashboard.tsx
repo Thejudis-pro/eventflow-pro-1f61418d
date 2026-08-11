@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
 import { DelegationCsvImport } from "@/components/fesa/DelegationCsvImport";
+import { StaffGate, StaffSignOutButton } from "@/components/fesa/StaffGate";
 import { eventQuery, participantsQuery, paymentsQuery, profileTypesQuery } from "@/lib/event";
 
 const TITLE = "Tableau de bord organisateur — FESA 2026";
@@ -40,6 +41,14 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 function Dashboard() {
+  return (
+    <StaffGate>
+      <DashboardContent />
+    </StaffGate>
+  );
+}
+
+function DashboardContent() {
   const { data: event } = useQuery(eventQuery);
   const { data: profiles } = useQuery(profileTypesQuery(event?.id));
   const { data: participants } = useQuery(participantsQuery(event?.id));
@@ -124,7 +133,7 @@ function Dashboard() {
               {event?.name ?? "Événement"} · {event?.location ?? ""}
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <DelegationCsvImport eventId={event?.id} />
             <Button asChild variant="outline">
               <Link to="/checkin">
@@ -137,6 +146,7 @@ function Dashboard() {
             >
               <Plus className="size-4" /> Créer un nouvel événement
             </Button>
+            <StaffSignOutButton />
           </div>
         </div>
 

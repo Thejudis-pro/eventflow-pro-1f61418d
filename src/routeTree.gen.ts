@@ -14,6 +14,8 @@ import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as InscriptionRouteImport } from './routes/inscription'
 import { Route as ConfirmationRegistrationIdRouteImport } from './routes/confirmation.$registrationId'
+import { Route as StaffLoginRouteImport } from './routes/staff.login'
+import { Route as StaffSignupRouteImport } from './routes/staff.signup'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -41,6 +43,16 @@ const ConfirmationRegistrationIdRoute =
     path: '/confirmation/$registrationId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const StaffLoginRoute = StaffLoginRouteImport.update({
+  id: '/staff/login',
+  path: '/staff/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StaffSignupRoute = StaffSignupRouteImport.update({
+  id: '/staff/signup',
+  path: '/staff/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -48,6 +60,8 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
+  '/staff/login': typeof StaffLoginRoute
+  '/staff/signup': typeof StaffSignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -55,6 +69,8 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
+  '/staff/login': typeof StaffLoginRoute
+  '/staff/signup': typeof StaffSignupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -63,6 +79,8 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
+  '/staff/login': typeof StaffLoginRoute
+  '/staff/signup': typeof StaffSignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -72,6 +90,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/inscription'
     | '/confirmation/$registrationId'
+    | '/staff/login'
+    | '/staff/signup'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -79,6 +99,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/inscription'
     | '/confirmation/$registrationId'
+    | '/staff/login'
+    | '/staff/signup'
   id:
     | '__root__'
     | '/'
@@ -86,6 +108,8 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/inscription'
     | '/confirmation/$registrationId'
+    | '/staff/login'
+    | '/staff/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -94,6 +118,8 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   InscriptionRoute: typeof InscriptionRoute
   ConfirmationRegistrationIdRoute: typeof ConfirmationRegistrationIdRoute
+  StaffLoginRoute: typeof StaffLoginRoute
+  StaffSignupRoute: typeof StaffSignupRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -133,6 +159,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfirmationRegistrationIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/staff/login': {
+      id: '/staff/login'
+      path: '/staff/login'
+      fullPath: '/staff/login'
+      preLoaderRoute: typeof StaffLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/staff/signup': {
+      id: '/staff/signup'
+      path: '/staff/signup'
+      fullPath: '/staff/signup'
+      preLoaderRoute: typeof StaffSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -142,6 +182,8 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   InscriptionRoute: InscriptionRoute,
   ConfirmationRegistrationIdRoute: ConfirmationRegistrationIdRoute,
+  StaffLoginRoute: StaffLoginRoute,
+  StaffSignupRoute: StaffSignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

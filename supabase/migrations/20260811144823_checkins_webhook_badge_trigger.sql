@@ -29,6 +29,7 @@ CREATE POLICY "checkins insertable" ON public.checkins FOR INSERT TO anon, authe
 CREATE OR REPLACE FUNCTION public.create_badge_for_participant()
 RETURNS TRIGGER
 LANGUAGE plpgsql
+SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
@@ -58,6 +59,7 @@ EXECUTE FUNCTION public.create_badge_for_participant();
 CREATE OR REPLACE FUNCTION public.mark_participant_checked_in()
 RETURNS TRIGGER
 LANGUAGE plpgsql
+SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN

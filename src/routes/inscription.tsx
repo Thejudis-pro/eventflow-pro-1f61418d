@@ -17,7 +17,7 @@ import {
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
 import { BadgePreview } from "@/components/fesa/BadgePreview";
 import { supabase } from "@/integrations/supabase/client";
-import { delegationsQuery, eventQuery, profileTypesQuery, SECTORS, type ProfileType } from "@/lib/event";
+import { publicDelegationNamesQuery, eventQuery, profileTypesQuery, SECTORS, type ProfileType } from "@/lib/event";
 
 const TITLE = "Inscription FESA 2026 | Dakar, 21-22 septembre 2026";
 const DESCRIPTION =
@@ -66,7 +66,7 @@ function RegistrationPage() {
   const navigate = useNavigate();
   const { data: event } = useQuery(eventQuery);
   const { data: profiles } = useQuery(profileTypesQuery(event?.id));
-  const { data: delegations } = useQuery(delegationsQuery(event?.id));
+  const { data: delegations } = useQuery(publicDelegationNamesQuery(event?.id));
 
   const [step, setStep] = useState(1);
   const [profileId, setProfileId] = useState<string | null>(null);
@@ -108,23 +108,24 @@ function RegistrationPage() {
     if (!event || !profile) return;
     setSubmitting(true);
     try {
-      const { data: participant, error } = await supabase
-        .from("participants")
-        .insert({
-          event_id: event.id,
-          profile_type_id: profile.id,
-          delegation_id: delegationId,
-          full_name: form.full_name.trim(),
-          email: form.email.trim(),
-          phone: form.phone.trim(),
-          company: form.company?.trim() || null,
-          function: form.function?.trim() || null,
-          sector: form.sector?.trim() || null,
-          status: withPayment ? "paid" : "confirmed",
-        })
-        .select()
-        .single();
+      // Registration goes through a SECURITY DEFINER RPC: anonymous visitors
+      // have no direct SELECT on participants, so a plain insert().select()
+      // couldn't read the row back.
+      const { data, error } = await supabase.rpc("register_participant", {
+        p_event_id: event.id,
+        p_profile_type_id: profile.id,
+        p_delegation_id: delegationId,
+        p_full_name: form.full_name.trim(),
+        p_email: form.email.trim(),
+        p_phone: form.phone.trim(),
+        p_company: form.company?.trim() || null,
+        p_function: form.function?.trim() || null,
+        p_sector: form.sector?.trim() || null,
+        p_status: withPayment ? "paid" : "confirmed",
+      });
       if (error) throw error;
+      const participant = data?.[0];
+      if (!participant) throw new Error("registration RPC returned no row");
 
       // The DB trigger `create_badge_for_participant` creates the badge row
       // as soon as status is paid/confirmed — nothing to insert here.
@@ -140,7 +141,7 @@ function RegistrationPage() {
 
       navigate({
         to: "/confirmation/$registrationId",
-        params: { registrationId: participant.registration_id! },
+        params: { registrationId: participant.registration_id },
       });
     } catch (e) {
       console.error(e);

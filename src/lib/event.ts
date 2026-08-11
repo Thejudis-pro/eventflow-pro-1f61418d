@@ -61,15 +61,19 @@ export type Payment = {
   participants: { full_name: string } | null;
 };
 
-export type Badge = {
-  id: string;
-  participant_id: string;
-  qr_payload: string;
-  badge_url: string;
-  generated_at: string;
-  sent_email: boolean;
-  sent_whatsapp: boolean;
+export type Registration = {
+  full_name: string;
+  function: string | null;
+  company: string | null;
+  profile_label: string | null;
+  profile_color: string | null;
+  registration_id: string;
+  status: string;
+  qr_payload: string | null;
+  badge_url: string | null;
 };
+
+export type DelegationName = { id: string; primary_contact_name: string };
 
 export const eventQuery = {
   queryKey: ["event", CURRENT_EVENT_SLUG],
@@ -140,17 +144,30 @@ export const paymentsQuery = (eventId?: string) => ({
   },
 });
 
-export const badgeQuery = (participantId?: string) => ({
-  queryKey: ["badge", participantId],
-  enabled: Boolean(participantId),
-  queryFn: async (): Promise<Badge | null> => {
-    const { data, error } = await supabase
-      .from("badges")
-      .select("*")
-      .eq("participant_id", participantId!)
-      .maybeSingle();
+/** Public, single-row lookup — the confirmation page has no direct read
+ * access to participants/badges, only this SECURITY DEFINER RPC. */
+export const registrationQuery = (registrationId?: string) => ({
+  queryKey: ["registration", registrationId],
+  enabled: Boolean(registrationId),
+  queryFn: async (): Promise<Registration | null> => {
+    const { data, error } = await supabase.rpc("get_registration", {
+      p_registration_id: registrationId!,
+    });
     if (error) throw error;
-    return data as Badge | null;
+    return (data?.[0] as Registration | undefined) ?? null;
+  },
+});
+
+/** Public delegation dropdown on the registration form — names only. */
+export const publicDelegationNamesQuery = (eventId?: string) => ({
+  queryKey: ["delegation-names", eventId],
+  enabled: Boolean(eventId),
+  queryFn: async (): Promise<DelegationName[]> => {
+    const { data, error } = await supabase.rpc("list_delegation_names", {
+      p_event_id: eventId!,
+    });
+    if (error) throw error;
+    return (data ?? []) as DelegationName[];
   },
 });
 

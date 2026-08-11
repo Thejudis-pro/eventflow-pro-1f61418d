@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Papa from "papaparse";
-import { Upload, Loader2 } from "lucide-react";
+import { Upload, Loader2, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +18,41 @@ type CsvRow = {
   delegation_contact_email?: string;
   delegation_contact_phone?: string;
 };
+
+const CSV_TEMPLATE_HEADERS = [
+  "full_name",
+  "email",
+  "phone",
+  "company",
+  "function",
+  "profile_type",
+  "delegation_name",
+  "delegation_contact_email",
+  "delegation_contact_phone",
+];
+
+const CSV_TEMPLATE_EXAMPLE = [
+  "Awa Diop",
+  "awa.diop@example.com",
+  "+221701234567",
+  "Ministère de l'Agriculture",
+  "Cheffe de projet",
+  "Institution/Partenaire",
+  "Délégation Ministère de l'Agriculture",
+  "contact.agriculture@example.gouv.sn",
+  "+221338001122",
+];
+
+function downloadCsvTemplate() {
+  const csv = [CSV_TEMPLATE_HEADERS.join(","), CSV_TEMPLATE_EXAMPLE.join(",")].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "modele-import-delegation.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 /**
  * Expected CSV columns: full_name, email, phone, company, function,
@@ -122,6 +157,9 @@ export function DelegationCsvImport({ eventId }: { eventId?: string | undefined 
       >
         {importing ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
         Importer délégation (CSV)
+      </Button>
+      <Button type="button" variant="ghost" onClick={downloadCsvTemplate}>
+        <FileDown className="size-4" /> Modèle CSV
       </Button>
     </>
   );

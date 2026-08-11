@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
+import { StaffGate, StaffSignOutButton } from "@/components/fesa/StaffGate";
 import { supabase } from "@/integrations/supabase/client";
 import { eventQuery, participantsQuery, profileTypesQuery } from "@/lib/event";
 
@@ -31,6 +32,14 @@ type BadgeLookup = {
 };
 
 function CheckinPage() {
+  return (
+    <StaffGate>
+      <CheckinContent />
+    </StaffGate>
+  );
+}
+
+function CheckinContent() {
   const queryClient = useQueryClient();
   const { data: event } = useQuery(eventQuery);
   const { data: profiles } = useQuery(profileTypesQuery(event?.id));
@@ -153,11 +162,16 @@ function CheckinPage() {
     <div className="min-h-screen bg-surface">
       <SiteHeader />
       <main className="mx-auto max-w-3xl px-4 py-12">
-        <h1 className="text-3xl font-bold sm:text-4xl">Check-in sur site</h1>
-        <p className="mt-2 text-muted-foreground">
-          {event?.name ?? "Événement"} · scannez le badge (caméra ou douchette) pour valider
-          l'entrée.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold sm:text-4xl">Check-in sur site</h1>
+            <p className="mt-2 text-muted-foreground">
+              {event?.name ?? "Événement"} · scannez le badge (caméra ou douchette) pour valider
+              l'entrée.
+            </p>
+          </div>
+          <StaffSignOutButton />
+        </div>
 
         <div className="mt-6 flex items-center gap-4 rounded-xl border border-border bg-card p-4 shadow-card">
           <span className="text-sm text-muted-foreground">Présents</span>
