@@ -194,6 +194,48 @@
   min-height: 100vh;
 }
 
+/* Light variant of the ops panel — same institutional palette as the public
+ * site, toggled via the theme switch in AdminShell. */
+.admin-shell.light {
+  --background: oklch(0.985 0.008 145);
+  --foreground: oklch(0.22 0.03 150);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.03 150);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.03 150);
+  --primary: oklch(0.52 0.13 150);
+  --primary-foreground: oklch(0.99 0.01 140);
+  --primary-deep: oklch(0.38 0.1 152);
+  --secondary: oklch(0.96 0.02 150);
+  --secondary-foreground: oklch(0.34 0.08 152);
+  --muted: oklch(0.97 0.01 150);
+  --muted-foreground: oklch(0.52 0.03 152);
+  --accent: oklch(0.72 0.17 55);
+  --accent-foreground: oklch(0.99 0.01 80);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(0.92 0.015 150);
+  --input: oklch(0.92 0.015 150);
+  --ring: oklch(0.52 0.13 150);
+  --surface: oklch(0.985 0.008 145);
+  --shadow-card: 0 1px 2px oklch(0.38 0.1 152 / 0.06), 0 12px 32px -16px oklch(0.38 0.1 152 / 0.25);
+  --shadow-lift: 0 24px 60px -28px oklch(0.38 0.1 152 / 0.45);
+  --chart-1: oklch(0.52 0.13 150);
+  --chart-2: oklch(0.6 0.11 150);
+  --chart-3: oklch(0.68 0.1 150);
+  --chart-4: oklch(0.76 0.09 150);
+  --chart-5: oklch(0.84 0.07 150);
+  --sidebar: oklch(0.98 0.006 145);
+  --sidebar-foreground: oklch(0.25 0.03 150);
+  --sidebar-primary: oklch(0.52 0.13 150);
+  --sidebar-primary-foreground: oklch(0.99 0.01 140);
+  --sidebar-accent: oklch(0.94 0.015 150);
+  --sidebar-accent-foreground: oklch(0.25 0.03 150);
+  --sidebar-border: oklch(0.9 0.015 150);
+  --sidebar-ring: oklch(0.52 0.13 150);
+  color-scheme: light;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);

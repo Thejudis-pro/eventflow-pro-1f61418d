@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   Gauge,
@@ -10,10 +10,57 @@ import {
   Search,
   Radio,
   LogOut,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useStaffSession, signOutStaff } from "@/lib/auth";
 import type { EventRow } from "@/lib/event";
+
+const THEME_KEY = "fesa-admin-theme";
+
+function useAdminTheme() {
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem(THEME_KEY);
+    if (stored === "light" || stored === "dark") setTheme(stored);
+  }, []);
+
+  function set(next: "dark" | "light") {
+    setTheme(next);
+    window.localStorage.setItem(THEME_KEY, next);
+  }
+
+  return { theme, set };
+}
+
+function ThemeToggle({ theme, onChange }: { theme: "dark" | "light"; onChange: (t: "dark" | "light") => void }) {
+  return (
+    <div className="flex items-center gap-1 rounded-full border border-border bg-secondary p-1">
+      <button
+        type="button"
+        onClick={() => onChange("light")}
+        aria-pressed={theme === "light"}
+        className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+          theme === "light" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+        }`}
+      >
+        <Sun className="size-3.5" /> Clair
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange("dark")}
+        aria-pressed={theme === "dark"}
+        className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+          theme === "dark" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+        }`}
+      >
+        <Moon className="size-3.5" /> Sombre
+      </button>
+    </div>
+  );
+}
 
 export type AdminNavKey =
   "overview" | "participants" | "payments" | "checkin" | "import" | "segments";
@@ -51,9 +98,10 @@ export function AdminShell({
   children: ReactNode;
 }) {
   const { email } = useStaffSession();
+  const { theme, set: setTheme } = useAdminTheme();
 
   return (
-    <div className="admin-shell flex min-h-screen">
+    <div className={`admin-shell flex min-h-screen ${theme === "light" ? "light" : ""}`}>
       <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar px-4 py-6 lg:flex">
         <div className="flex items-center gap-2 px-2">
           <span className="flex size-9 items-center justify-center rounded-lg bg-primary font-display text-sm font-bold text-primary-foreground">
@@ -129,6 +177,7 @@ export function AdminShell({
           <span className="hidden rounded-full border border-border bg-secondary px-3 py-1.5 text-xs font-medium text-muted-foreground sm:block">
             {event?.name ?? "Événement"}
           </span>
+          <ThemeToggle theme={theme} onChange={setTheme} />
         </header>
 
         <main className="flex-1 px-4 py-6 sm:px-8 sm:py-8">{children}</main>
