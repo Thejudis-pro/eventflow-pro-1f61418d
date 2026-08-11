@@ -14,7 +14,267 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      badges: {
+        Row: {
+          badge_url: string
+          generated_at: string
+          id: string
+          participant_id: string
+          qr_payload: string
+          sent_email: boolean
+          sent_whatsapp: boolean
+        }
+        Insert: {
+          badge_url: string
+          generated_at?: string
+          id?: string
+          participant_id: string
+          qr_payload: string
+          sent_email?: boolean
+          sent_whatsapp?: boolean
+        }
+        Update: {
+          badge_url?: string
+          generated_at?: string
+          id?: string
+          participant_id?: string
+          qr_payload?: string
+          sent_email?: boolean
+          sent_whatsapp?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "badges_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      delegations: {
+        Row: {
+          created_at: string
+          email: string | null
+          event_id: string
+          id: string
+          phone: string | null
+          primary_contact_name: string
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          event_id: string
+          id?: string
+          phone?: string | null
+          primary_contact_name: string
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          event_id?: string
+          id?: string
+          phone?: string | null
+          primary_contact_name?: string
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delegations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          branding: Json
+          created_at: string
+          end_date: string
+          id: string
+          location: string
+          name: string
+          slug: string
+          start_date: string
+          status: string
+        }
+        Insert: {
+          branding?: Json
+          created_at?: string
+          end_date: string
+          id?: string
+          location: string
+          name: string
+          slug: string
+          start_date: string
+          status?: string
+        }
+        Update: {
+          branding?: Json
+          created_at?: string
+          end_date?: string
+          id?: string
+          location?: string
+          name?: string
+          slug?: string
+          start_date?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      participants: {
+        Row: {
+          company: string | null
+          created_at: string
+          delegation_id: string | null
+          email: string
+          event_id: string
+          full_name: string
+          function: string | null
+          id: string
+          phone: string | null
+          profile_type_id: string | null
+          registration_id: string | null
+          sector: string | null
+          status: string
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          delegation_id?: string | null
+          email: string
+          event_id: string
+          full_name: string
+          function?: string | null
+          id?: string
+          phone?: string | null
+          profile_type_id?: string | null
+          registration_id?: string | null
+          sector?: string | null
+          status?: string
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          delegation_id?: string | null
+          email?: string
+          event_id?: string
+          full_name?: string
+          function?: string | null
+          id?: string
+          phone?: string | null
+          profile_type_id?: string | null
+          registration_id?: string | null
+          sector?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "participants_delegation_id_fkey"
+            columns: ["delegation_id"]
+            isOneToOne: false
+            referencedRelation: "delegations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "participants_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "participants_profile_type_id_fkey"
+            columns: ["profile_type_id"]
+            isOneToOne: false
+            referencedRelation: "profile_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          participant_id: string
+          provider: string
+          provider_transaction_id: string | null
+          status: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          participant_id: string
+          provider: string
+          provider_transaction_id?: string | null
+          status?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          participant_id?: string
+          provider?: string
+          provider_transaction_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profile_types: {
+        Row: {
+          color_code: string
+          created_at: string
+          event_id: string
+          id: string
+          label: string
+          price: number | null
+          requires_payment: boolean
+          sort_order: number
+        }
+        Insert: {
+          color_code?: string
+          created_at?: string
+          event_id: string
+          id?: string
+          label: string
+          price?: number | null
+          requires_payment?: boolean
+          sort_order?: number
+        }
+        Update: {
+          color_code?: string
+          created_at?: string
+          event_id?: string
+          id?: string
+          label?: string
+          price?: number | null
+          requires_payment?: boolean
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profile_types_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
