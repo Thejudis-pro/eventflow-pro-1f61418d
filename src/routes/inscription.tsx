@@ -2,7 +2,20 @@ import { useMemo, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
-import { ArrowLeft, ArrowRight, CreditCard, Loader2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  BadgeCheck,
+  Building2,
+  CalendarDays,
+  CircleDollarSign,
+  CreditCard,
+  Loader2,
+  MapPin,
+  Sparkles,
+  UserRound,
+  Wallet,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,9 +75,9 @@ const EMPTY: Details = {
 };
 
 const OPTION_BLURB: Record<string, string> = {
-  Participant: "Inscription individuelle au forum.",
-  Exposant: "Stand au Marché Forain — visibilité commerciale grand public.",
-  Partenaire: "Stand institutionnel — espace dédié aux institutions et partenaires.",
+  Participant: "Inscription individuelle au forum avec accès complet aux sessions et au réseau.",
+  Exposant: "Stand au Marché Forain — visibilité commerciale grand public et accès exposant.",
+  Partenaire: "Stand institutionnel — espace dédié aux institutions, financeurs et partenaires stratégiques.",
 };
 
 function isExposant(p?: ProfileType | null) {
@@ -95,7 +108,28 @@ function RegistrationPage() {
   const needsPayment = Boolean(profile?.requires_payment);
   const steps = needsPayment ? ["Formule", "Informations", "Paiement"] : ["Formule", "Informations"];
 
-  const set = (k: keyof Details, v: string) => setForm((f) => ({ ...f, [k]: v }));
+  const summary = useMemo(() => {
+    if (!profile) {
+      return {
+        label: "Choisissez votre formule",
+        price: "—",
+        blurb: "Sélectionnez un profil pour voir les détails de votre accès.",
+      };
+    }
+
+    return {
+      label: profile.label,
+      price: Number(profile.price ?? 0).toLocaleString("fr-FR") + " FCFA",
+      blurb: profile.requires_payment
+        ? "Paiement requis pour finaliser votre inscription."
+        : "Inscription gratuite avec accès complet au programme.",
+    };
+  }, [profile]);
+
+  const set = (k: keyof Details, v: string) => {
+    setForm((f) => ({ ...f, [k]: v }));
+    setErrors((current) => ({ ...current, [k]: "" }));
+  };
 
   function validateDetails() {
     const parsed = detailsSchema.safeParse(form);
@@ -121,9 +155,6 @@ function RegistrationPage() {
     if (!event || !profile) return;
     setSubmitting(true);
     try {
-      // Registration goes through a SECURITY DEFINER RPC: anonymous visitors
-      // have no direct SELECT on participants, so a plain insert().select()
-      // couldn't read the row back.
       const { data, error } = await supabase.rpc("register_participant", {
         p_event_id: event.id,
         p_profile_type_id: profile.id,
@@ -140,8 +171,6 @@ function RegistrationPage() {
       const participant = data?.[0];
       if (!participant) throw new Error("registration RPC returned no row");
 
-      // The DB trigger `create_badge_for_participant` creates the badge row
-      // as soon as status is paid/confirmed — nothing to insert here.
       if (withPayment) {
         await supabase.from("payments").insert({
           participant_id: participant.id,
@@ -156,8 +185,8 @@ function RegistrationPage() {
         to: "/confirmation/$registrationId",
         params: { registrationId: participant.registration_id },
       });
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
       toast.error("L'inscription n'a pas pu être enregistrée. Réessayez.");
     } finally {
       setSubmitting(false);
@@ -165,14 +194,56 @@ function RegistrationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface">
+    <div className="min-h-screen bg-[#f8f4eb] text-[#183b24]">
       <SiteHeader />
-      <main className="mx-auto max-w-6xl px-4 py-12">
-        <h1 className="text-3xl font-bold sm:text-4xl">Inscription</h1>
-        <p className="mt-2 text-muted-foreground">
-          {event?.name ?? "FESA 2026"} · 21 – 22 septembre 2026 ·{" "}
-          {event?.location ?? "Dakar, Sénégal"}
-        </p>
+      <main className="mx-auto max-w-7xl px-4 py-14 lg:px-8">
+        <section className="overflow-hidden rounded-[2rem] border border-[#e3dccf] bg-[#0d3d21] text-[#fdf8ef] shadow-[0_24px_60px_-24px_rgba(13,61,33,0.45)]">
+          <div className="grid gap-8 p-8 lg:grid-cols-[1.1fr_0.9fr] lg:p-10">
+            <div>
+              <p className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[#ffd8b5]">
+                Inscription en ligne
+              </p>
+              <h1 className="mt-5 text-3xl font-black sm:text-4xl">Réservez votre place au FESA 2026</h1>
+              <p className="mt-4 max-w-2xl text-lg text-white/80">
+                Choisissez votre formule, finalisez vos coordonnées et obtenez votre badge nominatif dès la confirmation.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3 text-sm text-white/80">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2">
+                  <CalendarDays className="size-4" /> 21 & 22 septembre 2026
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2">
+                  <MapPin className="size-4" /> Dakar, Sénégal
+                </span>
+              </div>
+            </div>
+
+            <div className="rounded-[1.5rem] border border-white/15 bg-white/10 p-5 backdrop-blur">
+              <div className="rounded-[1.25rem] bg-[#fdf8ef] p-5 text-[#0d3d21]">
+                <div className="flex items-center gap-3">
+                  <div className="flex size-12 items-center justify-center rounded-full bg-[#0d3d21] text-[#fdf8ef]">
+                    <BadgeCheck className="size-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#e8722a]">Votre sélection</p>
+                    <p className="text-lg font-semibold">{summary.label}</p>
+                  </div>
+                </div>
+                <div className="mt-5 rounded-2xl border border-[#e3dccf] bg-white p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm text-[#5f6f5f]">Montant</p>
+                      <p className="mt-1 font-display text-2xl font-black text-[#0d3d21]">{summary.price}</p>
+                    </div>
+                    <span className="rounded-full bg-[#0d3d21] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#fdf8ef]">
+                      {profile?.requires_payment ? "À payer" : "Gratuit"}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm text-[#4f5f51]">{summary.blurb}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <ol className="mt-8 flex flex-wrap gap-3">
           {steps.map((label, i) => {
@@ -184,10 +255,10 @@ function RegistrationPage() {
                 key={label}
                 className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium ${
                   active
-                    ? "border-primary bg-primary text-primary-foreground"
+                    ? "border-[#0d3d21] bg-[#0d3d21] text-[#fdf8ef]"
                     : done
-                      ? "border-primary/40 bg-secondary text-secondary-foreground"
-                      : "border-border bg-card text-muted-foreground"
+                      ? "border-[#e8722a]/30 bg-[#fff6ed] text-[#0d3d21]"
+                      : "border-[#e3dccf] bg-white text-[#5f6f5f]"
                 }`}
               >
                 <span className="font-mono">{n}</span> {label}
@@ -196,15 +267,22 @@ function RegistrationPage() {
           })}
         </ol>
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
-          <div className="rounded-xl border border-border bg-card p-6 shadow-card sm:p-8">
+        <div className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+          <div className="rounded-[2rem] border border-[#e3dccf] bg-white p-6 shadow-sm sm:p-8">
             {step === 1 && (
               <div>
-                <h2 className="text-xl font-semibold">Formule d'inscription</h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Les autres accréditations (VIP, presse, staff, comité scientifique…) sont
-                  attribuées directement par l'organisation.
-                </p>
+                <div className="flex items-center gap-3">
+                  <div className="flex size-10 items-center justify-center rounded-full bg-[#0d3d21]/10 text-[#0d3d21]">
+                    <Sparkles className="size-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold text-[#0d3d21]">Choisissez votre formule</h2>
+                    <p className="mt-1 text-sm text-[#5f6f5f]">
+                      Les autres accréditations (VIP, presse, staff, comité scientifique…) sont attribuées par l'organisation.
+                    </p>
+                  </div>
+                </div>
+
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                   {(profiles ?? []).map((p) => {
                     const selected = p.id === profileId;
@@ -213,10 +291,10 @@ function RegistrationPage() {
                         key={p.id}
                         type="button"
                         onClick={() => setProfileId(p.id)}
-                        className={`rounded-lg border p-4 text-left transition-colors ${
+                        className={`rounded-[1.25rem] border p-4 text-left transition-all ${
                           selected
-                            ? "border-primary bg-secondary"
-                            : "border-border bg-card hover:border-primary/50"
+                            ? "border-[#0d3d21] bg-[#f8f4eb] shadow-sm"
+                            : "border-[#e3dccf] bg-white hover:border-[#0d3d21]/30"
                         }`}
                       >
                         <span className="flex items-center gap-2">
@@ -224,25 +302,22 @@ function RegistrationPage() {
                             className="size-3 rounded-full"
                             style={{ backgroundColor: p.color_code }}
                           />
-                          <span className="font-semibold">{p.label}</span>
+                          <span className="font-semibold text-[#0d3d21]">{p.label}</span>
                         </span>
-                        <span className="mt-2 block text-sm text-muted-foreground">
+                        <span className="mt-2 block text-sm leading-6 text-[#5f6f5f]">
                           {OPTION_BLURB[p.label] ?? ""}
                         </span>
-                        <span className="mt-2 block font-display text-lg font-bold text-primary-deep">
+                        <span className="mt-3 flex items-center gap-2 text-sm font-semibold text-[#e8722a]">
+                          <Wallet className="size-4" />
                           {Number(p.price ?? 0).toLocaleString("fr-FR")} FCFA
                         </span>
                       </button>
                     );
                   })}
                 </div>
+
                 <div className="mt-8 flex justify-end">
-                  <Button
-                    variant="institutional"
-                    size="lg"
-                    disabled={!profileId}
-                    onClick={() => setStep(2)}
-                  >
+                  <Button variant="institutional" size="lg" disabled={!profileId} onClick={() => setStep(2)}>
                     Continuer <ArrowRight className="size-4" />
                   </Button>
                 </div>
@@ -251,7 +326,18 @@ function RegistrationPage() {
 
             {step === 2 && (
               <div>
-                <h2 className="text-xl font-semibold">Vos informations</h2>
+                <div className="flex items-center gap-3">
+                  <div className="flex size-10 items-center justify-center rounded-full bg-[#0d3d21]/10 text-[#0d3d21]">
+                    <UserRound className="size-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold text-[#0d3d21]">Vos informations</h2>
+                    <p className="mt-1 text-sm text-[#5f6f5f]">
+                      Nous utiliserons ces coordonnées pour créer votre badge nominatif et vous envoyer les mises à jour du forum.
+                    </p>
+                  </div>
+                </div>
+
                 <div className="mt-6 grid gap-5 sm:grid-cols-2">
                   <Field
                     id="full_name"
@@ -304,9 +390,7 @@ function RegistrationPage() {
                           ))}
                         </SelectContent>
                       </Select>
-                      {errors["sector"] && (
-                        <p className="text-xs text-destructive">{errors["sector"]}</p>
-                      )}
+                      {errors["sector"] && <p className="text-xs text-destructive">{errors["sector"]}</p>}
                     </div>
                   )}
                   {(delegations ?? []).length > 0 && (
@@ -328,15 +412,14 @@ function RegistrationPage() {
                           ))}
                         </SelectContent>
                       </Select>
-                      <p className="text-xs text-muted-foreground">
-                        Si vous faites partie d'une délégation déjà enregistrée, sélectionnez-la
-                        ici.
+                      <p className="text-xs text-[#5f6f5f]">
+                        Si vous faites partie d'une délégation déjà enregistrée, sélectionnez-la ici.
                       </p>
                     </div>
                   )}
                 </div>
 
-                <div className="mt-8 flex justify-between">
+                <div className="mt-8 flex flex-wrap justify-between gap-3">
                   <Button variant="outline" size="lg" onClick={() => setStep(1)}>
                     <ArrowLeft className="size-4" /> Retour
                   </Button>
@@ -360,53 +443,65 @@ function RegistrationPage() {
 
             {step === 3 && (
               <div>
-                <h2 className="text-xl font-semibold">Paiement</h2>
-                <div className="mt-6 flex items-baseline justify-between rounded-lg border border-border bg-surface p-5">
-                  <span className="text-sm text-muted-foreground">
-                    Frais de participation — {profile?.label}
-                  </span>
-                  <span className="font-display text-3xl font-bold text-primary-deep">
-                    {Number(profile?.price ?? 0).toLocaleString("fr-FR")} FCFA
-                  </span>
+                <div className="flex items-center gap-3">
+                  <div className="flex size-10 items-center justify-center rounded-full bg-[#0d3d21]/10 text-[#0d3d21]">
+                    <CircleDollarSign className="size-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold text-[#0d3d21]">Paiement</h2>
+                    <p className="mt-1 text-sm text-[#5f6f5f]">
+                      La collecte de paiement est simulée pour la démonstration, puis l'inscription est finalisée automatiquement.
+                    </p>
+                  </div>
                 </div>
-                <p className="mt-4 text-sm text-muted-foreground">
-                  Intégration PayTech / PayDunya à venir. Ce bouton simule un paiement réussi pour
-                  la démonstration.
-                </p>
+
+                <div className="mt-6 rounded-[1.25rem] border border-[#e3dccf] bg-[#f8f4eb] p-5">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm text-[#5f6f5f]">Frais de participation</p>
+                      <p className="mt-1 font-display text-2xl font-black text-[#0d3d21]">{summary.price}</p>
+                    </div>
+                    <div className="rounded-full bg-[#0d3d21] px-3 py-1 text-sm font-semibold uppercase tracking-[0.2em] text-[#fdf8ef]">
+                      {profile?.label}
+                    </div>
+                  </div>
+                </div>
+
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  <Button
-                    variant="hero"
-                    size="lg"
-                    disabled={submitting}
-                    onClick={() => void submit(true)}
-                  >
-                    {submitting ? (
-                      <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      <CreditCard className="size-4" />
-                    )}
+                  <Button variant="hero" size="lg" disabled={submitting} onClick={() => void submit(true)}>
+                    {submitting ? <Loader2 className="size-4 animate-spin" /> : <CreditCard className="size-4" />}
                     Payer avec PayTech
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    disabled={submitting}
-                    onClick={() => void submit(true)}
-                  >
+                  <Button variant="outline" size="lg" disabled={submitting} onClick={() => void submit(true)}>
                     <CreditCard className="size-4" /> Payer avec PayDunya
                   </Button>
                 </div>
-                <div className="mt-8">
+
+                <div className="mt-8 flex flex-wrap justify-between gap-3">
                   <Button variant="ghost" onClick={() => setStep(2)}>
                     <ArrowLeft className="size-4" /> Retour
                   </Button>
+                  <p className="text-sm text-[#5f6f5f]">L'inscription sera confirmée immédiatement après le paiement simulé.</p>
                 </div>
               </div>
             )}
           </div>
 
-          <aside className="space-y-3">
-            <p className="text-sm font-semibold text-muted-foreground">Aperçu de votre badge</p>
+          <aside className="space-y-4">
+            <div className="rounded-[2rem] border border-[#e3dccf] bg-[#fbf5eb] p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 items-center justify-center rounded-full bg-[#0d3d21]/10 text-[#0d3d21]">
+                  <Building2 className="size-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#e8722a]">Prévisualisation</p>
+                  <p className="text-lg font-semibold text-[#0d3d21]">Votre badge à l'arrivée</p>
+                </div>
+              </div>
+              <div className="mt-5 rounded-[1.25rem] border border-[#e3dccf] bg-white p-4">
+                <p className="text-sm text-[#5f6f5f]">Votre badge sera généré automatiquement avec vos informations et votre QR code unique.</p>
+              </div>
+            </div>
             <BadgePreview
               data={{
                 eventName: event?.name ?? "FESA 2026",

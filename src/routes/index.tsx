@@ -17,7 +17,7 @@ import {
   Sparkles,
   Users2,
 } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
 import { eventQuery } from "@/lib/event";
@@ -168,13 +168,28 @@ const PARTNERS = [
 function Landing() {
   const { data: event } = useQuery(eventQuery);
 
-  const daysRemaining = useMemo(() => {
-    if (!event?.start_date) return 41;
-    const startDate = new Date(`${event.start_date}T00:00:00`);
-    const today = new Date();
-    const diffDays = Math.ceil((startDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    return Math.max(0, diffDays);
+  const countdownTarget = useMemo(() => {
+    if (event?.start_date) {
+      return new Date(`${event.start_date}T00:00:00`);
+    }
+
+    return new Date("2026-09-21T00:00:00");
   }, [event?.start_date]);
+
+  const [daysRemaining, setDaysRemaining] = useState(0);
+
+  useEffect(() => {
+    function updateCountdown() {
+      const now = new Date();
+      const diffDays = Math.ceil((countdownTarget.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      setDaysRemaining(Math.max(0, diffDays));
+    }
+
+    updateCountdown();
+    const interval = window.setInterval(updateCountdown, 60 * 1000);
+
+    return () => window.clearInterval(interval);
+  }, [countdownTarget]);
 
   return (
     <div className="min-h-screen bg-[#f8f4eb] text-[#183b24]">
