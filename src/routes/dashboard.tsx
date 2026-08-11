@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Download, Plus, QrCode, Send, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import {
   ProfileBarChart,
   TrendSparkline,
 } from "@/components/fesa/admin-charts";
+import { supabase } from "@/integrations/supabase/client";
 import { eventQuery, participantsQuery, paymentsQuery, profileTypesQuery } from "@/lib/event";
 
 const TITLE = "Tableau de bord organisateur — FESA 2026";
@@ -60,10 +61,24 @@ function Dashboard() {
 }
 
 function DashboardContent() {
+  const queryClient = useQueryClient();
   const { data: event } = useQuery(eventQuery);
   const { data: profiles } = useQuery(profileTypesQuery(event?.id));
   const { data: participants } = useQuery(participantsQuery(event?.id));
   const { data: payments } = useQuery(paymentsQuery(event?.id));
+
+  async function assignCategory(participantId: string, profileTypeId: string) {
+    const { error } = await supabase
+      .from("participants")
+      .update({ profile_type_id: profileTypeId })
+      .eq("id", participantId);
+    if (error) {
+      console.error(error);
+      toast.error("Impossible de changer la catégorie.");
+      return;
+    }
+    void queryClient.invalidateQueries({ queryKey: ["participants", event?.id] });
+  }
 
   const [search, setSearch] = useState("");
   const [profileFilter, setProfileFilter] = useState("all");
@@ -318,13 +333,33 @@ function DashboardContent() {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="inline-flex items-center gap-2">
-                          <span
-                            className="size-2.5 rounded-full"
-                            style={{ backgroundColor: profileColor(r.profile_type_id) }}
-                          />
-                          {profileLabel(r.profile_type_id)}
-                        </span>
+                        <Select
+                          {...(r.profile_type_id ? { value: r.profile_type_id } : {})}
+                          onValueChange={(v) => void assignCategory(r.id, v)}
+                        >
+                          <SelectTrigger className="h-8 w-44 border-none bg-transparent px-2 shadow-none">
+                            <span className="inline-flex items-center gap-2">
+                              <span
+                                className="size-2.5 shrink-0 rounded-full"
+                                style={{ backgroundColor: profileColor(r.profile_type_id) }}
+                              />
+                              <SelectValue placeholder="—" />
+                            </span>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {(profiles ?? []).map((p) => (
+                              <SelectItem key={p.id} value={p.id}>
+                                <span className="inline-flex items-center gap-2">
+                                  <span
+                                    className="size-2.5 rounded-full"
+                                    style={{ backgroundColor: p.color_code }}
+                                  />
+                                  {p.label}
+                                </span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </td>
                       <td className="px-4 py-3">
                         <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground">

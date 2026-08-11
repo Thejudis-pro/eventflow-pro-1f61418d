@@ -27,7 +27,7 @@ import {
 
 const TITLE = "Inscription FESA 2026 | Dakar, 21-22 septembre 2026";
 const DESCRIPTION =
-  "Formulaire d'inscription au FESA 2026 : choisissez votre profil (VIP, entrepreneur, institution, presse, standard) et recevez votre badge nominatif.";
+  "Formulaire d'inscription au FESA 2026 : participant, stand Marché Forain (Exposant) ou stand institutionnel (Partenaire). Les autres accréditations (VIP, presse, staff...) sont attribuées par l'organisation.";
 
 export const Route = createFileRoute("/inscription")({
   head: () => ({
@@ -61,17 +61,24 @@ const EMPTY: Details = {
   sector: "",
 };
 
-function isEntrepreneur(p?: ProfileType | null) {
-  return Boolean(p && /entrepreneur/i.test(p.label));
+const OPTION_BLURB: Record<string, string> = {
+  Participant: "Inscription individuelle au forum.",
+  Exposant: "Stand au Marché Forain — visibilité commerciale grand public.",
+  Partenaire: "Stand institutionnel — espace dédié aux institutions et partenaires.",
+};
+
+function isExposant(p?: ProfileType | null) {
+  return p?.label === "Exposant";
 }
-function isInstitution(p?: ProfileType | null) {
-  return Boolean(p && /(institution|partenaire)/i.test(p.label));
+function isPartenaire(p?: ProfileType | null) {
+  return p?.label === "Partenaire";
 }
 
 function RegistrationPage() {
   const navigate = useNavigate();
   const { data: event } = useQuery(eventQuery);
-  const { data: profiles } = useQuery(profileTypesQuery(event?.id));
+  const { data: allProfiles } = useQuery(profileTypesQuery(event?.id));
+  const profiles = useMemo(() => (allProfiles ?? []).filter((p) => p.is_public), [allProfiles]);
   const { data: delegations } = useQuery(publicDelegationNamesQuery(event?.id));
 
   const [step, setStep] = useState(1);
@@ -85,8 +92,8 @@ function RegistrationPage() {
     () => profiles?.find((p) => p.id === profileId) ?? null,
     [profiles, profileId],
   );
-  const needsPayment = Boolean(profile?.requires_payment) && !isInstitution(profile);
-  const steps = needsPayment ? ["Profil", "Informations", "Paiement"] : ["Profil", "Informations"];
+  const needsPayment = Boolean(profile?.requires_payment);
+  const steps = needsPayment ? ["Formule", "Informations", "Paiement"] : ["Formule", "Informations"];
 
   const set = (k: keyof Details, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -98,11 +105,11 @@ function RegistrationPage() {
       setErrors(next);
       return false;
     }
-    if (isEntrepreneur(profile) && !form.sector) {
+    if (isExposant(profile) && !form.sector) {
       setErrors({ sector: "Sélectionnez un secteur" });
       return false;
     }
-    if (isInstitution(profile) && !form.company) {
+    if (isPartenaire(profile) && !form.company) {
       setErrors({ company: "Nom de l'organisation requis" });
       return false;
     }
@@ -120,7 +127,7 @@ function RegistrationPage() {
       const { data, error } = await supabase.rpc("register_participant", {
         p_event_id: event.id,
         p_profile_type_id: profile.id,
-        p_delegation_id: delegationId ?? "",
+        p_delegation_id: delegationId,
         p_full_name: form.full_name.trim(),
         p_email: form.email.trim(),
         p_phone: form.phone.trim(),
@@ -193,9 +200,10 @@ function RegistrationPage() {
           <div className="rounded-xl border border-border bg-card p-6 shadow-card sm:p-8">
             {step === 1 && (
               <div>
-                <h2 className="text-xl font-semibold">Type de profil</h2>
+                <h2 className="text-xl font-semibold">Formule d'inscription</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Le profil détermine le badge, l'accès et les frais éventuels.
+                  Les autres accréditations (VIP, presse, staff, comité scientifique…) sont
+                  attribuées directement par l'organisation.
                 </p>
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
                   {(profiles ?? []).map((p) => {
@@ -219,9 +227,10 @@ function RegistrationPage() {
                           <span className="font-semibold">{p.label}</span>
                         </span>
                         <span className="mt-2 block text-sm text-muted-foreground">
-                          {p.requires_payment && !/institution|partenaire/i.test(p.label)
-                            ? `${Number(p.price ?? 0).toLocaleString("fr-FR")} FCFA`
-                            : "Gratuit / sur invitation"}
+                          {OPTION_BLURB[p.label] ?? ""}
+                        </span>
+                        <span className="mt-2 block font-display text-lg font-bold text-primary-deep">
+                          {Number(p.price ?? 0).toLocaleString("fr-FR")} FCFA
                         </span>
                       </button>
                     );
@@ -275,14 +284,12 @@ function RegistrationPage() {
                   />
                   <Field
                     id="company"
-                    label={
-                      isInstitution(profile) ? "Nom de l'organisation" : "Structure / entreprise"
-                    }
+                    label={isPartenaire(profile) ? "Nom de l'organisation" : "Structure / entreprise"}
                     value={form.company ?? ""}
                     error={errors["company"]}
                     onChange={(v) => set("company", v)}
                   />
-                  {isEntrepreneur(profile) && (
+                  {isExposant(profile) && (
                     <div className="space-y-2">
                       <Label htmlFor="sector">Secteur d'activité</Label>
                       <Select value={form.sector ?? ""} onValueChange={(v) => set("sector", v)}>
@@ -328,13 +335,6 @@ function RegistrationPage() {
                     </div>
                   )}
                 </div>
-
-                {isInstitution(profile) && (
-                  <p className="mt-6 rounded-lg border border-border bg-secondary p-4 text-sm text-secondary-foreground">
-                    Les inscriptions Institution / Partenaire sont gratuites : aucune étape de
-                    paiement ne vous sera demandée.
-                  </p>
-                )}
 
                 <div className="mt-8 flex justify-between">
                   <Button variant="outline" size="lg" onClick={() => setStep(1)}>

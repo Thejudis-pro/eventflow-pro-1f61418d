@@ -22,6 +22,7 @@ export type ProfileType = {
   requires_payment: boolean;
   price: number | null;
   sort_order: number;
+  is_public: boolean;
 };
 
 export type Participant = {

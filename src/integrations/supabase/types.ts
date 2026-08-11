@@ -269,6 +269,7 @@ export type Database = {
           created_at: string
           event_id: string
           id: string
+          is_public: boolean
           label: string
           price: number | null
           requires_payment: boolean
@@ -279,6 +280,7 @@ export type Database = {
           created_at?: string
           event_id: string
           id?: string
+          is_public?: boolean
           label: string
           price?: number | null
           requires_payment?: boolean
@@ -289,6 +291,7 @@ export type Database = {
           created_at?: string
           event_id?: string
           id?: string
+          is_public?: boolean
           label?: string
           price?: number | null
           requires_payment?: boolean
@@ -362,7 +365,7 @@ export type Database = {
       register_participant: {
         Args: {
           p_company: string
-          p_delegation_id: string
+          p_delegation_id: string | null
           p_email: string
           p_event_id: string
           p_full_name: string
