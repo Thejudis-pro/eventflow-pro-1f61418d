@@ -120,13 +120,13 @@ function RegistrationPage() {
       const { data, error } = await supabase.rpc("register_participant", {
         p_event_id: event.id,
         p_profile_type_id: profile.id,
-        p_delegation_id: delegationId,
+        p_delegation_id: delegationId ?? "",
         p_full_name: form.full_name.trim(),
         p_email: form.email.trim(),
         p_phone: form.phone.trim(),
-        p_company: form.company?.trim() || null,
-        p_function: form.function?.trim() || null,
-        p_sector: form.sector?.trim() || null,
+        p_company: form.company?.trim() ?? "",
+        p_function: form.function?.trim() ?? "",
+        p_sector: form.sector?.trim() ?? "",
         p_status: withPayment ? "paid" : "confirmed",
       });
       if (error) throw error;
