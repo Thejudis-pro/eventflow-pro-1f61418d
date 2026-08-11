@@ -6,8 +6,8 @@ import { Camera, CameraOff, CheckCircle2, XCircle, AlertTriangle } from "lucide-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
-import { StaffGate, StaffSignOutButton } from "@/components/fesa/StaffGate";
+import { AdminShell } from "@/components/fesa/AdminShell";
+import { StaffGate } from "@/components/fesa/StaffGate";
 import { supabase } from "@/integrations/supabase/client";
 import { eventQuery, participantsQuery, profileTypesQuery } from "@/lib/event";
 
@@ -159,21 +159,15 @@ function CheckinContent() {
   }, [cameraActive]);
 
   return (
-    <div className="min-h-screen bg-surface">
-      <SiteHeader />
-      <main className="mx-auto max-w-3xl px-4 py-12">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold sm:text-4xl">Check-in sur site</h1>
-            <p className="mt-2 text-muted-foreground">
-              {event?.name ?? "Événement"} · scannez le badge (caméra ou douchette) pour valider
-              l'entrée.
-            </p>
-          </div>
-          <StaffSignOutButton />
-        </div>
+    <AdminShell active="checkin" event={event}>
+      <div className="mx-auto max-w-3xl">
+        <h1 className="text-3xl font-bold sm:text-4xl">Check-in sur site</h1>
+        <p className="mt-2 text-muted-foreground">
+          {event?.name ?? "Événement"} · scannez le badge (caméra ou douchette) pour valider
+          l'entrée.
+        </p>
 
-        <div className="mt-6 flex items-center gap-4 rounded-xl border border-border bg-card p-4 shadow-card">
+        <div className="mt-6 flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-card">
           <span className="text-sm text-muted-foreground">Présents</span>
           <span className="font-display text-2xl font-bold text-primary-deep">
             {checkedIn} / {total}
@@ -183,7 +177,7 @@ function CheckinContent() {
           </span>
         </div>
 
-        <div className="mt-6 rounded-xl border border-border bg-card p-6 shadow-card">
+        <div className="mt-6 rounded-2xl border border-border bg-card p-6 shadow-card">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Scanner caméra</h2>
             <Button
@@ -226,7 +220,7 @@ function CheckinContent() {
 
         {result && (
           <div
-            className={`mt-6 rounded-xl border p-6 shadow-card ${
+            className={`mt-6 rounded-2xl border p-6 shadow-card ${
               result.kind === "ok"
                 ? "border-primary bg-secondary"
                 : result.kind === "already"
@@ -263,8 +257,7 @@ function CheckinContent() {
             </Button>
           </div>
         )}
-      </main>
-      <SiteFooter />
-    </div>
+      </div>
+    </AdminShell>
   );
 }
