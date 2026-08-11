@@ -52,6 +52,35 @@ export type Database = {
           },
         ]
       }
+      checkins: {
+        Row: {
+          id: string
+          participant_id: string
+          scanned_at: string
+          scanned_by: string | null
+        }
+        Insert: {
+          id?: string
+          participant_id: string
+          scanned_at?: string
+          scanned_by?: string | null
+        }
+        Update: {
+          id?: string
+          participant_id?: string
+          scanned_at?: string
+          scanned_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkins_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       delegations: {
         Row: {
           created_at: string
@@ -205,6 +234,7 @@ export type Database = {
           provider: string
           provider_transaction_id: string | null
           status: string
+          webhook_payload: Json | null
         }
         Insert: {
           amount: number
@@ -214,6 +244,7 @@ export type Database = {
           provider: string
           provider_transaction_id?: string | null
           status?: string
+          webhook_payload?: Json | null
         }
         Update: {
           amount?: number
@@ -223,6 +254,7 @@ export type Database = {
           provider?: string
           provider_transaction_id?: string | null
           status?: string
+          webhook_payload?: Json | null
         }
         Relationships: [
           {

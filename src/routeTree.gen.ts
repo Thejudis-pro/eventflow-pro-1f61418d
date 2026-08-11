@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as InscriptionRouteImport } from './routes/inscription'
 import { Route as ConfirmationRegistrationIdRouteImport } from './routes/confirmation.$registrationId'
@@ -17,6 +18,11 @@ import { Route as ConfirmationRegistrationIdRouteImport } from './routes/confirm
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckinRoute = CheckinRouteImport.update({
+  id: '/checkin',
+  path: '/checkin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -38,12 +44,14 @@ const ConfirmationRegistrationIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
@@ -51,6 +59,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/checkin': typeof CheckinRoute
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
@@ -58,12 +67,22 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/dashboard' | '/inscription' | '/confirmation/$registrationId'
+    | '/'
+    | '/checkin'
+    | '/dashboard'
+    | '/inscription'
+    | '/confirmation/$registrationId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/inscription' | '/confirmation/$registrationId'
+  to:
+    | '/'
+    | '/checkin'
+    | '/dashboard'
+    | '/inscription'
+    | '/confirmation/$registrationId'
   id:
     | '__root__'
     | '/'
+    | '/checkin'
     | '/dashboard'
     | '/inscription'
     | '/confirmation/$registrationId'
@@ -71,6 +90,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CheckinRoute: typeof CheckinRoute
   DashboardRoute: typeof DashboardRoute
   InscriptionRoute: typeof InscriptionRoute
   ConfirmationRegistrationIdRoute: typeof ConfirmationRegistrationIdRoute
@@ -83,6 +103,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkin': {
+      id: '/checkin'
+      path: '/checkin'
+      fullPath: '/checkin'
+      preLoaderRoute: typeof CheckinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -111,6 +138,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CheckinRoute: CheckinRoute,
   DashboardRoute: DashboardRoute,
   InscriptionRoute: InscriptionRoute,
   ConfirmationRegistrationIdRoute: ConfirmationRegistrationIdRoute,

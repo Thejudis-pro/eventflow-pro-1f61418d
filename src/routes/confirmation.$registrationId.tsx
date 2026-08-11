@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
 import { BadgePreview } from "@/components/fesa/BadgePreview";
 import { supabase } from "@/integrations/supabase/client";
-import { eventQuery, profileTypesQuery } from "@/lib/event";
+import { badgeQuery, eventQuery, profileTypesQuery } from "@/lib/event";
 
 const TITLE = "Inscription confirmée — FESA 2026";
 const DESCRIPTION =
@@ -43,6 +43,7 @@ function ConfirmationPage() {
   });
 
   const profile = profiles?.find((p) => p.id === participant?.profile_type_id);
+  const { data: badge } = useQuery(badgeQuery(participant?.id));
 
   return (
     <div className="min-h-screen bg-surface">
@@ -109,6 +110,7 @@ function ConfirmationPage() {
                 profileLabel: profile?.label ?? "Participant",
                 profileColor: profile?.color_code ?? "#2E7D32",
                 registrationId,
+                qrValue: badge?.qr_payload,
               }}
             />
           </aside>

@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import QRCode from "qrcode";
 import { QrCode } from "lucide-react";
 
 export type BadgeData = {
@@ -10,7 +12,28 @@ export type BadgeData = {
   profileLabel: string;
   profileColor: string;
   registrationId: string;
+  /** Value encoded in the printed QR (badges.qr_payload). Omitted while no badge exists yet. */
+  qrValue?: string | null | undefined;
 };
+
+function BadgeQr({ value }: { value: string }) {
+  const [dataUrl, setDataUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    QRCode.toDataURL(value, { margin: 0, width: 160 }).then((url) => {
+      if (!cancelled) setDataUrl(url);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [value]);
+
+  if (!dataUrl) {
+    return <QrCode className="size-12 text-muted-foreground" aria-hidden />;
+  }
+  return <img src={dataUrl} alt="" className="size-full" aria-hidden />;
+}
 
 /** Reusable, event-agnostic badge card. Colours come from the event/profile data. */
 export function BadgePreview({ data }: { data: BadgeData }) {
@@ -49,8 +72,8 @@ export function BadgePreview({ data }: { data: BadgeData }) {
             <p className="font-mono text-sm font-semibold text-foreground">{data.registrationId}</p>
             <p className="mt-2 text-[10px] text-muted-foreground">{data.location}</p>
           </div>
-          <div className="flex size-20 items-center justify-center rounded-lg border border-dashed border-border bg-surface">
-            <QrCode className="size-12 text-muted-foreground" aria-hidden />
+          <div className="flex size-20 items-center justify-center rounded-lg border border-dashed border-border bg-surface p-1">
+            {data.qrValue ? <BadgeQr value={data.qrValue} /> : <QrCode className="size-12 text-muted-foreground" aria-hidden />}
             <span className="sr-only">QR code du badge</span>
           </div>
         </div>

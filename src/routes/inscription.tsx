@@ -17,7 +17,7 @@ import {
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
 import { BadgePreview } from "@/components/fesa/BadgePreview";
 import { supabase } from "@/integrations/supabase/client";
-import { eventQuery, profileTypesQuery, SECTORS, type ProfileType } from "@/lib/event";
+import { delegationsQuery, eventQuery, profileTypesQuery, SECTORS, type ProfileType } from "@/lib/event";
 
 const TITLE = "Inscription FESA 2026 | Dakar, 21-22 septembre 2026";
 const DESCRIPTION =
@@ -66,9 +66,11 @@ function RegistrationPage() {
   const navigate = useNavigate();
   const { data: event } = useQuery(eventQuery);
   const { data: profiles } = useQuery(profileTypesQuery(event?.id));
+  const { data: delegations } = useQuery(delegationsQuery(event?.id));
 
   const [step, setStep] = useState(1);
   const [profileId, setProfileId] = useState<string | null>(null);
+  const [delegationId, setDelegationId] = useState<string | null>(null);
   const [form, setForm] = useState<Details>(EMPTY);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -111,6 +113,7 @@ function RegistrationPage() {
         .insert({
           event_id: event.id,
           profile_type_id: profile.id,
+          delegation_id: delegationId,
           full_name: form.full_name.trim(),
           email: form.email.trim(),
           phone: form.phone.trim(),
@@ -123,26 +126,21 @@ function RegistrationPage() {
         .single();
       if (error) throw error;
 
-      const token = crypto.randomUUID().replace(/-/g, "").slice(0, 16);
-      await supabase.from("badges").insert({
-        participant_id: participant.id,
-        qr_payload: token,
-        badge_url: `/badge/${token}`,
-      });
-
+      // The DB trigger `create_badge_for_participant` creates the badge row
+      // as soon as status is paid/confirmed — nothing to insert here.
       if (withPayment) {
         await supabase.from("payments").insert({
           participant_id: participant.id,
           provider: "paytech",
           amount: profile.price ?? 0,
           status: "success",
-          provider_transaction_id: `MOCK-${token.slice(0, 10).toUpperCase()}`,
+          provider_transaction_id: `MOCK-${participant.id.slice(0, 10).toUpperCase()}`,
         });
       }
 
       navigate({
         to: "/confirmation/$registrationId",
-        params: { registrationId: participant.registration_id },
+        params: { registrationId: participant.registration_id! },
       });
     } catch (e) {
       console.error(e);
@@ -293,6 +291,31 @@ function RegistrationPage() {
                       {errors["sector"] && (
                         <p className="text-xs text-destructive">{errors["sector"]}</p>
                       )}
+                    </div>
+                  )}
+                  {(delegations ?? []).length > 0 && (
+                    <div className="space-y-2 sm:col-span-2">
+                      <Label htmlFor="delegation">Délégation (optionnel)</Label>
+                      <Select
+                        value={delegationId ?? "none"}
+                        onValueChange={(v) => setDelegationId(v === "none" ? null : v)}
+                      >
+                        <SelectTrigger id="delegation">
+                          <SelectValue placeholder="Aucune délégation" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">Aucune délégation</SelectItem>
+                          {(delegations ?? []).map((d) => (
+                            <SelectItem key={d.id} value={d.id}>
+                              {d.primary_contact_name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground">
+                        Si vous faites partie d'une délégation déjà enregistrée, sélectionnez-la
+                        ici.
+                      </p>
                     </div>
                   )}
                 </div>

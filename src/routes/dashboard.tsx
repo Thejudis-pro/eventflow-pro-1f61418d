@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Activity, Download, Plus } from "lucide-react";
+import { Activity, Download, Plus, QrCode, Send } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
-import { eventQuery, participantsQuery, profileTypesQuery } from "@/lib/event";
+import { DelegationCsvImport } from "@/components/fesa/DelegationCsvImport";
+import { eventQuery, participantsQuery, paymentsQuery, profileTypesQuery } from "@/lib/event";
 
 const TITLE = "Tableau de bord organisateur — FESA 2026";
 const DESCRIPTION =
@@ -42,9 +43,11 @@ function Dashboard() {
   const { data: event } = useQuery(eventQuery);
   const { data: profiles } = useQuery(profileTypesQuery(event?.id));
   const { data: participants } = useQuery(participantsQuery(event?.id));
+  const { data: payments } = useQuery(paymentsQuery(event?.id));
 
   const [profileFilter, setProfileFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [segmentProfile, setSegmentProfile] = useState("all");
 
   const rows = useMemo(() => {
     return (participants ?? []).filter(
@@ -57,6 +60,13 @@ function Dashboard() {
   const total = participants?.length ?? 0;
   const paid = (participants ?? []).filter((p) => p.status === "paid").length;
   const conversion = total ? Math.round((paid / total) * 100) : 0;
+  const checkedIn = (participants ?? []).filter((p) => p.status === "checked_in").length;
+  const attendanceRate = total ? Math.round((checkedIn / total) * 100) : 0;
+
+  const segmentCount = useMemo(() => {
+    if (segmentProfile === "all") return total;
+    return (participants ?? []).filter((p) => p.profile_type_id === segmentProfile).length;
+  }, [participants, segmentProfile, total]);
 
   const profileLabel = (id: string | null) =>
     profiles?.find((p) => p.id === id)?.label ?? "—";
@@ -114,18 +124,27 @@ function Dashboard() {
               {event?.name ?? "Événement"} · {event?.location ?? ""}
             </p>
           </div>
-          <Button
-            variant="outline"
-            onClick={() => toast.info("Création d'un nouvel événement — bientôt disponible.")}
-          >
-            <Plus className="size-4" /> Créer un nouvel événement
-          </Button>
+          <div className="flex flex-wrap gap-3">
+            <DelegationCsvImport eventId={event?.id} />
+            <Button asChild variant="outline">
+              <Link to="/checkin">
+                <QrCode className="size-4" /> Check-in sur site
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => toast.info("Création d'un nouvel événement — bientôt disponible.")}
+            >
+              <Plus className="size-4" /> Créer un nouvel événement
+            </Button>
+          </div>
         </div>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <Tile label="Inscriptions totales" value={String(total)} />
           <Tile label="Paiements confirmés" value={String(paid)} />
           <Tile label="Taux de conversion" value={`${conversion}%`} />
+          <Tile label="Enregistrés sur site" value={`${checkedIn} (${attendanceRate}%)`} />
           <Tile
             label="Recettes (mock)"
             value={`${(paid * 10000).toLocaleString("fr-FR")} F`}
@@ -216,27 +235,65 @@ function Dashboard() {
 
           <section className="rounded-xl border border-border bg-card p-5 shadow-card">
             <h2 className="flex items-center gap-2 text-sm font-semibold">
-              <Activity className="size-4 text-accent" /> Flux transactions (live)
+              <Activity className="size-4 text-accent" /> Transactions (table payments)
             </h2>
             <p className="mt-1 text-xs text-muted-foreground">
-              Emplacement réservé au flux temps réel PayTech / PayDunya.
+              Emplacement réservé au flux temps réel PayTech / PayDunya — en attendant, lecture
+              directe de la table <code>payments</code>.
             </p>
             <ul className="mt-4 space-y-3">
-              {(participants ?? []).slice(0, 6).map((p) => (
-                <li key={p.id} className="rounded-lg border border-dashed border-border p-3 text-sm">
-                  <span className="font-medium">{p.full_name}</span>
+              {(payments ?? []).slice(0, 6).map((tx) => (
+                <li key={tx.id} className="rounded-lg border border-dashed border-border p-3 text-sm">
+                  <span className="font-medium">{tx.participants?.full_name ?? "—"}</span>
                   <span className="block text-xs text-muted-foreground">
-                    {STATUS_LABEL[p.status] ?? p.status} ·{" "}
-                    {new Date(p.created_at).toLocaleString("fr-FR")}
+                    {tx.provider} · {Number(tx.amount).toLocaleString("fr-FR")} FCFA ·{" "}
+                    {tx.status === "success" ? "réussie" : tx.status} ·{" "}
+                    {new Date(tx.created_at).toLocaleString("fr-FR")}
                   </span>
                 </li>
               ))}
-              {(participants ?? []).length === 0 && (
+              {(payments ?? []).length === 0 && (
                 <li className="text-sm text-muted-foreground">Aucune transaction pour le moment.</li>
               )}
             </ul>
           </section>
         </div>
+
+        <section className="mt-6 rounded-xl border border-border bg-card p-5 shadow-card">
+          <h2 className="flex items-center gap-2 text-sm font-semibold">
+            <Send className="size-4 text-accent" /> Segmentation pour communication ciblée
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Sélectionnez un profil pour préparer un envoi ciblé (email/WhatsApp — intégration
+            provider à venir).
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <Select value={segmentProfile} onValueChange={setSegmentProfile}>
+              <SelectTrigger className="w-56">
+                <SelectValue placeholder="Segment" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les profils ({total})</SelectItem>
+                {(profiles ?? []).map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
+                    {p.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span className="text-sm text-muted-foreground">
+              {segmentCount} participant{segmentCount > 1 ? "s" : ""} dans ce segment
+            </span>
+            <Button
+              variant="institutional"
+              onClick={() =>
+                toast.info(`Envoi ciblé à ${segmentCount} participant(s) — bientôt disponible.`)
+              }
+            >
+              <Send className="size-4" /> Envoyer un message à ce segment
+            </Button>
+          </div>
+        </section>
       </main>
       <SiteFooter />
     </div>

@@ -28,6 +28,7 @@ export type Participant = {
   id: string;
   event_id: string;
   profile_type_id: string | null;
+  delegation_id: string | null;
   full_name: string;
   email: string;
   phone: string | null;
@@ -37,6 +38,37 @@ export type Participant = {
   registration_id: string;
   status: string;
   created_at: string;
+};
+
+export type Delegation = {
+  id: string;
+  event_id: string;
+  primary_contact_name: string;
+  email: string | null;
+  phone: string | null;
+  source: string;
+  created_at: string;
+};
+
+export type Payment = {
+  id: string;
+  participant_id: string;
+  provider: string;
+  amount: number;
+  status: string;
+  provider_transaction_id: string | null;
+  created_at: string;
+  participants: { full_name: string } | null;
+};
+
+export type Badge = {
+  id: string;
+  participant_id: string;
+  qr_payload: string;
+  badge_url: string;
+  generated_at: string;
+  sent_email: boolean;
+  sent_whatsapp: boolean;
 };
 
 export const eventQuery = {
@@ -77,6 +109,48 @@ export const participantsQuery = (eventId?: string) => ({
       .order("created_at", { ascending: false });
     if (error) throw error;
     return (data ?? []) as Participant[];
+  },
+});
+
+export const delegationsQuery = (eventId?: string) => ({
+  queryKey: ["delegations", eventId],
+  enabled: Boolean(eventId),
+  queryFn: async (): Promise<Delegation[]> => {
+    const { data, error } = await supabase
+      .from("delegations")
+      .select("*")
+      .eq("event_id", eventId!)
+      .order("primary_contact_name");
+    if (error) throw error;
+    return (data ?? []) as Delegation[];
+  },
+});
+
+export const paymentsQuery = (eventId?: string) => ({
+  queryKey: ["payments", eventId],
+  enabled: Boolean(eventId),
+  queryFn: async (): Promise<Payment[]> => {
+    const { data, error } = await supabase
+      .from("payments")
+      .select("*, participants!inner(full_name, event_id)")
+      .eq("participants.event_id", eventId!)
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return (data ?? []) as unknown as Payment[];
+  },
+});
+
+export const badgeQuery = (participantId?: string) => ({
+  queryKey: ["badge", participantId],
+  enabled: Boolean(participantId),
+  queryFn: async (): Promise<Badge | null> => {
+    const { data, error } = await supabase
+      .from("badges")
+      .select("*")
+      .eq("participant_id", participantId!)
+      .maybeSingle();
+    if (error) throw error;
+    return data as Badge | null;
   },
 });
 
