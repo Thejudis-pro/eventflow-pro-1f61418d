@@ -10,9 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as CheckinRouteImport } from './routes/checkin'
+import { Route as ConditionsInscriptionRouteImport } from './routes/conditions-inscription'
+import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as InscriptionRouteImport } from './routes/inscription'
+import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as ConfirmationRegistrationIdRouteImport } from './routes/confirmation.$registrationId'
 import { Route as StaffLoginRouteImport } from './routes/staff.login'
 import { Route as StaffSignupRouteImport } from './routes/staff.signup'
@@ -22,9 +26,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AProposRoute = AProposRouteImport.update({
+  id: '/a-propos',
+  path: '/a-propos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckinRoute = CheckinRouteImport.update({
   id: '/checkin',
   path: '/checkin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConditionsInscriptionRoute = ConditionsInscriptionRouteImport.update({
+  id: '/conditions-inscription',
+  path: '/conditions-inscription',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
+  id: '/confidentialite',
+  path: '/confidentialite',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -35,6 +54,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const InscriptionRoute = InscriptionRouteImport.update({
   id: '/inscription',
   path: '/inscription',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
+  id: '/mentions-legales',
+  path: '/mentions-legales',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConfirmationRegistrationIdRoute =
@@ -56,18 +80,26 @@ const StaffSignupRoute = StaffSignupRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/a-propos': typeof AProposRoute
   '/checkin': typeof CheckinRoute
+  '/conditions-inscription': typeof ConditionsInscriptionRoute
+  '/confidentialite': typeof ConfidentialiteRoute
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
+  '/mentions-legales': typeof MentionsLegalesRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/a-propos': typeof AProposRoute
   '/checkin': typeof CheckinRoute
+  '/conditions-inscription': typeof ConditionsInscriptionRoute
+  '/confidentialite': typeof ConfidentialiteRoute
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
+  '/mentions-legales': typeof MentionsLegalesRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
@@ -75,9 +107,13 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/a-propos': typeof AProposRoute
   '/checkin': typeof CheckinRoute
+  '/conditions-inscription': typeof ConditionsInscriptionRoute
+  '/confidentialite': typeof ConfidentialiteRoute
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
+  '/mentions-legales': typeof MentionsLegalesRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
@@ -86,27 +122,39 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/a-propos'
     | '/checkin'
+    | '/conditions-inscription'
+    | '/confidentialite'
     | '/dashboard'
     | '/inscription'
+    | '/mentions-legales'
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/a-propos'
     | '/checkin'
+    | '/conditions-inscription'
+    | '/confidentialite'
     | '/dashboard'
     | '/inscription'
+    | '/mentions-legales'
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
   id:
     | '__root__'
     | '/'
+    | '/a-propos'
     | '/checkin'
+    | '/conditions-inscription'
+    | '/confidentialite'
     | '/dashboard'
     | '/inscription'
+    | '/mentions-legales'
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
@@ -114,9 +162,13 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AProposRoute: typeof AProposRoute
   CheckinRoute: typeof CheckinRoute
+  ConditionsInscriptionRoute: typeof ConditionsInscriptionRoute
+  ConfidentialiteRoute: typeof ConfidentialiteRoute
   DashboardRoute: typeof DashboardRoute
   InscriptionRoute: typeof InscriptionRoute
+  MentionsLegalesRoute: typeof MentionsLegalesRoute
   ConfirmationRegistrationIdRoute: typeof ConfirmationRegistrationIdRoute
   StaffLoginRoute: typeof StaffLoginRoute
   StaffSignupRoute: typeof StaffSignupRoute
@@ -131,11 +183,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/a-propos': {
+      id: '/a-propos'
+      path: '/a-propos'
+      fullPath: '/a-propos'
+      preLoaderRoute: typeof AProposRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkin': {
       id: '/checkin'
       path: '/checkin'
       fullPath: '/checkin'
       preLoaderRoute: typeof CheckinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conditions-inscription': {
+      id: '/conditions-inscription'
+      path: '/conditions-inscription'
+      fullPath: '/conditions-inscription'
+      preLoaderRoute: typeof ConditionsInscriptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confidentialite': {
+      id: '/confidentialite'
+      path: '/confidentialite'
+      fullPath: '/confidentialite'
+      preLoaderRoute: typeof ConfidentialiteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -150,6 +223,13 @@ declare module '@tanstack/react-router' {
       path: '/inscription'
       fullPath: '/inscription'
       preLoaderRoute: typeof InscriptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mentions-legales': {
+      id: '/mentions-legales'
+      path: '/mentions-legales'
+      fullPath: '/mentions-legales'
+      preLoaderRoute: typeof MentionsLegalesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/confirmation/$registrationId': {
@@ -178,9 +258,13 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AProposRoute: AProposRoute,
   CheckinRoute: CheckinRoute,
+  ConditionsInscriptionRoute: ConditionsInscriptionRoute,
+  ConfidentialiteRoute: ConfidentialiteRoute,
   DashboardRoute: DashboardRoute,
   InscriptionRoute: InscriptionRoute,
+  MentionsLegalesRoute: MentionsLegalesRoute,
   ConfirmationRegistrationIdRoute: ConfirmationRegistrationIdRoute,
   StaffLoginRoute: StaffLoginRoute,
   StaffSignupRoute: StaffSignupRoute,

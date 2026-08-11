@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { authErrorMessage, useAttemptThrottle } from "@/lib/auth";
 
 export const Route = createFileRoute("/staff/login")({
   head: () => ({
@@ -19,17 +20,21 @@ function StaffLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const throttle = useAttemptThrottle();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (throttle.locked) return;
     setSubmitting(true);
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      throttle.reset();
       void navigate({ to: "/dashboard" });
     } catch (err) {
       console.error(err);
-      toast.error("Identifiants invalides.");
+      throttle.registerFailure();
+      toast.error(authErrorMessage(err, "login"));
     } finally {
       setSubmitting(false);
     }
@@ -65,9 +70,14 @@ function StaffLoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button type="submit" className="w-full" variant="institutional" disabled={submitting}>
+          <Button
+            type="submit"
+            className="w-full"
+            variant="institutional"
+            disabled={submitting || throttle.locked}
+          >
             {submitting && <Loader2 className="size-4 animate-spin" />}
-            Se connecter
+            {throttle.locked ? `Réessayez dans ${throttle.remaining}s` : "Se connecter"}
           </Button>
         </form>
 

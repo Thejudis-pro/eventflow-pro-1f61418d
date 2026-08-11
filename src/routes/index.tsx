@@ -13,17 +13,23 @@ import {
   Landmark,
   Leaf,
   MapPin,
+  Menu,
   ShieldCheck,
   Sparkles,
   Users2,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import heroAsset from "@/assets/fesa-hero.jpg.asset.json";
 import partnersAsset from "@/assets/fesa-partenaires.png.asset.json";
 import logoAsset from "@/assets/fesa-logo.png.asset.json";
-import { Button } from "@/components/ui/button";
-import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
-import { eventQuery } from "@/lib/event";
+// Once the PAAF logo file is provided, add it under src/assets/ and swap this
+// for: import paafLogoAsset from "@/assets/paaf-logo.png.asset.json"; then
+// replace PAAF_LOGO_URL below with paafLogoAsset.url.
+const PAAF_LOGO_URL: string | null = null;
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useReveal } from "@/components/fesa/Reveal";
+import { eventQuery, subscribeToNewsletter } from "@/lib/event";
+import { AXES, OBJECTIVES, PAAF_STATS } from "@/lib/forum-content";
 
 const TITLE = "FESA 2026 — Forum entrepreneuriat & souveraineté alimentaire | Dakar";
 const DESCRIPTION =
@@ -36,7 +42,9 @@ export const Route = createFileRoute("/")({
       { name: "description", content: DESCRIPTION },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
+      { property: "og:url", content: "https://fesa2026.com/" },
     ],
+    links: [{ rel: "canonical", href: "https://fesa2026.com/" }],
   }),
   component: Landing,
 });
@@ -60,7 +68,7 @@ const ARROW = (
 function QrMark({ seed = 184, dark = "#0d3d21" }: { seed?: number; dark?: string }) {
   const N = 21;
   let s = seed;
-  const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+  const rnd = () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296;
   const isFinder = (r: number, c: number) =>
     (r < 7 && c < 7) || (r < 7 && c > N - 8) || (r > N - 8 && c < 7);
   const cells: React.ReactElement[] = [];
@@ -97,34 +105,10 @@ function QrMark({ seed = 184, dark = "#0d3d21" }: { seed?: number; dark?: string
 
 const NAV = [
   { label: "Le forum", href: "#forum" },
-  { label: "Objectifs", href: "#objectifs" },
+  { label: "À propos", to: "/a-propos" as const },
   { label: "Programme", href: "#programme" },
   { label: "Tarifs & stands", href: "#tarifs" },
   { label: "Partenaires", href: "#partenaires" },
-];
-
-const OBJECTIVES = [
-  "Un agenda commun de formalisation",
-  "L'accès au financement CEDEAO / UEMOA",
-  "Des passerelles projets ↔ investisseurs",
-  "Les initiatives des femmes et des jeunes",
-  "L'ESS et la gouvernance coopérative",
-  "Un agenda régional pluriannuel",
-];
-
-const AXES = [
-  "Femmes & jeunes",
-  "Formalisation",
-  "Financement",
-  "Climat",
-  "Agroalimentaire",
-  "ZLECAf",
-  "Numérique",
-  "Industrialisation",
-  "Emploi des jeunes",
-  "Leadership féminin",
-  "PPP",
-  "Investissements agricoles",
 ];
 
 const DAY_21 = [
@@ -207,13 +191,24 @@ const TIERS: Tier[] = [
 const FOOTER_COLS = [
   {
     title: "LE FORUM",
-    links: ["À propos de la PAAF", "Objectifs", "Axes thématiques", "Programme"],
+    links: [
+      { label: "À propos de la PAAF", href: "https://paafs.org", external: true },
+      { label: "Objectifs", to: "/a-propos" as const },
+      { label: "Axes thématiques", href: "#axes" },
+      { label: "Programme", href: "#programme" },
+    ],
   },
   {
     title: "PARTICIPER",
-    links: ["S'inscrire", "Réserver un stand", "Accréditation presse", "Retrouver mon badge"],
+    links: [
+      { label: "S'inscrire", to: "/inscription" as const },
+      { label: "Réserver un stand", href: "#tarifs" },
+    ],
   },
-  { title: "PRATIQUE", links: ["Accès et hébergement", "Visas", "FAQ", "Contact"] },
+  {
+    title: "PRATIQUE",
+    links: [{ label: "Contact", href: "mailto:presidence@paafs.org" }],
+  },
 ];
 
 function Landing() {
@@ -228,11 +223,37 @@ function Landing() {
   }, [event?.start_date]);
 
   const [daysRemaining, setDaysRemaining] = useState(0);
+  const [newsletterStatus, setNewsletterStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
+  const forumReveal = useReveal<HTMLDivElement>();
+  const programmeReveal = useReveal<HTMLDivElement>();
+  const tarifsReveal = useReveal<HTMLDivElement>();
+  const partenairesReveal = useReveal<HTMLDivElement>();
+
+  async function handleNewsletterSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!event) return;
+    const form = e.currentTarget;
+    const email = (new FormData(form).get("email") as string)?.trim();
+    if (!email) return;
+    setNewsletterStatus("submitting");
+    try {
+      await subscribeToNewsletter(event.id, email);
+      setNewsletterStatus("success");
+      form.reset();
+    } catch (error) {
+      console.error(error);
+      setNewsletterStatus("error");
+    }
+  }
 
   useEffect(() => {
     function updateCountdown() {
       const now = new Date();
-      const diffDays = Math.ceil((countdownTarget.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      const diffDays = Math.ceil(
+        (countdownTarget.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+      );
       setDaysRemaining(Math.max(0, diffDays));
     }
 
@@ -241,8 +262,40 @@ function Landing() {
 
     return () => window.clearInterval(interval);
   }, [countdownTarget]);
+
+  const eventJsonLd = useMemo(
+    () => ({
+      "@context": "https://schema.org",
+      "@type": "Event",
+      name: "FESA 2026 — Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire",
+      startDate: event?.start_date ?? "2026-09-21",
+      endDate: event?.end_date ?? "2026-09-22",
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      eventStatus: "https://schema.org/EventScheduled",
+      location: {
+        "@type": "Place",
+        name: event?.location ?? "Dakar, Sénégal",
+        address: { "@type": "PostalAddress", addressLocality: "Dakar", addressCountry: "SN" },
+      },
+      organizer: { "@type": "Organization", name: "PAAF", url: "https://www.paafs.org" },
+      offers: TIERS.map((tier) => ({
+        "@type": "Offer",
+        name: tier.title.join(" "),
+        price: tier.price.replace(/\s/g, ""),
+        priceCurrency: "XOF",
+        availability: "https://schema.org/InStock",
+        url: "https://fesa2026.com/inscription",
+      })),
+    }),
+    [event],
+  );
+
   return (
     <div className="min-h-screen bg-[#fbf7f0] font-[Manrope,ui-sans-serif,system-ui] text-[#0d3d21]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
+      />
       {/* Top bar */}
       <div className="bg-[#0d3d21] text-[rgba(251,247,240,.8)]">
         <div className="mx-auto flex max-w-[1440px] flex-col gap-1 px-5 py-2 text-[12px] font-medium sm:px-8 lg:h-10 lg:flex-row lg:items-center lg:justify-between lg:gap-0 lg:py-0 lg:px-16">
@@ -256,11 +309,7 @@ function Landing() {
           <div className="flex flex-wrap items-center gap-[18px]">
             <span>presidence@paafs.org</span>
             <span>+221 77 477 83 60</span>
-            <span className="flex items-center gap-[6px]">
-              <span className="font-extrabold text-[#fbf7f0]">FR</span>
-              <span className="opacity-40">/</span>
-              <span>EN</span>
-            </span>
+            <span className="font-extrabold text-[#fbf7f0]">FR</span>
           </div>
         </div>
       </div>
@@ -276,23 +325,76 @@ function Landing() {
         </Link>
         <div className="flex items-center gap-[26px]">
           <nav className="hidden items-center gap-[26px] xl:flex">
-            {NAV.map((n) => (
-              <a
-                key={n.label}
-                href={n.href}
-                className="text-[14px] font-semibold text-[#0d3d21] transition hover:text-[#e8722a]"
-              >
-                {n.label}
-              </a>
-            ))}
+            {NAV.map((n) =>
+              "to" in n ? (
+                <Link
+                  key={n.label}
+                  to={n.to}
+                  className="text-[14px] font-semibold text-[#0d3d21] transition hover:text-[#e8722a]"
+                >
+                  {n.label}
+                </Link>
+              ) : (
+                <a
+                  key={n.label}
+                  href={n.href}
+                  className="text-[14px] font-semibold text-[#0d3d21] transition hover:text-[#e8722a]"
+                >
+                  {n.label}
+                </a>
+              ),
+            )}
           </nav>
           <Link
             to="/inscription"
-            className="flex h-[46px] items-center gap-2 rounded-[14px] bg-[#e8722a] px-[22px] text-[14px] font-extrabold text-white transition hover:bg-[#c85c18]"
+            className="hidden h-[46px] items-center gap-2 rounded-[14px] bg-[#e8722a] px-[22px] text-[14px] font-extrabold text-white transition hover:bg-[#c85c18] sm:flex"
           >
             S'inscrire
             {ARROW}
           </Link>
+          <Sheet>
+            <SheetTrigger asChild>
+              <button
+                type="button"
+                aria-label="Ouvrir le menu"
+                className="flex size-[46px] items-center justify-center rounded-[14px] border border-[#ddd2c2] bg-white text-[#0d3d21] xl:hidden"
+              >
+                <Menu className="size-5" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="flex flex-col gap-6">
+              <nav className="mt-8 flex flex-col gap-1 text-base font-semibold text-[#0d3d21]">
+                {NAV.map((n) => (
+                  <SheetClose asChild key={n.label}>
+                    {"to" in n ? (
+                      <Link
+                        to={n.to}
+                        className="rounded-lg px-3 py-3 transition hover:bg-[#f8f4eb] hover:text-[#e8722a]"
+                      >
+                        {n.label}
+                      </Link>
+                    ) : (
+                      <a
+                        href={n.href}
+                        className="rounded-lg px-3 py-3 transition hover:bg-[#f8f4eb] hover:text-[#e8722a]"
+                      >
+                        {n.label}
+                      </a>
+                    )}
+                  </SheetClose>
+                ))}
+              </nav>
+              <SheetClose asChild>
+                <Link
+                  to="/inscription"
+                  className="flex h-[46px] items-center justify-center gap-2 rounded-[14px] bg-[#e8722a] px-[22px] text-[14px] font-extrabold text-white transition hover:bg-[#c85c18]"
+                >
+                  S'inscrire
+                  {ARROW}
+                </Link>
+              </SheetClose>
+            </SheetContent>
+          </Sheet>
         </div>
       </header>
 
@@ -309,9 +411,9 @@ function Landing() {
             </span>
           </div>
           <h1 className="mt-6 text-[40px] font-extrabold leading-[1.02] tracking-[-.038em] text-[#0d3d21] sm:text-[52px] lg:text-[58px]">
-            Forum de l'Entrepreneuriat et&nbsp;
+            Forum de l'Entrepreneuriat et
             <br />
-            <span className="text-[#0b7a3c]">de la&nbsp; Souveraineté Alimentaire</span>
+            <span className="text-[#0b7a3c]">de la Souveraineté Alimentaire</span>
           </h1>
           <p className="mt-5 max-w-[470px] border-l-[3px] border-[#e8722a] pl-4 text-[18px] font-semibold leading-[1.45] text-[#42544a]">
             Entrepreneuriat, économie sociale et solidaire et souveraineté alimentaire en Afrique de
@@ -342,9 +444,7 @@ function Landing() {
               <div
                 key={s.l}
                 className={
-                  i === 0
-                    ? "flex-1 pr-5"
-                    : "flex-1 border-l border-[#e0d6c6] px-3 sm:px-5"
+                  i === 0 ? "flex-1 pr-5" : "flex-1 border-l border-[#e0d6c6] px-3 sm:px-5"
                 }
               >
                 <dt className="text-[24px] font-extrabold leading-none text-[#0d3d21] sm:text-[28px]">
@@ -399,95 +499,113 @@ function Landing() {
       {/* Le forum / objectifs */}
       <section
         id="forum"
-        className="mx-auto grid max-w-[1440px] items-start gap-12 px-5 pt-16 sm:px-8 lg:grid-cols-[minmax(0,1fr)_372px] lg:gap-16 lg:px-16 lg:pt-[78px]"
+        className="mx-auto max-w-[1440px] px-5 pt-16 sm:px-8 lg:px-16 lg:pt-[78px]"
       >
-        <div className="min-w-0">
-          <div className="text-[12px] font-extrabold tracking-[.12em] text-[#e8722a]">LE FORUM</div>
-          <h2 className="mt-4 max-w-[640px] text-[36px] font-extrabold leading-[1.08] tracking-[-.035em] text-[#0d3d21] lg:text-[46px]">
-            Formaliser,
-            <br />
-            financer,
-            <br />
-            <span className="text-[#0b7a3c]">transformer.</span>
-          </h2>
-          <p className="mt-5 max-w-[520px] text-[16px] leading-[1.7] text-[#5a6b62]">
-            1ʳᵉ édition, dédiée aux entreprises et coopératives, à l'ESS et à la souveraineté
-            alimentaire ouest-africaine.
-          </p>
-
-          <div id="objectifs" className="mt-9 grid gap-x-9 sm:grid-cols-2 lg:grid-cols-3">
-            {OBJECTIVES.map((o, i) => (
-              <div
-                key={o}
-                className="flex gap-3 border-t border-[#e0d6c6] py-[14px] last:border-b lg:[&:nth-child(n+4)]:border-b"
-              >
-                <span className="flex-none text-[12px] font-extrabold leading-[1.7] text-[#e8722a]">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="text-[14.5px] font-semibold leading-[1.5] text-[#42544a]">{o}</span>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-7">
-            <div className="w-20 flex-none text-[12px] font-extrabold leading-[2.6] tracking-[.12em] text-[#e8722a]">
-              13 AXES
+        <div
+          ref={forumReveal.ref}
+          className={`grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_372px] lg:gap-16 ${forumReveal.className}`}
+        >
+          <div className="min-w-0">
+            <div className="text-[12px] font-extrabold tracking-[.12em] text-[#e8722a]">
+              LE FORUM
             </div>
-            <div className="flex flex-wrap gap-2">
-              {AXES.map((a) => (
-                <span
-                  key={a}
-                  className="rounded-[10px] bg-[#f2ede3] px-[13px] py-2 text-[13px] font-semibold text-[#42544a]"
+            <h2 className="mt-4 max-w-[640px] text-[36px] font-extrabold leading-[1.08] tracking-[-.035em] text-[#0d3d21] lg:text-[46px]">
+              Formaliser,
+              <br />
+              financer,
+              <br />
+              <span className="text-[#0b7a3c]">transformer.</span>
+            </h2>
+            <p className="mt-5 max-w-[520px] text-[16px] leading-[1.7] text-[#5a6b62]">
+              1ʳᵉ édition, dédiée aux entreprises et coopératives, à l'ESS et à la souveraineté
+              alimentaire ouest-africaine.
+            </p>
+
+            <div id="objectifs" className="mt-9 grid gap-x-9 sm:grid-cols-2 lg:grid-cols-3">
+              {OBJECTIVES.map((o, i) => (
+                <div
+                  key={o}
+                  className="flex gap-3 border-t border-[#e0d6c6] py-[14px] last:border-b sm:[&:nth-child(n+5)]:border-b lg:[&:nth-child(n+4)]:border-b"
                 >
-                  {a}
-                </span>
-              ))}
-              <span className="rounded-[10px] bg-[#0b7a3c] px-[13px] py-2 text-[13px] font-semibold text-white">
-                ESS &amp; coopératives
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <aside className="lg:sticky lg:top-6">
-          <div className="rounded-[20px] bg-[#0d3d21] p-[30px] text-[#fbf7f0]">
-            <div className="text-[12px] font-extrabold tracking-[.1em] text-[#f0913f]">
-              PORTÉE PAR LA PAAF
-            </div>
-            <div className="mt-[22px] flex flex-col gap-5">
-              {[
-                { v: "+21 000", l: "femmes rurales structurées en coopératives" },
-                { v: "7", l: "pays d'intervention en Afrique de l'Ouest" },
-                { v: "2019", l: "accompagnement continu depuis" },
-              ].map((s, i) => (
-                <div key={s.v} className="flex flex-col gap-5">
-                  {i > 0 && <div className="h-px bg-[rgba(251,247,240,.14)]" />}
-                  <div>
-                    <div className="text-[30px] font-extrabold leading-none">{s.v}</div>
-                    <div className="mt-[5px] text-[13px] font-medium leading-[1.5] text-[rgba(251,247,240,.68)]">
-                      {s.l}
-                    </div>
-                  </div>
+                  <span className="flex-none text-[12px] font-extrabold leading-[1.7] text-[#e8722a]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-[14.5px] font-semibold leading-[1.5] text-[#42544a]">
+                    {o}
+                  </span>
                 </div>
               ))}
             </div>
-          </div>
-          <div className="mt-4 rounded-[20px] border border-[#e0d6c6] px-6 py-[22px]">
-            <div className="text-[12px] font-extrabold tracking-[.1em] text-[#7a8b81]">
-              DÉLÉGATIONS INVITÉES
+
+            <div id="axes" className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-7">
+              <div className="w-20 flex-none text-[12px] font-extrabold leading-[2.6] tracking-[.12em] text-[#e8722a]">
+                13 AXES
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {AXES.map((a) => (
+                  <span
+                    key={a}
+                    className="rounded-[10px] bg-[#f2ede3] px-[13px] py-2 text-[13px] font-semibold text-[#42544a]"
+                  >
+                    {a}
+                  </span>
+                ))}
+                <span className="rounded-[10px] bg-[#0b7a3c] px-[13px] py-2 text-[13px] font-semibold text-white">
+                  ESS &amp; coopératives
+                </span>
+              </div>
             </div>
-            <p className="mt-3 text-[13.5px] font-semibold leading-[1.9] text-[#42544a]">
-              Bénin · Burkina Faso · Cabo Verde · Côte d'Ivoire · Gambie · Ghana · Guinée ·
-              Guinée-Bissau · Libéria · Mali · Niger · Nigéria ·{" "}
-              <span className="text-[#0b7a3c]">Sénégal (hôte)</span> · Sierra Leone · Togo
-            </p>
           </div>
-        </aside>
+
+          <aside className="lg:sticky lg:top-6">
+            <div className="rounded-[20px] bg-[#0d3d21] p-[30px] text-[#fbf7f0]">
+              {PAAF_LOGO_URL ? (
+                <img src={PAAF_LOGO_URL} alt="Logo PAAF" className="mb-4 h-10 w-auto" />
+              ) : (
+                <div className="mb-4 flex h-10 w-32 items-center justify-center rounded-lg border border-dashed border-white/25 text-[10px] font-semibold uppercase tracking-wide text-white/40">
+                  Logo PAAF
+                </div>
+              )}
+              <div className="text-[12px] font-extrabold tracking-[.1em] text-[#f0913f]">
+                PORTÉE PAR LA PAAF
+              </div>
+              <div className="mt-[22px] flex flex-col gap-5">
+                {PAAF_STATS.map((s, i) => (
+                  <div key={s.v} className="flex flex-col gap-5">
+                    {i > 0 && <div className="h-px bg-[rgba(251,247,240,.14)]" />}
+                    <div>
+                      <div className="text-[30px] font-extrabold leading-none">{s.v}</div>
+                      <div className="mt-[5px] text-[13px] font-medium leading-[1.5] text-[rgba(251,247,240,.68)]">
+                        {s.l}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="mt-4 rounded-[20px] border border-[#e0d6c6] px-6 py-[22px]">
+              <div className="text-[12px] font-extrabold tracking-[.1em] text-[#7a8b81]">
+                DÉLÉGATIONS INVITÉES
+              </div>
+              <p className="mt-3 text-[13.5px] font-semibold leading-[1.9] text-[#42544a]">
+                Bénin · Burkina Faso · Cabo Verde · Côte d'Ivoire · Gambie · Ghana · Guinée ·
+                Guinée-Bissau · Libéria · Mali · Niger · Nigéria ·{" "}
+                <span className="text-[#0b7a3c]">Sénégal (hôte)</span> · Sierra Leone · Togo
+              </p>
+            </div>
+          </aside>
+        </div>
       </section>
 
       {/* Programme */}
-      <section id="programme" className="mt-16 bg-[#0d3d21] py-14 text-[#fbf7f0] lg:mt-[78px] lg:py-[58px]">
-        <div className="mx-auto grid max-w-[1440px] items-start gap-10 px-5 sm:px-8 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-14 lg:px-16">
+      <section
+        id="programme"
+        className="mt-16 bg-[#0d3d21] py-14 text-[#fbf7f0] lg:mt-[78px] lg:py-[58px]"
+      >
+        <div
+          ref={programmeReveal.ref}
+          className={`mx-auto grid max-w-[1440px] items-start gap-10 px-5 sm:px-8 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-14 lg:px-16 ${programmeReveal.className}`}
+        >
           <div>
             <div className="text-[12px] font-extrabold tracking-[.12em] text-[#f0913f]">
               PROGRAMME
@@ -522,7 +640,7 @@ function Landing() {
                       i === day.items.length - 1 ? "border-b" : ""
                     }`}
                   >
-                    <div className="text-[18px] font-extrabold leading-[1.3]">{it.t}</div>
+                    <h3 className="text-[18px] font-extrabold leading-[1.3]">{it.t}</h3>
                     <div className="mt-1 text-[13px] leading-[1.5] text-[rgba(251,247,240,.6)]">
                       {it.s}
                     </div>
@@ -535,151 +653,163 @@ function Landing() {
       </section>
 
       {/* Tarifs & stands */}
-      <section id="tarifs" className="mx-auto max-w-[1440px] px-5 pt-14 sm:px-8 lg:px-16 lg:pt-[70px]">
-        <div className="grid items-end gap-8 border-b-[2.5px] border-[#0B7A3CEB] pb-7 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-14">
-          <div>
-            <div className="text-[12px] font-extrabold tracking-[.12em] text-[#e8722a]">
-              TARIFS &amp; STANDS
-            </div>
-            <h2 className="mt-[14px] text-[30px] font-extrabold leading-[1.1] tracking-[-.03em] text-[#0d3d21] lg:text-[38px]">
-              Inscription en trois minutes,
-              <br />
-              depuis un téléphone
-            </h2>
-          </div>
-          <div>
-            <div className="text-[12px] font-bold tracking-[.1em] text-[#7a8b81]">
-              MOYENS DE PAIEMENT
-            </div>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <span className="rounded-[10px] bg-[#0b7a3c] px-[15px] py-[9px] text-[12px] font-extrabold text-white">
-                Wave
-              </span>
-              <span className="rounded-[10px] bg-[#e8722a] px-[15px] py-[9px] text-[12px] font-extrabold text-white">
-                Orange Money
-              </span>
-              <span className="rounded-[10px] bg-[#0d3d21] px-[15px] py-[9px] text-[12px] font-extrabold text-white">
-                Carte bancaire
-              </span>
-              <span className="rounded-[10px] border border-[#ddd2c2] bg-white px-[15px] py-[9px] text-[12px] font-extrabold text-[#0d3d21]">
-                Virement
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-9 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
-          {TIERS.map((tier, idx) => (
-            <div
-              key={tier.title.join(" ")}
-              className={`flex flex-col ${
-                idx === 0 ? "lg:pr-7" : idx === TIERS.length - 1 ? "lg:pl-7" : "lg:px-7"
-              } ${idx > 0 ? "lg:border-l lg:border-[#e0d6c6]" : ""}`}
-            >
-              <div className="text-[11.5px] font-extrabold tracking-[.1em] text-[#7a8b81]">
-                {tier.kicker}
+      <section
+        id="tarifs"
+        className="mx-auto max-w-[1440px] px-5 pt-14 sm:px-8 lg:px-16 lg:pt-[70px]"
+      >
+        <div ref={tarifsReveal.ref} className={tarifsReveal.className}>
+          <div className="grid items-end gap-8 border-b-[2.5px] border-[#0B7A3CEB] pb-7 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-14">
+            <div>
+              <div className="text-[12px] font-extrabold tracking-[.12em] text-[#e8722a]">
+                TARIFS &amp; STANDS
               </div>
-              <div className="mt-3 text-[26px] font-extrabold leading-[1.15] text-[#0d3d21]">
-                {tier.title[0]}
+              <h2 className="mt-[14px] text-[30px] font-extrabold leading-[1.1] tracking-[-.03em] text-[#0d3d21] lg:text-[38px]">
+                Inscription en trois minutes,
                 <br />
-                {tier.title[1]}
+                depuis un téléphone
+              </h2>
+            </div>
+            <div>
+              <div className="text-[12px] font-bold tracking-[.1em] text-[#7a8b81]">
+                MOYENS DE PAIEMENT
               </div>
-              <div className="mt-5 flex items-baseline gap-[6px]">
-                <span className="text-[38px] font-extrabold leading-none text-[#0d3d21]">
-                  {tier.price}
+              <div className="mt-3 flex flex-wrap gap-2">
+                <span className="rounded-[10px] bg-[#1A8FE3] px-[15px] py-[9px] text-[12px] font-extrabold text-white">
+                  Wave
                 </span>
-                <span className="text-[14px] font-bold text-[#7a8b81]">FCFA</span>
+                <span className="rounded-[10px] bg-[#e8722a] px-[15px] py-[9px] text-[12px] font-extrabold text-white">
+                  Orange Money
+                </span>
+                <span className="rounded-[10px] bg-[#0d3d21] px-[15px] py-[9px] text-[12px] font-extrabold text-white">
+                  Carte bancaire
+                </span>
+                <span className="rounded-[10px] border border-[#ddd2c2] bg-white px-[15px] py-[9px] text-[12px] font-extrabold text-[#0d3d21]">
+                  Virement
+                </span>
               </div>
-              <div className="mt-2 text-[12.5px] font-medium leading-[1.5] text-[#7a8b81]">
-                {tier.note}
-              </div>
-              <Link
-                to="/inscription"
-                className="mt-[22px] flex h-12 items-center justify-center rounded-[14px] bg-[#0b7a3c] px-3 text-center text-[14px] font-extrabold text-white transition hover:bg-[#0d3d21]"
+            </div>
+          </div>
+
+          <div className="mt-9 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
+            {TIERS.map((tier, idx) => (
+              <div
+                key={tier.title.join(" ")}
+                className={`flex flex-col ${
+                  idx === 0 ? "lg:pr-7" : idx === TIERS.length - 1 ? "lg:pl-7" : "lg:px-7"
+                } ${idx > 0 ? "lg:border-l lg:border-[#0b7a3c]/25" : ""}`}
               >
-                {tier.cta}
-              </Link>
-              <div className="mt-[26px] flex flex-col gap-[11px]">
-                <div className="mb-[2px] text-[11.5px] font-extrabold tracking-[.08em] text-[#7a8b81]">
-                  INCLUS
+                <div className="text-[11.5px] font-extrabold tracking-[.1em] text-[#7a8b81]">
+                  {tier.kicker}
                 </div>
-                {tier.included.map((inc) => (
-                  <div
-                    key={inc}
-                    className={`flex gap-[9px] text-[13.5px] leading-[1.45] ${
-                      tier.highlight ? "font-semibold text-[#0d3d21]" : "font-medium text-[#42544a]"
-                    }`}
-                  >
-                    <span
-                      className={`font-extrabold ${
-                        tier.highlight ? "text-[#e8722a]" : "text-[#0b7a3c]"
+                <h3 className="mt-3 text-[26px] font-extrabold leading-[1.15] text-[#0d3d21]">
+                  {tier.title[0]}
+                  <br />
+                  {tier.title[1]}
+                </h3>
+                <div className="mt-5 flex items-baseline gap-[6px]">
+                  <span className="text-[38px] font-extrabold leading-none text-[#0d3d21]">
+                    {tier.price}
+                  </span>
+                  <span className="text-[14px] font-bold text-[#7a8b81]">FCFA</span>
+                </div>
+                <div className="mt-2 text-[12.5px] font-medium leading-[1.5] text-[#7a8b81]">
+                  {tier.note}
+                </div>
+                <Link
+                  to="/inscription"
+                  className="mt-[22px] flex h-12 items-center justify-center rounded-[14px] bg-[#0b7a3c] px-3 text-center text-[14px] font-extrabold text-white transition hover:bg-[#0d3d21]"
+                >
+                  {tier.cta}
+                </Link>
+                <div className="mt-[26px] flex flex-col gap-[11px]">
+                  <div className="mb-[2px] text-[11.5px] font-extrabold tracking-[.08em] text-[#7a8b81]">
+                    INCLUS
+                  </div>
+                  {tier.included.map((inc) => (
+                    <div
+                      key={inc}
+                      className={`flex gap-[9px] text-[13.5px] leading-[1.45] ${
+                        tier.highlight
+                          ? "font-semibold text-[#0d3d21]"
+                          : "font-medium text-[#42544a]"
                       }`}
                     >
-                      ✓
-                    </span>
-                    {inc}
-                  </div>
-                ))}
-                {tier.audience && (
-                  <>
-                    <div className="mb-[2px] mt-[10px] text-[11.5px] font-extrabold tracking-[.08em] text-[#7a8b81]">
-                      POUR QUI
+                      <span
+                        className={`font-extrabold ${
+                          tier.highlight ? "text-[#e8722a]" : "text-[#0b7a3c]"
+                        }`}
+                      >
+                        ✓
+                      </span>
+                      {inc}
                     </div>
-                    <div className="text-[13px] font-medium leading-[1.75] text-[#42544a]">
-                      {tier.audience}
-                    </div>
-                  </>
-                )}
+                  ))}
+                  {tier.audience && (
+                    <>
+                      <div className="mb-[2px] mt-[10px] text-[11.5px] font-extrabold tracking-[.08em] text-[#7a8b81]">
+                        POUR QUI
+                      </div>
+                      <div className="text-[13px] font-medium leading-[1.75] text-[#42544a]">
+                        {tier.audience}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Partenaires */}
       <section
         id="partenaires"
-        className="mx-auto grid max-w-[1440px] items-start gap-10 px-5 pt-16 sm:px-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-12 lg:px-16 lg:pt-[78px]"
+        className="mx-auto max-w-[1440px] px-5 pt-16 sm:px-8 lg:px-16 lg:pt-[78px]"
       >
-        <div className="min-w-0">
-          <div className="flex items-baseline gap-4">
-            <div className="text-[12px] font-extrabold tracking-[.12em] text-[#e8722a]">
-              ILS SOUTIENNENT LE FORUM
+        <div
+          ref={partenairesReveal.ref}
+          className={`grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-12 ${partenairesReveal.className}`}
+        >
+          <div className="min-w-0">
+            <div className="flex items-baseline gap-4">
+              <div className="text-[12px] font-extrabold tracking-[.12em] text-[#e8722a]">
+                ILS SOUTIENNENT LE FORUM
+              </div>
+              <div className="h-px flex-1 bg-[#e0d6c6]" />
             </div>
-            <div className="h-px flex-1 bg-[#e0d6c6]" />
+            <h2 className="mt-[14px] text-[28px] font-extrabold leading-[1.1] tracking-[-.03em] text-[#0d3d21] lg:text-[34px]">
+              Plus de 21 partenaires
+            </h2>
+            <img
+              src={partnersAsset.url}
+              alt="Ministères, agences nationales et partenaires techniques et financiers du FESA 2026"
+              loading="lazy"
+              className="mt-6 block h-auto w-full max-w-[1104px]"
+            />
           </div>
-          <h2 className="mt-[14px] text-[28px] font-extrabold leading-[1.1] tracking-[-.03em] text-[#0d3d21] lg:text-[34px]">
-            Plus de 21 partenaires
-          </h2>
-          <img
-            src={partnersAsset.url}
-            alt="Ministères, agences nationales et partenaires techniques et financiers du FESA 2026"
-            loading="lazy"
-            className="mt-6 block h-auto w-full max-w-[1104px]"
-          />
-        </div>
-        <div className="rounded-[20px] bg-[#0d3d21] p-7 text-[#fbf7f0] lg:sticky lg:top-6">
-          <div className="text-[12px] font-extrabold tracking-[.1em] text-[#f0913f]">
-            PARTENARIAT
+          <div className="rounded-[20px] bg-[#0d3d21] p-7 text-[#fbf7f0] lg:sticky lg:top-6">
+            <div className="text-[12px] font-extrabold tracking-[.1em] text-[#f0913f]">
+              PARTENARIAT
+            </div>
+            <h3 className="mt-[14px] text-[22px] font-extrabold leading-[1.2]">
+              Devenez partenaire du FESA 2026
+            </h3>
+            <p className="mb-5 mt-3 text-[13.5px] leading-[1.7] text-[rgba(251,247,240,.72)]">
+              Visibilité, mise en réseau et accès à un écosystème sous-régional de coopératives, PME
+              et décideurs. Contactez notre secrétariat technique.
+            </p>
+            <div className="flex flex-col gap-2 text-[13.5px] font-bold leading-[1.5] text-[#f0913f]">
+              <span>+221 77 477 83 60</span>
+              <span>presidence@paafs.org</span>
+              <span>www.paafs.org</span>
+            </div>
+            <a
+              href="mailto:presidence@paafs.org?subject=Devenir%20partenaire%20du%20FESA%202026"
+              className="mt-5 flex h-12 items-center justify-center rounded-[14px] bg-[#e8722a] text-[14px] font-extrabold text-white transition hover:bg-[#c85c18]"
+            >
+              Contactez-nous
+            </a>
           </div>
-          <div className="mt-[14px] text-[22px] font-extrabold leading-[1.2]">
-            Devenez partenaire du FESA 2026
-          </div>
-          <p className="mb-5 mt-3 text-[13.5px] leading-[1.7] text-[rgba(251,247,240,.72)]">
-            Visibilité, mise en réseau et accès à un écosystème sous-régional de coopératives, PME
-            et décideurs. Contactez notre secrétariat technique.
-          </p>
-          <div className="flex flex-col gap-2 text-[13.5px] font-bold leading-[1.5] text-[#f0913f]">
-            <span>+221 77 477 83 60</span>
-            <span>presidence@paafs.org</span>
-            <span>www.paafs.org</span>
-          </div>
-          <a
-            href="mailto:presidence@paafs.org"
-            className="mt-5 flex h-12 items-center justify-center rounded-[14px] bg-[#e8722a] text-[14px] font-extrabold text-white transition hover:bg-[#c85c18]"
-          >
-            Recevoir les formules
-          </a>
         </div>
       </section>
 
@@ -729,15 +859,28 @@ function Landing() {
                 <div className="mb-1 text-[12px] font-extrabold tracking-[.1em] text-[#fbf7f0]">
                   {col.title}
                 </div>
-                {col.links.map((l) => (
-                  <a
-                    key={l}
-                    href="#"
-                    className="text-[13.5px] font-medium text-[rgba(251,247,240,.72)] transition hover:text-[#f0913f]"
-                  >
-                    {l}
-                  </a>
-                ))}
+                {col.links.map((l) =>
+                  "to" in l ? (
+                    <Link
+                      key={l.label}
+                      to={l.to}
+                      className="text-[13.5px] font-medium text-[rgba(251,247,240,.72)] transition hover:text-[#f0913f]"
+                    >
+                      {l.label}
+                    </Link>
+                  ) : (
+                    <a
+                      key={l.label}
+                      href={l.href}
+                      {...("external" in l && l.external
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
+                      className="text-[13.5px] font-medium text-[rgba(251,247,240,.72)] transition hover:text-[#f0913f]"
+                    >
+                      {l.label}
+                    </a>
+                  ),
+                )}
               </div>
             ))}
             <div>
@@ -747,35 +890,58 @@ function Landing() {
               <p className="mb-[14px] mt-3 text-[13.5px] leading-[1.6] text-[rgba(251,247,240,.62)]">
                 Programme, intervenants, logistique — une lettre par mois.
               </p>
-              <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
+              <form className="flex gap-2" onSubmit={handleNewsletterSubmit}>
                 <input
                   type="email"
+                  name="email"
+                  required
                   placeholder="Votre email"
                   aria-label="Votre email"
-                  className="h-12 min-w-0 flex-1 rounded-[14px] bg-[rgba(251,247,240,.1)] px-[14px] text-[13.5px] font-medium text-[#fbf7f0] outline-none placeholder:text-[rgba(251,247,240,.45)]"
+                  disabled={newsletterStatus === "submitting"}
+                  className="h-12 min-w-0 flex-1 rounded-[14px] bg-[rgba(251,247,240,.1)] px-[14px] text-[13.5px] font-medium text-[#fbf7f0] outline-none placeholder:text-[rgba(251,247,240,.45)] disabled:opacity-60"
                 />
                 <button
                   type="submit"
                   aria-label="S'abonner"
-                  className="flex size-12 flex-none items-center justify-center rounded-[14px] bg-[#e8722a] text-white"
+                  disabled={newsletterStatus === "submitting"}
+                  className="flex size-12 flex-none items-center justify-center rounded-[14px] bg-[#e8722a] text-white disabled:opacity-60"
                 >
                   {ARROW}
                 </button>
               </form>
+              {newsletterStatus === "success" && (
+                <p className="mt-2 text-[12.5px] font-semibold text-[#7fd4a0]">
+                  Merci, vous êtes inscrit·e.
+                </p>
+              )}
+              {newsletterStatus === "error" && (
+                <p className="mt-2 text-[12.5px] font-semibold text-[#f0913f]">
+                  Une erreur est survenue. Réessayez.
+                </p>
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-3 pt-[22px] text-[12px] font-medium text-[rgba(251,247,240,.5)] sm:flex-row sm:justify-between">
             <span>© 2026 PAAF — www.paafs.org</span>
             <span className="flex flex-wrap gap-[22px]">
-              <a href="#" className="text-[rgba(251,247,240,.5)]">
+              <Link
+                to="/mentions-legales"
+                className="text-[rgba(251,247,240,.5)] hover:text-[#f0913f]"
+              >
                 Mentions légales
-              </a>
-              <a href="#" className="text-[rgba(251,247,240,.5)]">
+              </Link>
+              <Link
+                to="/confidentialite"
+                className="text-[rgba(251,247,240,.5)] hover:text-[#f0913f]"
+              >
                 Confidentialité
-              </a>
-              <a href="#" className="text-[rgba(251,247,240,.5)]">
+              </Link>
+              <Link
+                to="/conditions-inscription"
+                className="text-[rgba(251,247,240,.5)] hover:text-[#f0913f]"
+              >
                 Conditions d'inscription
-              </a>
+              </Link>
             </span>
           </div>
         </div>

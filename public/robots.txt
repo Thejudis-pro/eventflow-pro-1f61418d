@@ -1,8 +1,16 @@
 User-agent: Googlebot
 Allow: /
+Disallow: /dashboard
+Disallow: /checkin
+Disallow: /staff/
+Disallow: /confirmation/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /dashboard
+Disallow: /checkin
+Disallow: /staff/
+Disallow: /confirmation/
 
 User-agent: Twitterbot
 Allow: /
@@ -12,3 +20,9 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /dashboard
+Disallow: /checkin
+Disallow: /staff/
+Disallow: /confirmation/
+
+Sitemap: https://fesa2026.com/sitemap.xml

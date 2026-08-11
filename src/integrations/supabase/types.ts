@@ -155,9 +155,39 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          event_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          event_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          event_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_subscribers_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       participants: {
         Row: {
           company: string | null
+          country: string | null
           created_at: string
           delegation_id: string | null
           email: string
@@ -173,6 +203,7 @@ export type Database = {
         }
         Insert: {
           company?: string | null
+          country?: string | null
           created_at?: string
           delegation_id?: string | null
           email: string
@@ -188,6 +219,7 @@ export type Database = {
         }
         Update: {
           company?: string | null
+          country?: string | null
           created_at?: string
           delegation_id?: string | null
           email?: string
@@ -269,6 +301,7 @@ export type Database = {
           created_at: string
           event_id: string
           id: string
+          is_public: boolean
           label: string
           price: number | null
           requires_payment: boolean
@@ -279,6 +312,7 @@ export type Database = {
           created_at?: string
           event_id: string
           id?: string
+          is_public?: boolean
           label: string
           price?: number | null
           requires_payment?: boolean
@@ -289,6 +323,7 @@ export type Database = {
           created_at?: string
           event_id?: string
           id?: string
+          is_public?: boolean
           label?: string
           price?: number | null
           requires_payment?: boolean
@@ -362,6 +397,7 @@ export type Database = {
       register_participant: {
         Args: {
           p_company: string
+          p_country: string
           p_delegation_id: string
           p_email: string
           p_event_id: string

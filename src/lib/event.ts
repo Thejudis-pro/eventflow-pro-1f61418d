@@ -36,6 +36,7 @@ export type Participant = {
   company: string | null;
   sector: string | null;
   function: string | null;
+  country: string | null;
   registration_id: string;
   status: string;
   created_at: string;
@@ -171,6 +172,13 @@ export const publicDelegationNamesQuery = (eventId?: string) => ({
     return (data ?? []) as DelegationName[];
   },
 });
+
+export async function subscribeToNewsletter(eventId: string, email: string) {
+  const { error } = await supabase
+    .from("newsletter_subscribers")
+    .insert({ event_id: eventId, email });
+  if (error) throw error;
+}
 
 export function formatEventDates(event?: EventRow | null) {
   if (!event) return "";

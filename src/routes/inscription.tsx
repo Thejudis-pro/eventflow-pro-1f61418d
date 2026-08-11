@@ -37,6 +37,7 @@ import {
   SECTORS,
   type ProfileType,
 } from "@/lib/event";
+import { COUNTRIES } from "@/lib/countries";
 
 const TITLE = "Inscription FESA 2026 | Dakar, 21-22 septembre 2026";
 const DESCRIPTION =
@@ -49,15 +50,21 @@ export const Route = createFileRoute("/inscription")({
       { name: "description", content: DESCRIPTION },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
+      { property: "og:url", content: "https://fesa2026.com/inscription" },
     ],
+    links: [{ rel: "canonical", href: "https://fesa2026.com/inscription" }],
   }),
   component: RegistrationPage,
 });
 
+const PHONE_REGEX = /^\+[1-9]\d{0,3}[\d\s-]{6,14}$/;
+
 const detailsSchema = z.object({
-  full_name: z.string().trim().min(2, "Nom complet requis").max(120),
+  last_name: z.string().trim().min(2, "Nom requis").max(60),
+  first_name: z.string().trim().min(2, "Prénom requis").max(60),
+  country: z.string().trim().min(1, "Pays requis"),
   email: z.string().trim().email("Adresse e-mail invalide").max(255),
-  phone: z.string().trim().min(6, "Téléphone requis").max(30),
+  phone: z.string().trim().regex(PHONE_REGEX, "Format international requis, ex : +221771234567"),
   company: z.string().trim().max(160).optional().or(z.literal("")),
   function: z.string().trim().max(120).optional().or(z.literal("")),
   sector: z.string().trim().max(80).optional().or(z.literal("")),
@@ -66,7 +73,9 @@ const detailsSchema = z.object({
 type Details = z.infer<typeof detailsSchema>;
 
 const EMPTY: Details = {
-  full_name: "",
+  last_name: "",
+  first_name: "",
+  country: "Sénégal",
   email: "",
   phone: "",
   company: "",
@@ -77,7 +86,8 @@ const EMPTY: Details = {
 const OPTION_BLURB: Record<string, string> = {
   Participant: "Inscription individuelle au forum avec accès complet aux sessions et au réseau.",
   Exposant: "Stand au Marché Forain — visibilité commerciale grand public et accès exposant.",
-  Partenaire: "Stand institutionnel — espace dédié aux institutions, financeurs et partenaires stratégiques.",
+  Partenaire:
+    "Stand institutionnel — espace dédié aux institutions, financeurs et partenaires stratégiques.",
 };
 
 function isExposant(p?: ProfileType | null) {
@@ -106,7 +116,9 @@ function RegistrationPage() {
     [profiles, profileId],
   );
   const needsPayment = Boolean(profile?.requires_payment);
-  const steps = needsPayment ? ["Formule", "Informations", "Paiement"] : ["Formule", "Informations"];
+  const steps = needsPayment
+    ? ["Formule", "Informations", "Paiement"]
+    : ["Formule", "Informations"];
 
   const summary = useMemo(() => {
     if (!profile) {
@@ -125,6 +137,8 @@ function RegistrationPage() {
         : "Inscription gratuite avec accès complet au programme.",
     };
   }, [profile]);
+
+  const fullName = [form.first_name, form.last_name].filter(Boolean).join(" ").trim();
 
   const set = (k: keyof Details, v: string) => {
     setForm((f) => ({ ...f, [k]: v }));
@@ -159,13 +173,14 @@ function RegistrationPage() {
         p_event_id: event.id,
         p_profile_type_id: profile.id,
         p_delegation_id: delegationId ?? "",
-        p_full_name: form.full_name.trim(),
+        p_full_name: fullName,
         p_email: form.email.trim(),
         p_phone: form.phone.trim(),
         p_company: form.company?.trim() ?? "",
         p_function: form.function?.trim() ?? "",
         p_sector: form.sector?.trim() ?? "",
         p_status: withPayment ? "paid" : "confirmed",
+        p_country: form.country.trim(),
       });
       if (error) throw error;
       const participant = data?.[0];
@@ -203,9 +218,12 @@ function RegistrationPage() {
               <p className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-[#ffd8b5]">
                 Inscription en ligne
               </p>
-              <h1 className="mt-5 text-3xl font-black sm:text-4xl">Réservez votre place au FESA 2026</h1>
+              <h1 className="mt-5 text-3xl font-black sm:text-4xl">
+                Réservez votre place au FESA 2026
+              </h1>
               <p className="mt-4 max-w-2xl text-lg text-white/80">
-                Choisissez votre formule, finalisez vos coordonnées et obtenez votre badge nominatif dès la confirmation.
+                Choisissez votre formule, finalisez vos coordonnées et obtenez votre badge nominatif
+                dès la confirmation.
               </p>
               <div className="mt-6 flex flex-wrap gap-3 text-sm text-white/80">
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2">
@@ -224,7 +242,9 @@ function RegistrationPage() {
                     <BadgeCheck className="size-5" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#e8722a]">Votre sélection</p>
+                    <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#e8722a]">
+                      Votre sélection
+                    </p>
                     <p className="text-lg font-semibold">{summary.label}</p>
                   </div>
                 </div>
@@ -232,7 +252,9 @@ function RegistrationPage() {
                   <div className="flex items-center justify-between gap-4">
                     <div>
                       <p className="text-sm text-[#5f6f5f]">Montant</p>
-                      <p className="mt-1 font-display text-2xl font-black text-[#0d3d21]">{summary.price}</p>
+                      <p className="mt-1 font-display text-2xl font-black text-[#0d3d21]">
+                        {summary.price}
+                      </p>
                     </div>
                     <span className="rounded-full bg-[#0d3d21] px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#fdf8ef]">
                       {profile?.requires_payment ? "À payer" : "Gratuit"}
@@ -276,9 +298,12 @@ function RegistrationPage() {
                     <Sparkles className="size-5" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-[#0d3d21]">Choisissez votre formule</h2>
+                    <h2 className="text-xl font-semibold text-[#0d3d21]">
+                      Choisissez votre formule
+                    </h2>
                     <p className="mt-1 text-sm text-[#5f6f5f]">
-                      Les autres accréditations (VIP, presse, staff, comité scientifique…) sont attribuées par l'organisation.
+                      Les autres accréditations (VIP, presse, staff, comité scientifique…) sont
+                      attribuées par l'organisation.
                     </p>
                   </div>
                 </div>
@@ -317,7 +342,12 @@ function RegistrationPage() {
                 </div>
 
                 <div className="mt-8 flex justify-end">
-                  <Button variant="institutional" size="lg" disabled={!profileId} onClick={() => setStep(2)}>
+                  <Button
+                    variant="institutional"
+                    size="lg"
+                    disabled={!profileId}
+                    onClick={() => setStep(2)}
+                  >
                     Continuer <ArrowRight className="size-4" />
                   </Button>
                 </div>
@@ -333,19 +363,45 @@ function RegistrationPage() {
                   <div>
                     <h2 className="text-xl font-semibold text-[#0d3d21]">Vos informations</h2>
                     <p className="mt-1 text-sm text-[#5f6f5f]">
-                      Nous utiliserons ces coordonnées pour créer votre badge nominatif et vous envoyer les mises à jour du forum.
+                      Nous utiliserons ces coordonnées pour créer votre badge nominatif et vous
+                      envoyer les mises à jour du forum.
                     </p>
                   </div>
                 </div>
 
                 <div className="mt-6 grid gap-5 sm:grid-cols-2">
                   <Field
-                    id="full_name"
-                    label="Nom complet"
-                    value={form.full_name}
-                    error={errors["full_name"]}
-                    onChange={(v) => set("full_name", v)}
+                    id="last_name"
+                    label="Nom"
+                    value={form.last_name}
+                    error={errors["last_name"]}
+                    onChange={(v) => set("last_name", v)}
                   />
+                  <Field
+                    id="first_name"
+                    label="Prénom"
+                    value={form.first_name}
+                    error={errors["first_name"]}
+                    onChange={(v) => set("first_name", v)}
+                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="country">Pays</Label>
+                    <Select value={form.country} onValueChange={(v) => set("country", v)}>
+                      <SelectTrigger id="country">
+                        <SelectValue placeholder="Choisir un pays" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {COUNTRIES.map((c) => (
+                          <SelectItem key={c} value={c}>
+                            {c}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors["country"] && (
+                      <p className="text-xs text-destructive">{errors["country"]}</p>
+                    )}
+                  </div>
                   <Field
                     id="email"
                     label="E-mail"
@@ -356,7 +412,8 @@ function RegistrationPage() {
                   />
                   <Field
                     id="phone"
-                    label="Téléphone (WhatsApp)"
+                    label="Téléphone (format international)"
+                    placeholder="+221 77 477 83 60"
                     value={form.phone}
                     error={errors["phone"]}
                     onChange={(v) => set("phone", v)}
@@ -370,7 +427,11 @@ function RegistrationPage() {
                   />
                   <Field
                     id="company"
-                    label={isPartenaire(profile) ? "Nom de l'organisation" : "Structure / entreprise"}
+                    label={
+                      isPartenaire(profile)
+                        ? "Nom de l'organisation"
+                        : "Structure / Organisation (optionnel)"
+                    }
                     value={form.company ?? ""}
                     error={errors["company"]}
                     onChange={(v) => set("company", v)}
@@ -390,7 +451,9 @@ function RegistrationPage() {
                           ))}
                         </SelectContent>
                       </Select>
-                      {errors["sector"] && <p className="text-xs text-destructive">{errors["sector"]}</p>}
+                      {errors["sector"] && (
+                        <p className="text-xs text-destructive">{errors["sector"]}</p>
+                      )}
                     </div>
                   )}
                   {(delegations ?? []).length > 0 && (
@@ -413,7 +476,8 @@ function RegistrationPage() {
                         </SelectContent>
                       </Select>
                       <p className="text-xs text-[#5f6f5f]">
-                        Si vous faites partie d'une délégation déjà enregistrée, sélectionnez-la ici.
+                        Si vous faites partie d'une délégation déjà enregistrée, sélectionnez-la
+                        ici.
                       </p>
                     </div>
                   )}
@@ -450,7 +514,8 @@ function RegistrationPage() {
                   <div>
                     <h2 className="text-xl font-semibold text-[#0d3d21]">Paiement</h2>
                     <p className="mt-1 text-sm text-[#5f6f5f]">
-                      La collecte de paiement est simulée pour la démonstration, puis l'inscription est finalisée automatiquement.
+                      La collecte de paiement est simulée pour la démonstration, puis l'inscription
+                      est finalisée automatiquement.
                     </p>
                   </div>
                 </div>
@@ -459,7 +524,9 @@ function RegistrationPage() {
                   <div className="flex items-center justify-between gap-4">
                     <div>
                       <p className="text-sm text-[#5f6f5f]">Frais de participation</p>
-                      <p className="mt-1 font-display text-2xl font-black text-[#0d3d21]">{summary.price}</p>
+                      <p className="mt-1 font-display text-2xl font-black text-[#0d3d21]">
+                        {summary.price}
+                      </p>
                     </div>
                     <div className="rounded-full bg-[#0d3d21] px-3 py-1 text-sm font-semibold uppercase tracking-[0.2em] text-[#fdf8ef]">
                       {profile?.label}
@@ -468,11 +535,25 @@ function RegistrationPage() {
                 </div>
 
                 <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  <Button variant="hero" size="lg" disabled={submitting} onClick={() => void submit(true)}>
-                    {submitting ? <Loader2 className="size-4 animate-spin" /> : <CreditCard className="size-4" />}
+                  <Button
+                    variant="hero"
+                    size="lg"
+                    disabled={submitting}
+                    onClick={() => void submit(true)}
+                  >
+                    {submitting ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <CreditCard className="size-4" />
+                    )}
                     Payer avec PayTech
                   </Button>
-                  <Button variant="outline" size="lg" disabled={submitting} onClick={() => void submit(true)}>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    disabled={submitting}
+                    onClick={() => void submit(true)}
+                  >
                     <CreditCard className="size-4" /> Payer avec PayDunya
                   </Button>
                 </div>
@@ -481,7 +562,9 @@ function RegistrationPage() {
                   <Button variant="ghost" onClick={() => setStep(2)}>
                     <ArrowLeft className="size-4" /> Retour
                   </Button>
-                  <p className="text-sm text-[#5f6f5f]">L'inscription sera confirmée immédiatement après le paiement simulé.</p>
+                  <p className="text-sm text-[#5f6f5f]">
+                    L'inscription sera confirmée immédiatement après le paiement simulé.
+                  </p>
                 </div>
               </div>
             )}
@@ -494,12 +577,17 @@ function RegistrationPage() {
                   <Building2 className="size-5" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#e8722a]">Prévisualisation</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#e8722a]">
+                    Prévisualisation
+                  </p>
                   <p className="text-lg font-semibold text-[#0d3d21]">Votre badge à l'arrivée</p>
                 </div>
               </div>
               <div className="mt-5 rounded-[1.25rem] border border-[#e3dccf] bg-white p-4">
-                <p className="text-sm text-[#5f6f5f]">Votre badge sera généré automatiquement avec vos informations et votre QR code unique.</p>
+                <p className="text-sm text-[#5f6f5f]">
+                  Votre badge sera généré automatiquement avec vos informations et votre QR code
+                  unique.
+                </p>
               </div>
             </div>
             <BadgePreview
@@ -507,7 +595,7 @@ function RegistrationPage() {
                 eventName: event?.name ?? "FESA 2026",
                 eventDates: "21 – 22 septembre 2026",
                 location: event?.location ?? "Dakar, Sénégal",
-                fullName: form.full_name,
+                fullName,
                 functionLabel: form.function,
                 company: form.company,
                 profileLabel: profile?.label ?? "Profil",
@@ -530,6 +618,7 @@ function Field({
   onChange,
   error,
   type = "text",
+  placeholder,
 }: {
   id: string;
   label: string;
@@ -537,6 +626,7 @@ function Field({
   onChange: (v: string) => void;
   error?: string | undefined;
   type?: string | undefined;
+  placeholder?: string | undefined;
 }) {
   return (
     <div className="space-y-2">
@@ -546,6 +636,7 @@ function Field({
         type={type}
         value={value}
         maxLength={255}
+        placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
       />
       {error && <p className="text-xs text-destructive">{error}</p>}

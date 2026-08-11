@@ -1,12 +1,14 @@
+import { Menu } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navItems = [
-  { label: "Le forum", href: "#forum" },
-  { label: "Objectifs", href: "#objectifs" },
-  { label: "Programme", href: "#programme" },
-  { label: "Tarifs & stands", href: "#tarifs" },
-  { label: "Partenaires", href: "#partenaires" },
+  { label: "Le forum", href: "/#forum" },
+  { label: "À propos", to: "/a-propos" as const },
+  { label: "Programme", href: "/#programme" },
+  { label: "Tarifs & stands", href: "/#tarifs" },
+  { label: "Partenaires", href: "/#partenaires" },
 ];
 
 export function SiteHeader() {
@@ -23,15 +25,63 @@ export function SiteHeader() {
           </span>
         </Link>
         <nav className="hidden items-center gap-5 text-sm font-medium text-[#27482f] md:flex">
-          {navItems.map((item) => (
-            <a key={item.label} href={item.href} className="transition hover:text-[#e8722a]">
-              {item.label}
-            </a>
-          ))}
+          {navItems.map((item) =>
+            "to" in item ? (
+              <Link key={item.label} to={item.to} className="transition hover:text-[#e8722a]">
+                {item.label}
+              </Link>
+            ) : (
+              <a key={item.label} href={item.href} className="transition hover:text-[#e8722a]">
+                {item.label}
+              </a>
+            ),
+          )}
         </nav>
-        <Button asChild variant="institutional" size="sm">
-          <Link to="/inscription">S'inscrire</Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild variant="institutional" size="sm" className="hidden sm:inline-flex">
+            <Link to="/inscription">S'inscrire</Link>
+          </Button>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="md:hidden"
+                aria-label="Ouvrir le menu"
+              >
+                <Menu className="size-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="flex flex-col gap-6">
+              <nav className="mt-8 flex flex-col gap-1 text-base font-medium text-[#27482f]">
+                {navItems.map((item) => (
+                  <SheetClose asChild key={item.label}>
+                    {"to" in item ? (
+                      <Link
+                        to={item.to}
+                        className="rounded-lg px-3 py-3 transition hover:bg-[#f8f4eb] hover:text-[#e8722a]"
+                      >
+                        {item.label}
+                      </Link>
+                    ) : (
+                      <a
+                        href={item.href}
+                        className="rounded-lg px-3 py-3 transition hover:bg-[#f8f4eb] hover:text-[#e8722a]"
+                      >
+                        {item.label}
+                      </a>
+                    )}
+                  </SheetClose>
+                ))}
+              </nav>
+              <SheetClose asChild>
+                <Button asChild variant="institutional" size="lg">
+                  <Link to="/inscription">S'inscrire</Link>
+                </Button>
+              </SheetClose>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   );
@@ -44,7 +94,9 @@ export function SiteFooter() {
         <div>
           <p className="font-display text-xl font-black text-[#0d3d21]">FESA 2026</p>
           <p className="mt-2 max-w-xl text-sm leading-6">
-            Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire — une plateforme de dialogue, d'innovation et de mise en réseau pour les acteurs économiques et institutionnels de la sous-région.
+            Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire — une plateforme de
+            dialogue, d'innovation et de mise en réseau pour les acteurs économiques et
+            institutionnels de la sous-région.
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2">
@@ -57,7 +109,7 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <a href="#tarifs" className="hover:text-[#e8722a]">
+                <a href="/#tarifs" className="hover:text-[#e8722a]">
                   Réserver un stand
                 </a>
               </li>

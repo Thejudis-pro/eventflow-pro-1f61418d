@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { authErrorMessage, useAttemptThrottle } from "@/lib/auth";
 
 export const Route = createFileRoute("/staff/signup")({
   head: () => ({
@@ -20,9 +21,11 @@ function StaffSignupPage() {
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const throttle = useAttemptThrottle();
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (throttle.locked) return;
     if (password.length < 8) {
       toast.error("Le mot de passe doit contenir au moins 8 caractères.");
       return;
@@ -35,10 +38,12 @@ function StaffSignupPage() {
         options: { data: { full_name: fullName || undefined } },
       });
       if (error) throw error;
+      throttle.reset();
       setDone(true);
     } catch (err) {
       console.error(err);
-      toast.error("La création du compte a échoué.");
+      throttle.registerFailure();
+      toast.error(authErrorMessage(err, "signup"));
     } finally {
       setSubmitting(false);
     }
@@ -99,9 +104,14 @@ function StaffSignupPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button type="submit" className="w-full" variant="institutional" disabled={submitting}>
+          <Button
+            type="submit"
+            className="w-full"
+            variant="institutional"
+            disabled={submitting || throttle.locked}
+          >
             {submitting && <Loader2 className="size-4 animate-spin" />}
-            Créer le compte
+            {throttle.locked ? `Réessayez dans ${throttle.remaining}s` : "Créer le compte"}
           </Button>
         </form>
 
