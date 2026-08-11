@@ -120,10 +120,33 @@ export function SiteFooter() {
             <ul className="mt-2 space-y-2">
               <li>+221 77 477 83 60</li>
               <li>presidence@paafs.org</li>
-              <li>www.paafs.org</li>
+              <li>
+                <a
+                  href="https://paafs.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#e8722a]"
+                >
+                  www.paafs.org
+                </a>
+              </li>
             </ul>
           </div>
         </div>
+      </div>
+      <div className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-[#dcd2bd] px-4 py-5 text-xs text-[#7a8b81] sm:flex-row sm:items-center sm:justify-between lg:px-8">
+        <span>© 2026 PAAF — www.paafs.org</span>
+        <span className="flex flex-wrap gap-4">
+          <Link to="/mentions-legales" className="hover:text-[#e8722a]">
+            Mentions légales
+          </Link>
+          <Link to="/confidentialite" className="hover:text-[#e8722a]">
+            Confidentialité
+          </Link>
+          <Link to="/conditions-inscription" className="hover:text-[#e8722a]">
+            Conditions d'inscription
+          </Link>
+        </span>
       </div>
     </footer>
   );
