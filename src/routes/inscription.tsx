@@ -17,7 +17,13 @@ import {
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
 import { BadgePreview } from "@/components/fesa/BadgePreview";
 import { supabase } from "@/integrations/supabase/client";
-import { publicDelegationNamesQuery, eventQuery, profileTypesQuery, SECTORS, type ProfileType } from "@/lib/event";
+import {
+  publicDelegationNamesQuery,
+  eventQuery,
+  profileTypesQuery,
+  SECTORS,
+  type ProfileType,
+} from "@/lib/event";
 
 const TITLE = "Inscription FESA 2026 | Dakar, 21-22 septembre 2026";
 const DESCRIPTION =
@@ -114,13 +120,13 @@ function RegistrationPage() {
       const { data, error } = await supabase.rpc("register_participant", {
         p_event_id: event.id,
         p_profile_type_id: profile.id,
-        p_delegation_id: delegationId,
+        p_delegation_id: delegationId ?? "",
         p_full_name: form.full_name.trim(),
         p_email: form.email.trim(),
         p_phone: form.phone.trim(),
-        p_company: form.company?.trim() || null,
-        p_function: form.function?.trim() || null,
-        p_sector: form.sector?.trim() || null,
+        p_company: form.company?.trim() ?? "",
+        p_function: form.function?.trim() ?? "",
+        p_sector: form.sector?.trim() ?? "",
         p_status: withPayment ? "paid" : "confirmed",
       });
       if (error) throw error;
@@ -269,7 +275,9 @@ function RegistrationPage() {
                   />
                   <Field
                     id="company"
-                    label={isInstitution(profile) ? "Nom de l'organisation" : "Structure / entreprise"}
+                    label={
+                      isInstitution(profile) ? "Nom de l'organisation" : "Structure / entreprise"
+                    }
                     value={form.company ?? ""}
                     error={errors["company"]}
                     onChange={(v) => set("company", v)}

@@ -51,8 +51,8 @@ function StaffSignupPage() {
           <CheckCircle2 className="mx-auto size-10 text-primary" />
           <h1 className="mt-4 text-xl font-bold">Compte créé</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Votre compte est en attente de validation par un administrateur. Si une confirmation
-            par e-mail est requise, vérifiez votre boîte de réception avant de vous connecter.
+            Votre compte est en attente de validation par un administrateur. Si une confirmation par
+            e-mail est requise, vérifiez votre boîte de réception avant de vous connecter.
           </p>
           <Button asChild className="mt-6 w-full" variant="institutional">
             <Link to="/staff/login">Aller à la connexion</Link>
@@ -107,7 +107,10 @@ function StaffSignupPage() {
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
           Déjà un compte ?{" "}
-          <Link to="/staff/login" className="font-medium text-primary underline-offset-2 hover:underline">
+          <Link
+            to="/staff/login"
+            className="font-medium text-primary underline-offset-2 hover:underline"
+          >
             Se connecter
           </Link>
         </p>

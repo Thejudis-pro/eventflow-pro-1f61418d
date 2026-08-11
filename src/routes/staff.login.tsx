@@ -73,7 +73,10 @@ function StaffLoginPage() {
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
           Pas encore de compte ?{" "}
-          <Link to="/staff/signup" className="font-medium text-primary underline-offset-2 hover:underline">
+          <Link
+            to="/staff/signup"
+            className="font-medium text-primary underline-offset-2 hover:underline"
+          >
             Créer un compte organisateur
           </Link>
         </p>

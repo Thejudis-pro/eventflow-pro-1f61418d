@@ -17,6 +17,9 @@ export function useStaffSession() {
     queryKey: ["staff-profile", userId],
     enabled: Boolean(userId),
     queryFn: async () => {
+      // Staff rows are self-provisioned on first authenticated visit
+      // (no triggers are allowed on the auth schema).
+      await supabase.rpc("ensure_staff_profile");
       const { data, error } = await supabase
         .from("staff_profiles")
         .select("approved, email, full_name")

@@ -88,7 +88,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "FESA 2026 — Dakar, 21-22 septembre 2026" },
       {
         property: "og:description",
-        content: "Inscription en ligne au Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire.",
+        content:
+          "Inscription en ligne au Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

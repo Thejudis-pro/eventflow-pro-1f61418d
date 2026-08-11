@@ -192,11 +192,17 @@ function Landing() {
             <h2 className="text-3xl font-bold sm:text-4xl">Programme indicatif</h2>
             <div className="mt-10 grid gap-6 lg:grid-cols-2">
               {PROGRAM.map((d) => (
-                <div key={d.day} className="rounded-xl border border-border bg-card p-6 shadow-card">
+                <div
+                  key={d.day}
+                  className="rounded-xl border border-border bg-card p-6 shadow-card"
+                >
                   <h3 className="text-lg font-semibold text-primary-deep">{d.day}</h3>
                   <ul className="mt-4 space-y-4">
                     {d.items.map(([time, label]) => (
-                      <li key={time} className="flex gap-4 border-b border-border pb-3 last:border-0">
+                      <li
+                        key={time}
+                        className="flex gap-4 border-b border-border pb-3 last:border-0"
+                      >
                         <span className="w-14 shrink-0 font-mono text-sm font-semibold text-accent">
                           {time}
                         </span>

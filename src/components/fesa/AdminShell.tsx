@@ -15,7 +15,8 @@ import { Input } from "@/components/ui/input";
 import { useStaffSession, signOutStaff } from "@/lib/auth";
 import type { EventRow } from "@/lib/event";
 
-export type AdminNavKey = "overview" | "participants" | "payments" | "checkin" | "import" | "segments";
+export type AdminNavKey =
+  "overview" | "participants" | "payments" | "checkin" | "import" | "segments";
 
 const NAV_ITEMS: {
   key: AdminNavKey;
@@ -25,7 +26,13 @@ const NAV_ITEMS: {
   icon: typeof Gauge;
 }[] = [
   { key: "overview", label: "Vue d'ensemble", to: "/dashboard", icon: Gauge },
-  { key: "participants", label: "Participants", to: "/dashboard", hash: "participants", icon: Users },
+  {
+    key: "participants",
+    label: "Participants",
+    to: "/dashboard",
+    hash: "participants",
+    icon: Users,
+  },
   { key: "payments", label: "Paiements", to: "/dashboard", hash: "paiements", icon: CreditCard },
   { key: "checkin", label: "Check-in sur site", to: "/checkin", icon: QrCode },
   { key: "import", label: "Import CSV", to: "/dashboard", hash: "import", icon: Upload },

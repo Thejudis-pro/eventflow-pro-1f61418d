@@ -54,21 +54,21 @@ export type Database = {
       }
       checkins: {
         Row: {
+          created_at: string
           id: string
           participant_id: string
-          scanned_at: string
           scanned_by: string | null
         }
         Insert: {
+          created_at?: string
           id?: string
           participant_id: string
-          scanned_at?: string
           scanned_by?: string | null
         }
         Update: {
+          created_at?: string
           id?: string
           participant_id?: string
-          scanned_at?: string
           scanned_by?: string | null
         }
         Relationships: [
@@ -234,7 +234,6 @@ export type Database = {
           provider: string
           provider_transaction_id: string | null
           status: string
-          webhook_payload: Json | null
         }
         Insert: {
           amount: number
@@ -244,7 +243,6 @@ export type Database = {
           provider: string
           provider_transaction_id?: string | null
           status?: string
-          webhook_payload?: Json | null
         }
         Update: {
           amount?: number
@@ -254,7 +252,6 @@ export type Database = {
           provider?: string
           provider_transaction_id?: string | null
           status?: string
-          webhook_payload?: Json | null
         }
         Relationships: [
           {
@@ -265,33 +262,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      staff_profiles: {
-        Row: {
-          approved: boolean
-          created_at: string
-          email: string
-          full_name: string | null
-          id: string
-          user_id: string
-        }
-        Insert: {
-          approved?: boolean
-          created_at?: string
-          email: string
-          full_name?: string | null
-          id?: string
-          user_id: string
-        }
-        Update: {
-          approved?: boolean
-          created_at?: string
-          email?: string
-          full_name?: string | null
-          id?: string
-          user_id?: string
-        }
-        Relationships: []
       }
       profile_types: {
         Row: {
@@ -334,47 +304,78 @@ export type Database = {
           },
         ]
       }
+      staff_profiles: {
+        Row: {
+          approved: boolean
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          approved?: boolean
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          approved?: boolean
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      ensure_staff_profile: { Args: never; Returns: undefined }
       get_registration: {
         Args: { p_registration_id: string }
         Returns: {
+          badge_url: string
+          company: string
           full_name: string
           function: string
-          company: string
-          profile_label: string
           profile_color: string
+          profile_label: string
+          qr_payload: string
           registration_id: string
           status: string
-          qr_payload: string
-          badge_url: string
         }[]
       }
-      is_approved_staff: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_approved_staff: { Args: { _user_id: string }; Returns: boolean }
       list_delegation_names: {
         Args: { p_event_id: string }
-        Returns: { id: string; primary_contact_name: string }[]
+        Returns: {
+          id: string
+          primary_contact_name: string
+        }[]
       }
       register_participant: {
         Args: {
-          p_event_id: string
-          p_profile_type_id: string
-          p_delegation_id: string | null
-          p_full_name: string
+          p_company: string
+          p_delegation_id: string
           p_email: string
+          p_event_id: string
+          p_full_name: string
+          p_function: string
           p_phone: string
-          p_company: string | null
-          p_function: string | null
-          p_sector: string | null
+          p_profile_type_id: string
+          p_sector: string
           p_status: string
         }
-        Returns: { id: string; registration_id: string }[]
+        Returns: {
+          id: string
+          registration_id: string
+        }[]
       }
     }
     Enums: {

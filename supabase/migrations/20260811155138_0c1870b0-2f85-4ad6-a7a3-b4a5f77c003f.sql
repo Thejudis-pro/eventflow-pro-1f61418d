@@ -1,0 +1,1 @@
+DELETE FROM public.participants WHERE email = 'integrite@example.com';
