@@ -1,24 +1,37 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 
+const navItems = [
+  { label: "Le forum", href: "#forum" },
+  { label: "Objectifs", href: "#objectifs" },
+  { label: "Programme", href: "#programme" },
+  { label: "Tarifs & stands", href: "#tarifs" },
+  { label: "Partenaires", href: "#partenaires" },
+];
+
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+    <header className="sticky top-0 z-40 border-b border-[#dcd2bd] bg-[#fbf5eb]/90 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
         <Link to="/" className="flex items-center gap-3">
-          <span className="flex size-9 items-center justify-center rounded-lg bg-hero-gradient font-display text-sm font-bold text-primary-foreground">
+          <span className="flex size-9 items-center justify-center rounded-lg bg-[#0d3d21] font-display text-sm font-black text-[#fdf8ef]">
             F
           </span>
           <span className="leading-tight">
-            <span className="block font-display text-base font-bold">FESA 2026</span>
-            <span className="block text-[11px] text-muted-foreground">Organisé par la PAAF</span>
+            <span className="block font-display text-base font-bold text-[#0d3d21]">FESA 2026</span>
+            <span className="block text-[11px] text-[#5f6f5f]">Organisé par la PAAF</span>
           </span>
         </Link>
-        <nav className="flex items-center gap-1 sm:gap-3">
-          <Button asChild variant="institutional" size="sm">
-            <Link to="/inscription">S'inscrire</Link>
-          </Button>
+        <nav className="hidden items-center gap-5 text-sm font-medium text-[#27482f] md:flex">
+          {navItems.map((item) => (
+            <a key={item.label} href={item.href} className="transition hover:text-[#e8722a]">
+              {item.label}
+            </a>
+          ))}
         </nav>
+        <Button asChild variant="institutional" size="sm">
+          <Link to="/inscription">S'inscrire</Link>
+        </Button>
       </div>
     </header>
   );
@@ -26,13 +39,39 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border bg-surface">
-      <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-10 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <p>
-          <span className="font-semibold text-foreground">FESA 2026</span> — Forum de
-          l'Entrepreneuriat et de la Souveraineté Alimentaire
-        </p>
-        <p>Plateforme Africaine pour l'Autonomisation des Femmes et des Filles (PAAF)</p>
+    <footer className="border-t border-[#dcd2bd] bg-[#f8f4eb]">
+      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-10 text-sm text-[#4f5f51] lg:flex-row lg:items-start lg:justify-between lg:px-8">
+        <div>
+          <p className="font-display text-xl font-black text-[#0d3d21]">FESA 2026</p>
+          <p className="mt-2 max-w-xl text-sm leading-6">
+            Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire — une plateforme de dialogue, d'innovation et de mise en réseau pour les acteurs économiques et institutionnels de la sous-région.
+          </p>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div>
+            <p className="font-semibold text-[#0d3d21]">Participer</p>
+            <ul className="mt-2 space-y-2">
+              <li>
+                <Link to="/inscription" className="hover:text-[#e8722a]">
+                  S'inscrire
+                </Link>
+              </li>
+              <li>
+                <a href="#tarifs" className="hover:text-[#e8722a]">
+                  Réserver un stand
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <p className="font-semibold text-[#0d3d21]">Contact</p>
+            <ul className="mt-2 space-y-2">
+              <li>+221 77 477 83 60</li>
+              <li>presidence@paafs.org</li>
+              <li>www.paafs.org</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </footer>
   );
