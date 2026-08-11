@@ -73,7 +73,11 @@ export function BadgePreview({ data }: { data: BadgeData }) {
             <p className="mt-2 text-[10px] text-muted-foreground">{data.location}</p>
           </div>
           <div className="flex size-20 items-center justify-center rounded-lg border border-dashed border-border bg-surface p-1">
-            {data.qrValue ? <BadgeQr value={data.qrValue} /> : <QrCode className="size-12 text-muted-foreground" aria-hidden />}
+            {data.qrValue ? (
+              <BadgeQr value={data.qrValue} />
+            ) : (
+              <QrCode className="size-12 text-muted-foreground" aria-hidden />
+            )}
             <span className="sr-only">QR code du badge</span>
           </div>
         </div>

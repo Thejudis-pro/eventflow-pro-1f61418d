@@ -17,7 +17,13 @@ import {
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
 import { BadgePreview } from "@/components/fesa/BadgePreview";
 import { supabase } from "@/integrations/supabase/client";
-import { publicDelegationNamesQuery, eventQuery, profileTypesQuery, SECTORS, type ProfileType } from "@/lib/event";
+import {
+  publicDelegationNamesQuery,
+  eventQuery,
+  profileTypesQuery,
+  SECTORS,
+  type ProfileType,
+} from "@/lib/event";
 
 const TITLE = "Inscription FESA 2026 | Dakar, 21-22 septembre 2026";
 const DESCRIPTION =
@@ -269,7 +275,9 @@ function RegistrationPage() {
                   />
                   <Field
                     id="company"
-                    label={isInstitution(profile) ? "Nom de l'organisation" : "Structure / entreprise"}
+                    label={
+                      isInstitution(profile) ? "Nom de l'organisation" : "Structure / entreprise"
+                    }
                     value={form.company ?? ""}
                     error={errors["company"]}
                     onChange={(v) => set("company", v)}

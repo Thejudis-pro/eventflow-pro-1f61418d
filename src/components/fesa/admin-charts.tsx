@@ -16,7 +16,15 @@ import {
   PolarAngleAxis,
 } from "recharts";
 
-function ChartTooltip({ active, payload, label }: { active?: boolean; payload?: { value: number; name?: string; color?: string }[]; label?: string }) {
+function ChartTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: { value: number; name?: string; color?: string }[];
+  label?: string;
+}) {
   if (!active || !payload?.length) return null;
   return (
     <div className="rounded-lg border border-border bg-popover px-3 py-2 text-xs shadow-lift">
@@ -57,7 +65,11 @@ export function TrendSparkline({ data }: { data: { label: string; value: number 
   );
 }
 
-export function ProfileBarChart({ data }: { data: { label: string; value: number; color: string }[] }) {
+export function ProfileBarChart({
+  data,
+}: {
+  data: { label: string; value: number; color: string }[];
+}) {
   return (
     <ResponsiveContainer width="100%" height={200}>
       <BarChart data={data} margin={{ top: 16, right: 8, bottom: 0, left: 8 }} barCategoryGap="28%">
@@ -79,7 +91,11 @@ export function ProfileBarChart({ data }: { data: { label: string; value: number
   );
 }
 
-export function PaymentsDonut({ data }: { data: { label: string; value: number; color: string }[] }) {
+export function PaymentsDonut({
+  data,
+}: {
+  data: { label: string; value: number; color: string }[];
+}) {
   const total = data.reduce((sum, d) => sum + d.value, 0);
   return (
     <div className="flex items-center gap-6">
@@ -134,7 +150,10 @@ export function EventHealthRadar({ data }: { data: { metric: string; value: numb
       <ResponsiveContainer width="100%" height={200}>
         <RadarChart data={data} outerRadius="75%">
           <PolarGrid stroke="var(--border)" />
-          <PolarAngleAxis dataKey="metric" tick={{ fill: "var(--muted-foreground)", fontSize: 10 }} />
+          <PolarAngleAxis
+            dataKey="metric"
+            tick={{ fill: "var(--muted-foreground)", fontSize: 10 }}
+          />
           <Radar
             dataKey="value"
             stroke="var(--chart-1)"

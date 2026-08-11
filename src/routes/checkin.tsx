@@ -99,7 +99,12 @@ function CheckinContent() {
         .insert({ participant_id: badge.participant_id, scanned_by: "staff-web" });
       if (insertError) throw insertError;
 
-      setResult({ kind: "ok", name: badge.participants.full_name, profileLabel: meta.label, profileColor: meta.color });
+      setResult({
+        kind: "ok",
+        name: badge.participants.full_name,
+        profileLabel: meta.label,
+        profileColor: meta.color,
+      });
       queryClient.invalidateQueries({ queryKey: ["participants", event?.id] });
     } catch (e) {
       console.error(e);
@@ -121,7 +126,9 @@ function CheckinContent() {
 
     async function start() {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+        });
         if (stopped) {
           stream.getTracks().forEach((t) => t.stop());
           return;
@@ -191,7 +198,12 @@ function CheckinContent() {
           </div>
           {cameraActive && (
             <div className="mt-4 overflow-hidden rounded-lg border border-border bg-black">
-              <video ref={videoRef} className="aspect-video w-full object-cover" muted playsInline />
+              <video
+                ref={videoRef}
+                className="aspect-video w-full object-cover"
+                muted
+                playsInline
+              />
             </div>
           )}
           <canvas ref={canvasRef} className="hidden" />
@@ -231,14 +243,20 @@ function CheckinContent() {
             {result.kind === "ok" && (
               <p className="flex items-center gap-2 text-lg font-bold text-primary-deep">
                 <CheckCircle2 className="size-6" /> VALIDÉ — {result.name} —{" "}
-                <span className="size-2.5 rounded-full" style={{ backgroundColor: result.profileColor }} />
+                <span
+                  className="size-2.5 rounded-full"
+                  style={{ backgroundColor: result.profileColor }}
+                />
                 {result.profileLabel}
               </p>
             )}
             {result.kind === "already" && (
               <p className="flex items-center gap-2 text-lg font-bold text-accent">
                 <AlertTriangle className="size-6" /> DÉJÀ SCANNÉ — {result.name} —{" "}
-                <span className="size-2.5 rounded-full" style={{ backgroundColor: result.profileColor }} />
+                <span
+                  className="size-2.5 rounded-full"
+                  style={{ backgroundColor: result.profileColor }}
+                />
                 {result.profileLabel}
               </p>
             )}

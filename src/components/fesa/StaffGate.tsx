@@ -33,8 +33,8 @@ export function StaffGate({ children }: { children: ReactNode }) {
           <ShieldAlert className="size-10 text-accent" />
           <h1 className="mt-4 text-2xl font-bold">Compte en attente de validation</h1>
           <p className="mt-2 text-muted-foreground">
-            {email} n'a pas encore été approuvé pour accéder à l'espace organisateur. Demandez à
-            un administrateur de valider votre compte.
+            {email} n'a pas encore été approuvé pour accéder à l'espace organisateur. Demandez à un
+            administrateur de valider votre compte.
           </p>
           <Button className="mt-6" variant="outline" onClick={() => void signOutStaff()}>
             Se déconnecter
@@ -63,4 +63,3 @@ export function StaffSignOutButton() {
     </Button>
   );
 }
-

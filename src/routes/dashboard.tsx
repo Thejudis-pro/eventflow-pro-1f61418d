@@ -95,7 +95,8 @@ function DashboardContent() {
   }, [participants, segmentProfile, total]);
 
   const profileLabel = (id: string | null) => profiles?.find((p) => p.id === id)?.label ?? "—";
-  const profileColor = (id: string | null) => profiles?.find((p) => p.id === id)?.color_code ?? "#2E7D32";
+  const profileColor = (id: string | null) =>
+    profiles?.find((p) => p.id === id)?.color_code ?? "#2E7D32";
 
   const trendData = useMemo(() => {
     const days = 7;
@@ -110,7 +111,10 @@ function DashboardContent() {
         const t = new Date(p.created_at).getTime();
         return t >= start.getTime() && t < end.getTime();
       }).length;
-      buckets.push({ label: start.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }), value: count });
+      buckets.push({
+        label: start.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" }),
+        value: count,
+      });
     }
     return buckets;
   }, [participants]);
@@ -142,7 +146,9 @@ function DashboardContent() {
       : 0;
     const profileCoverage = profiles?.length
       ? Math.round(
-          (new Set((participants ?? []).map((p) => p.profile_type_id).filter(Boolean)).size / profiles.length) * 100,
+          (new Set((participants ?? []).map((p) => p.profile_type_id).filter(Boolean)).size /
+            profiles.length) *
+            100,
         )
       : 0;
     const last24h = (participants ?? []).filter(
@@ -257,7 +263,10 @@ function DashboardContent() {
           </section>
 
           {/* Participants table */}
-          <section id="participants" className="scroll-mt-6 rounded-2xl border border-border bg-card shadow-card">
+          <section
+            id="participants"
+            className="scroll-mt-6 rounded-2xl border border-border bg-card shadow-card"
+          >
             <div className="flex flex-wrap items-center gap-3 border-b border-border p-4">
               <h2 className="mr-auto text-sm font-semibold text-foreground">Participants</h2>
               <Select value={profileFilter} onValueChange={setProfileFilter}>
@@ -337,7 +346,10 @@ function DashboardContent() {
           </section>
 
           {/* CSV import */}
-          <section id="import" className="scroll-mt-6 rounded-2xl border border-border bg-card p-6 shadow-card">
+          <section
+            id="import"
+            className="scroll-mt-6 rounded-2xl border border-border bg-card p-6 shadow-card"
+          >
             <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Upload className="size-4 text-accent" /> Import de délégations (CSV)
             </h2>
@@ -351,7 +363,10 @@ function DashboardContent() {
           </section>
 
           {/* Segmentation */}
-          <section id="segmentation" className="scroll-mt-6 rounded-2xl border border-border bg-card p-6 shadow-card">
+          <section
+            id="segmentation"
+            className="scroll-mt-6 rounded-2xl border border-border bg-card p-6 shadow-card"
+          >
             <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Send className="size-4 text-accent" /> Segmentation pour communication ciblée
             </h2>
@@ -390,7 +405,10 @@ function DashboardContent() {
 
         {/* Right rail */}
         <div className="space-y-6">
-          <section id="paiements" className="scroll-mt-6 rounded-2xl border border-border bg-card p-6 shadow-card">
+          <section
+            id="paiements"
+            className="scroll-mt-6 rounded-2xl border border-border bg-card p-6 shadow-card"
+          >
             <h2 className="text-sm font-semibold text-foreground">Paiements</h2>
             <p className="mt-1 text-xs text-muted-foreground">Par prestataire, ce mois-ci</p>
             <div className="mt-4">
