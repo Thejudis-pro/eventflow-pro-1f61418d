@@ -127,7 +127,7 @@ function RegistrationPage() {
       const { data, error } = await supabase.rpc("register_participant", {
         p_event_id: event.id,
         p_profile_type_id: profile.id,
-        p_delegation_id: delegationId,
+        p_delegation_id: delegationId ?? "",
         p_full_name: form.full_name.trim(),
         p_email: form.email.trim(),
         p_phone: form.phone.trim(),
