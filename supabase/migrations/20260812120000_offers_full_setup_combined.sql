@@ -113,6 +113,10 @@ END $$;
 -- ============================================================
 -- 3. participants + payments columns
 -- ============================================================
+-- country predates this script (20260811211151) but errored as missing
+-- live, so it's re-asserted here defensively alongside the columns this
+-- script actually owns.
+ALTER TABLE public.participants ADD COLUMN IF NOT EXISTS country text;
 ALTER TABLE public.participants ADD COLUMN IF NOT EXISTS offer_id uuid REFERENCES public.offers(id);
 ALTER TABLE public.participants ADD COLUMN IF NOT EXISTS city text;
 ALTER TABLE public.participants ADD COLUMN IF NOT EXISTS badge_quantity integer NOT NULL DEFAULT 1;
