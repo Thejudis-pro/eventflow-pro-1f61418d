@@ -60,7 +60,7 @@ function AProposPage() {
                 key={o}
                 className="flex gap-3 border-t border-[#e0d6c6] py-[14px] last:border-b sm:[&:nth-child(n+5)]:border-b"
               >
-                <span className="flex-none text-[12px] font-extrabold leading-[1.7] text-[#e8722a]">
+                <span className="flex-none text-[12px] font-extrabold leading-[1.7] text-[#a8481a]">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span className="text-[14.5px] font-semibold leading-[1.5] text-[#42544a]">
@@ -138,7 +138,7 @@ function AProposPage() {
           </div>
         </section>
 
-        <div className="mt-14 flex flex-col items-start gap-4 rounded-3xl bg-[#e8722a] p-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col items-start gap-4 rounded-3xl bg-[#a8481a] p-8 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-2xl font-extrabold leading-tight text-white">
             Prêt·e à rejoindre le forum ?
           </h2>

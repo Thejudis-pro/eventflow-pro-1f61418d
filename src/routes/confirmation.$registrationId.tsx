@@ -92,7 +92,7 @@ function ConfirmationPage() {
           <div className="max-w-xl">
             <div
               className="inline-flex items-center gap-2.5 rounded-full px-4 py-2"
-              style={{ background: "#fdf3e7", color: "#c85c18", font: "800 12px/1 Manrope, sans-serif", letterSpacing: "0.04em" }}
+              style={{ background: "#fdf3e7", color: "#8f3d10", font: "800 12px/1 Manrope, sans-serif", letterSpacing: "0.04em" }}
             >
               <Loader2 className="size-3.5 animate-spin" /> PAIEMENT EN COURS DE CONFIRMATION
             </div>

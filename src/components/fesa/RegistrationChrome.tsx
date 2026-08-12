@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import headerBand from "@/assets/header-fesa-band.jpeg";
 import { REG } from "@/lib/fesa-registration-theme";
@@ -16,8 +15,6 @@ const navItems = [
  * keeps SiteHeader/SiteFooter from SiteChrome.tsx untouched.
  */
 export function RegistrationHeader() {
-  const [lang, setLang] = useState<"FR" | "EN">("FR");
-
   return (
     <header style={{ background: REG.dark }}>
       <div
@@ -35,16 +32,6 @@ export function RegistrationHeader() {
           <a href="tel:+221774778360" className="hidden md:inline hover:text-white">
             +221 77 477 83 60
           </a>
-          <button
-            type="button"
-            onClick={() => setLang((l) => (l === "FR" ? "EN" : "FR"))}
-            className="flex items-center gap-1.5"
-            aria-label="Changer de langue"
-          >
-            <span style={{ color: REG.cream, fontWeight: 800 }}>{lang}</span>
-            <span style={{ opacity: 0.4 }}>/</span>
-            <span>{lang === "FR" ? "EN" : "FR"}</span>
-          </button>
         </div>
       </div>
 

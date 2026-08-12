@@ -7,7 +7,7 @@
 export const REG = {
   dark: "#0d3d21",
   green: "#0b7a3c",
-  orange: "#e8722a",
+  orange: "#a8481a",
   cream: "#fbf7f0",
   creamLight: "#f2ede3",
   line: "#e0d6c6",
