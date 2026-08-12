@@ -332,7 +332,7 @@ function Landing() {
                 <Link
                   key={n.label}
                   to={n.to}
-                  className="text-[14px] font-semibold text-[#0d3d21] transition hover:text-[#e8722a]"
+                  className="text-[14px] font-semibold text-[#0d3d21] transition hover:text-[#a8481a]"
                 >
                   {n.label}
                 </Link>
@@ -340,7 +340,7 @@ function Landing() {
                 <a
                   key={n.label}
                   href={n.href}
-                  className="text-[14px] font-semibold text-[#0d3d21] transition hover:text-[#e8722a]"
+                  className="text-[14px] font-semibold text-[#0d3d21] transition hover:text-[#a8481a]"
                 >
                   {n.label}
                 </a>
@@ -349,7 +349,7 @@ function Landing() {
           </nav>
           <Link
             to="/inscription"
-            className="hidden h-[46px] items-center gap-2 rounded-[14px] bg-[#e8722a] px-[22px] text-[14px] font-extrabold text-white transition hover:bg-[#c85c18] sm:flex"
+            className="hidden h-[46px] items-center gap-2 rounded-[14px] bg-[#a8481a] px-[22px] text-[14px] font-extrabold text-white transition hover:bg-[#8f3d10] sm:flex"
           >
             S'inscrire
             {ARROW}
@@ -371,14 +371,14 @@ function Landing() {
                     {"to" in n ? (
                       <Link
                         to={n.to}
-                        className="rounded-lg px-3 py-3 transition hover:bg-[#f8f4eb] hover:text-[#e8722a]"
+                        className="rounded-lg px-3 py-3 transition hover:bg-[#f8f4eb] hover:text-[#a8481a]"
                       >
                         {n.label}
                       </Link>
                     ) : (
                       <a
                         href={n.href}
-                        className="rounded-lg px-3 py-3 transition hover:bg-[#f8f4eb] hover:text-[#e8722a]"
+                        className="rounded-lg px-3 py-3 transition hover:bg-[#f8f4eb] hover:text-[#a8481a]"
                       >
                         {n.label}
                       </a>
@@ -389,7 +389,7 @@ function Landing() {
               <SheetClose asChild>
                 <Link
                   to="/inscription"
-                  className="flex h-[46px] items-center justify-center gap-2 rounded-[14px] bg-[#e8722a] px-[22px] text-[14px] font-extrabold text-white transition hover:bg-[#c85c18]"
+                  className="flex h-[46px] items-center justify-center gap-2 rounded-[14px] bg-[#a8481a] px-[22px] text-[14px] font-extrabold text-white transition hover:bg-[#8f3d10]"
                 >
                   S'inscrire
                   {ARROW}
@@ -405,7 +405,7 @@ function Landing() {
         <div className="relative z-[2] px-5 pb-14 pt-8 sm:px-8 lg:pb-[60px] lg:pl-16 lg:pr-14 lg:pt-9">
           <div className="flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-[10px] rounded-full bg-[#e9f3ec] px-[14px] py-[7px] text-[12px] font-extrabold tracking-[.04em] text-[#0b7a3c]">
-              <span className="size-[7px] rounded-full bg-[#e8722a]" />
+              <span className="size-[7px] rounded-full bg-[#a8481a]" />
               21 &amp; 22 SEPTEMBRE 2026 · DAKAR
             </span>
             <span className="rounded-full bg-[#0d3d21] px-[14px] py-[7px] text-[12px] font-extrabold tracking-[.04em] text-[#fbf7f0]">
@@ -417,7 +417,7 @@ function Landing() {
             <br />
             <span className="text-[#0b7a3c]">de la Souveraineté Alimentaire</span>
           </h1>
-          <p className="mt-5 max-w-[470px] border-l-[3px] border-[#e8722a] pl-4 text-[18px] font-semibold leading-[1.45] text-[#42544a]">
+          <p className="mt-5 max-w-[470px] border-l-[3px] border-[#a8481a] pl-4 text-[18px] font-semibold leading-[1.45] text-[#42544a]">
             Entrepreneuriat, économie sociale et solidaire et souveraineté alimentaire en Afrique de
             l'Ouest.
           </p>
@@ -467,7 +467,7 @@ function Landing() {
             className="absolute inset-0 size-full object-cover"
           />
           <div className="absolute bottom-6 left-4 w-[290px] overflow-hidden rounded-[18px] bg-white shadow-[0_20px_44px_rgba(13,61,33,.22)] lg:bottom-14 lg:left-[-90px]">
-            <div className="flex items-center justify-between bg-[#e8722a] px-4 py-3">
+            <div className="flex items-center justify-between bg-[#a8481a] px-4 py-3">
               <span className="text-[11px] font-extrabold tracking-[.08em] text-white">
                 BADGE CONFIRMÉ
               </span>
@@ -508,7 +508,7 @@ function Landing() {
           className={`grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_372px] lg:gap-16 ${forumReveal.className}`}
         >
           <div className="min-w-0">
-            <div className="text-[12px] font-extrabold tracking-[.12em] text-[#e8722a]">
+            <div className="text-[12px] font-extrabold tracking-[.12em] text-[#a8481a]">
               LE FORUM
             </div>
             <h2 className="mt-4 max-w-[640px] text-[36px] font-extrabold leading-[1.08] tracking-[-.035em] text-[#0d3d21] lg:text-[46px]">
@@ -529,7 +529,7 @@ function Landing() {
                   key={o}
                   className="flex gap-3 border-t border-[#e0d6c6] py-[14px] last:border-b sm:[&:nth-child(n+5)]:border-b lg:[&:nth-child(n+4)]:border-b"
                 >
-                  <span className="flex-none text-[12px] font-extrabold leading-[1.7] text-[#e8722a]">
+                  <span className="flex-none text-[12px] font-extrabold leading-[1.7] text-[#a8481a]">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span className="text-[14.5px] font-semibold leading-[1.5] text-[#42544a]">
@@ -540,7 +540,7 @@ function Landing() {
             </div>
 
             <div id="axes" className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-7">
-              <div className="w-20 flex-none text-[12px] font-extrabold leading-[2.6] tracking-[.12em] text-[#e8722a]">
+              <div className="w-20 flex-none text-[12px] font-extrabold leading-[2.6] tracking-[.12em] text-[#a8481a]">
                 13 AXES
               </div>
               <div className="flex flex-wrap gap-2">
@@ -622,7 +622,7 @@ function Landing() {
             ].map((day) => (
               <div key={day.n}>
                 <div className="flex items-baseline gap-3 pb-[14px]">
-                  <span className="text-[34px] font-extrabold leading-none text-[#e8722a]">
+                  <span className="text-[34px] font-extrabold leading-none text-[#a8481a]">
                     {day.n}
                   </span>
                   <span className="text-[12px] font-extrabold tracking-[.1em] text-[rgba(251,247,240,.6)]">
@@ -656,7 +656,7 @@ function Landing() {
         <div ref={tarifsReveal.ref} className={tarifsReveal.className}>
           <div className="grid items-end gap-8 border-b-[2.5px] border-[#0B7A3CEB] pb-7 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-14">
             <div>
-              <div className="text-[12px] font-extrabold tracking-[.12em] text-[#e8722a]">
+              <div className="text-[12px] font-extrabold tracking-[.12em] text-[#a8481a]">
                 TARIFS &amp; STANDS
               </div>
               <h2 className="mt-[14px] text-[30px] font-extrabold leading-[1.1] tracking-[-.03em] text-[#0d3d21] lg:text-[38px]">
@@ -673,7 +673,7 @@ function Landing() {
                 <span className="rounded-[10px] bg-[#1A8FE3] px-[15px] py-[9px] text-[12px] font-extrabold text-white">
                   Wave
                 </span>
-                <span className="rounded-[10px] bg-[#e8722a] px-[15px] py-[9px] text-[12px] font-extrabold text-white">
+                <span className="rounded-[10px] bg-[#a8481a] px-[15px] py-[9px] text-[12px] font-extrabold text-white">
                   Orange Money
                 </span>
                 <span className="rounded-[10px] bg-[#0d3d21] px-[15px] py-[9px] text-[12px] font-extrabold text-white">
@@ -732,7 +732,7 @@ function Landing() {
                     >
                       <span
                         className={`font-extrabold ${
-                          tier.highlight ? "text-[#e8722a]" : "text-[#0b7a3c]"
+                          tier.highlight ? "text-[#a8481a]" : "text-[#0b7a3c]"
                         }`}
                       >
                         ✓
@@ -768,7 +768,7 @@ function Landing() {
         >
           <div className="min-w-0">
             <div className="flex items-baseline gap-4">
-              <div className="text-[12px] font-extrabold tracking-[.12em] text-[#e8722a]">
+              <div className="text-[12px] font-extrabold tracking-[.12em] text-[#a8481a]">
                 ILS SOUTIENNENT LE FORUM
               </div>
               <div className="h-px flex-1 bg-[#e0d6c6]" />
@@ -801,7 +801,7 @@ function Landing() {
             </div>
             <a
               href="mailto:presidence@paafs.org?subject=Devenir%20partenaire%20du%20FESA%202026"
-              className="mt-5 flex h-12 items-center justify-center rounded-[14px] bg-[#e8722a] text-[14px] font-extrabold text-white transition hover:bg-[#c85c18]"
+              className="mt-5 flex h-12 items-center justify-center rounded-[14px] bg-[#a8481a] text-[14px] font-extrabold text-white transition hover:bg-[#8f3d10]"
             >
               Contactez-nous
             </a>
@@ -818,7 +818,7 @@ function Landing() {
 
       {/* CTA */}
       <section className="mx-auto mt-16 max-w-[1440px] px-5 sm:px-8 lg:mt-[78px] lg:px-16">
-        <div className="flex flex-col justify-between gap-10 rounded-3xl bg-[#e8722a] p-8 sm:flex-row sm:items-center lg:p-11">
+        <div className="flex flex-col justify-between gap-10 rounded-3xl bg-[#a8481a] p-8 sm:flex-row sm:items-center lg:p-11">
           <div>
             <h2 className="text-[28px] font-extrabold leading-[1.12] tracking-[-.03em] text-white lg:text-[34px]">
               Les places de la 1ʳᵉ édition
@@ -907,7 +907,7 @@ function Landing() {
                   type="submit"
                   aria-label="S'abonner"
                   disabled={newsletterStatus === "submitting"}
-                  className="flex size-12 flex-none items-center justify-center rounded-[14px] bg-[#e8722a] text-white disabled:opacity-60"
+                  className="flex size-12 flex-none items-center justify-center rounded-[14px] bg-[#a8481a] text-white disabled:opacity-60"
                 >
                   {ARROW}
                 </button>

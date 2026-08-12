@@ -27,11 +27,11 @@ export function SiteHeader() {
         <nav className="hidden items-center gap-5 text-sm font-medium text-[#27482f] md:flex">
           {navItems.map((item) =>
             "to" in item ? (
-              <Link key={item.label} to={item.to} className="transition hover:text-[#e8722a]">
+              <Link key={item.label} to={item.to} className="transition hover:text-[#a8481a]">
                 {item.label}
               </Link>
             ) : (
-              <a key={item.label} href={item.href} className="transition hover:text-[#e8722a]">
+              <a key={item.label} href={item.href} className="transition hover:text-[#a8481a]">
                 {item.label}
               </a>
             ),
@@ -59,14 +59,14 @@ export function SiteHeader() {
                     {"to" in item ? (
                       <Link
                         to={item.to}
-                        className="rounded-lg px-3 py-3 transition hover:bg-[#f8f4eb] hover:text-[#e8722a]"
+                        className="rounded-lg px-3 py-3 transition hover:bg-[#f8f4eb] hover:text-[#a8481a]"
                       >
                         {item.label}
                       </Link>
                     ) : (
                       <a
                         href={item.href}
-                        className="rounded-lg px-3 py-3 transition hover:bg-[#f8f4eb] hover:text-[#e8722a]"
+                        className="rounded-lg px-3 py-3 transition hover:bg-[#f8f4eb] hover:text-[#a8481a]"
                       >
                         {item.label}
                       </a>
@@ -104,12 +104,12 @@ export function SiteFooter() {
             <p className="font-semibold text-[#0d3d21]">Participer</p>
             <ul className="mt-2 space-y-2">
               <li>
-                <Link to="/inscription" className="hover:text-[#e8722a]">
+                <Link to="/inscription" className="hover:text-[#a8481a]">
                   S'inscrire
                 </Link>
               </li>
               <li>
-                <a href="/#tarifs" className="hover:text-[#e8722a]">
+                <a href="/#tarifs" className="hover:text-[#a8481a]">
                   Réserver un stand
                 </a>
               </li>
