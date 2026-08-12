@@ -44,10 +44,10 @@ export const Route = createFileRoute("/inscription")({
       { name: "description", content: DESCRIPTION },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
-      { property: "og:url", content: "https://fesa2026.com/inscription" },
+      { property: "og:url", content: "https://fesa2026.vercel.app/inscription" },
     ],
     links: [
-      { rel: "canonical", href: "https://fesa2026.com/inscription" },
+      { rel: "canonical", href: "https://fesa2026.vercel.app/inscription" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: ARCHIVO_FONT_HREF },
     ],

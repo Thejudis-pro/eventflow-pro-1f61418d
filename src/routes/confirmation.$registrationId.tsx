@@ -65,7 +65,7 @@ function ConfirmationPage() {
   function handleAddToCalendar() {
     if (!event) return;
     downloadIcs({
-      uid: `${registrationId}@fesa2026.com`,
+      uid: `${registrationId}@fesa2026.vercel.app`,
       title: event.name,
       description: `Votre inscription FESA 2026 — référence ${registrationId}.`,
       location: event.location,

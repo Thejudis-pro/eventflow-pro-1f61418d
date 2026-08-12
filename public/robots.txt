@@ -25,4 +25,4 @@ Disallow: /checkin
 Disallow: /staff/
 Disallow: /confirmation/
 
-Sitemap: https://fesa2026.com/sitemap.xml
+Sitemap: https://fesa2026.vercel.app/sitemap.xml
