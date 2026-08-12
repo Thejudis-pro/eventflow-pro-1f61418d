@@ -7,12 +7,25 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { RegistrationFooter, RegistrationHeader } from "@/components/fesa/RegistrationChrome";
 import { BadgePreview } from "@/components/fesa/BadgePreview";
 import { supabase } from "@/integrations/supabase/client";
 import { createCheckoutSession } from "@/lib/payments/checkout.functions";
-import { eventQuery, offersQuery, publicDelegationNamesQuery, SECTORS, type Offer, type ProfileType } from "@/lib/event";
+import {
+  eventQuery,
+  offersQuery,
+  publicDelegationNamesQuery,
+  SECTORS,
+  type Offer,
+  type ProfileType,
+} from "@/lib/event";
 import { COUNTRIES } from "@/lib/countries";
 import { fmt, REG } from "@/lib/fesa-registration-theme";
 
@@ -81,7 +94,11 @@ function isPartenaire(label?: string | null) {
 function RegistrationPage() {
   const navigate = useNavigate();
   const { data: event } = useQuery(eventQuery);
-  const { data: offers } = useQuery(offersQuery(event?.id));
+  const {
+    data: offers,
+    isLoading: offersLoading,
+    isError: offersErrored,
+  } = useQuery(offersQuery(event?.id));
   const { data: delegations } = useQuery(publicDelegationNamesQuery(event?.id));
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -105,7 +122,8 @@ function RegistrationPage() {
   const profileColor = offer?.profile_types?.color_code ?? "#0b7a3c";
 
   const fullName = [form.first_name, form.last_name].filter(Boolean).join(" ").trim();
-  const effectiveCountry = form.country === OTHER_COUNTRY ? form.otherCountry?.trim() || "" : form.country;
+  const effectiveCountry =
+    form.country === OTHER_COUNTRY ? form.otherCountry?.trim() || "" : form.country;
 
   const set = (k: keyof Details, v: string) => {
     setForm((f) => ({ ...f, [k]: v }));
@@ -159,12 +177,16 @@ function RegistrationPage() {
     if (!validateDetails()) return;
     setSubmitting(true);
     try {
-      const result = registered ?? (await registerParticipant(needsPayment ? "pending" : "confirmed"));
+      const result =
+        registered ?? (await registerParticipant(needsPayment ? "pending" : "confirmed"));
       setRegistered(result);
       if (needsPayment) {
         setStep(3);
       } else {
-        navigate({ to: "/confirmation/$registrationId", params: { registrationId: result.registrationId } });
+        navigate({
+          to: "/confirmation/$registrationId",
+          params: { registrationId: result.registrationId },
+        });
       }
     } catch (error) {
       console.error(error);
@@ -196,11 +218,21 @@ function RegistrationPage() {
   ];
 
   return (
-    <div style={{ background: REG.cream, color: REG.dark, fontFamily: "Manrope, system-ui, sans-serif" }} className="min-h-screen">
+    <div
+      style={{
+        background: REG.cream,
+        color: REG.dark,
+        fontFamily: "Manrope, system-ui, sans-serif",
+      }}
+      className="min-h-screen"
+    >
       <RegistrationHeader />
 
       <main className="mx-auto max-w-7xl px-4 py-8 lg:px-16">
-        <div className="flex items-center gap-0 overflow-x-auto border-b pb-6" style={{ borderColor: REG.line }}>
+        <div
+          className="flex items-center gap-0 overflow-x-auto border-b pb-6"
+          style={{ borderColor: REG.line }}
+        >
           {stepDefs.map((s, i) => {
             const n = i + 1;
             const on = n === step;
@@ -229,14 +261,27 @@ function RegistrationPage() {
                     {n}
                   </span>
                   <span className="flex flex-col items-start gap-[3px]">
-                    <span style={{ font: "800 13.5px/1.15 Manrope, sans-serif", whiteSpace: "nowrap" }}>{s.title}</span>
-                    <span style={{ font: "500 11px/1.15 Manrope, sans-serif", color: REG.mutedLight, whiteSpace: "nowrap" }}>
+                    <span
+                      style={{ font: "800 13.5px/1.15 Manrope, sans-serif", whiteSpace: "nowrap" }}
+                    >
+                      {s.title}
+                    </span>
+                    <span
+                      style={{
+                        font: "500 11px/1.15 Manrope, sans-serif",
+                        color: REG.mutedLight,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       {s.hint}
                     </span>
                   </span>
                 </button>
                 {n !== stepDefs.length && (
-                  <div className="mx-2.5 h-px flex-1" style={{ background: done ? REG.green : REG.line }} />
+                  <div
+                    className="mx-2.5 h-px flex-1"
+                    style={{ background: done ? REG.green : REG.line }}
+                  />
                 )}
               </div>
             );
@@ -247,18 +292,51 @@ function RegistrationPage() {
           <div className="min-w-0">
             {step === 1 && (
               <div>
-                <div style={{ font: "800 12px/1 Manrope, sans-serif", letterSpacing: "0.12em", color: REG.orange }}>
+                <div
+                  style={{
+                    font: "800 12px/1 Manrope, sans-serif",
+                    letterSpacing: "0.12em",
+                    color: REG.orange,
+                  }}
+                >
                   ÉTAPE 1 · VOTRE FORMULE
                 </div>
-                <h1 className="mt-3.5" style={{ font: "800 40px/1.08 Manrope, sans-serif", letterSpacing: "-0.035em" }}>
+                <h1
+                  className="mt-3.5"
+                  style={{ font: "800 40px/1.08 Manrope, sans-serif", letterSpacing: "-0.035em" }}
+                >
                   Que souhaitez-vous
                   <br />
                   réserver ?
                 </h1>
-                <p className="mt-4 max-w-[520px]" style={{ font: "400 15.5px/1.7 Manrope, sans-serif", color: REG.muted }}>
+                <p
+                  className="mt-4 max-w-[520px]"
+                  style={{ font: "400 15.5px/1.7 Manrope, sans-serif", color: REG.muted }}
+                >
                   Une seule formule par inscription. Les stands incluent des badges exposants — vous
                   nommerez les porteurs après le paiement.
                 </p>
+
+                {offersLoading && (
+                  <div className="mt-8 flex items-center gap-2" style={{ color: REG.muted }}>
+                    <Loader2 className="size-4 animate-spin" /> Chargement des formules…
+                  </div>
+                )}
+
+                {!offersLoading && (offersErrored || (offers ?? []).length === 0) && (
+                  <div
+                    className="mt-8 rounded-[18px] px-6 py-5"
+                    style={{
+                      border: `1px solid ${REG.line}`,
+                      background: "#fff",
+                      font: "500 14px/1.6 Manrope, sans-serif",
+                      color: REG.muted,
+                    }}
+                  >
+                    Les formules ne sont pas disponibles pour le moment. Réessayez dans un instant
+                    ou contactez le secrétariat technique au +221 77 477 83 60.
+                  </div>
+                )}
 
                 <div className="mt-8 flex flex-col gap-3">
                   {(offers as OfferWithProfile[] | undefined)?.map((o) => {
@@ -280,24 +358,48 @@ function RegistrationPage() {
                         }}
                       >
                         <span className="flex min-w-0 flex-col gap-[7px]">
-                          <span style={{ font: "800 11.5px/1 Manrope, sans-serif", letterSpacing: "0.1em", color: REG.mutedLight }}>
+                          <span
+                            style={{
+                              font: "800 11.5px/1 Manrope, sans-serif",
+                              letterSpacing: "0.1em",
+                              color: REG.mutedLight,
+                            }}
+                          >
                             {o.kicker}
                           </span>
-                          <span style={{ font: "800 22px/1.15 Manrope, sans-serif" }}>{o.name}</span>
-                          <span className="max-w-[430px]" style={{ font: "500 13.5px/1.55 Manrope, sans-serif", color: REG.muted }}>
+                          <span style={{ font: "800 22px/1.15 Manrope, sans-serif" }}>
+                            {o.name}
+                          </span>
+                          <span
+                            className="max-w-[430px]"
+                            style={{
+                              font: "500 13.5px/1.55 Manrope, sans-serif",
+                              color: REG.muted,
+                            }}
+                          >
                             {o.description}
                           </span>
                         </span>
                         <span className="flex flex-none items-center gap-[22px]">
                           <span className="flex flex-col items-end gap-1">
-                            <span style={{ font: "800 26px/1 Manrope, sans-serif" }}>{fmt(o.price)}</span>
-                            <span style={{ font: "700 11.5px/1 Manrope, sans-serif", color: REG.mutedLight }}>
+                            <span style={{ font: "800 26px/1 Manrope, sans-serif" }}>
+                              {fmt(o.price)}
+                            </span>
+                            <span
+                              style={{
+                                font: "700 11.5px/1 Manrope, sans-serif",
+                                color: REG.mutedLight,
+                              }}
+                            >
                               FCFA · {o.unit_label}
                             </span>
                           </span>
                           <span
                             className="size-6 flex-none rounded-full"
-                            style={{ background: "#fff", border: on ? `7px solid ${REG.green}` : `2px solid ${REG.lineDark}` }}
+                            style={{
+                              background: "#fff",
+                              border: on ? `7px solid ${REG.green}` : `2px solid ${REG.lineDark}`,
+                            }}
                           />
                         </span>
                       </button>
@@ -311,7 +413,10 @@ function RegistrationPage() {
                 >
                   <div>
                     <div style={{ font: "800 15px/1.2 Manrope, sans-serif" }}>Nombre de badges</div>
-                    <div className="mt-[5px]" style={{ font: "500 13px/1.55 Manrope, sans-serif", color: REG.mutedLight }}>
+                    <div
+                      className="mt-[5px]"
+                      style={{ font: "500 13px/1.55 Manrope, sans-serif", color: REG.mutedLight }}
+                    >
                       {isStand
                         ? `${offer?.included_badges ?? 0} badges exposants sont inclus dans ce stand.`
                         : "Un badge nominatif par personne, réglé en une seule fois."}
@@ -323,19 +428,30 @@ function RegistrationPage() {
                       disabled={isStand}
                       onClick={() => setQty((q) => Math.max(1, q - 1))}
                       className="flex size-11 items-center justify-center rounded-xl"
-                      style={{ border: `1px solid ${REG.lineDark}`, background: "#fff", font: "800 20px/1 Manrope, sans-serif" }}
+                      style={{
+                        border: `1px solid ${REG.lineDark}`,
+                        background: "#fff",
+                        font: "800 20px/1 Manrope, sans-serif",
+                      }}
                     >
                       −
                     </button>
-                    <div className="min-w-7 text-center" style={{ font: "800 22px/1 Manrope, sans-serif" }}>
-                      {isStand ? offer?.included_badges ?? 0 : qty}
+                    <div
+                      className="min-w-7 text-center"
+                      style={{ font: "800 22px/1 Manrope, sans-serif" }}
+                    >
+                      {isStand ? (offer?.included_badges ?? 0) : qty}
                     </div>
                     <button
                       type="button"
                       disabled={isStand}
                       onClick={() => setQty((q) => Math.min(20, q + 1))}
                       className="flex size-11 items-center justify-center rounded-xl"
-                      style={{ border: `1px solid ${REG.lineDark}`, background: "#fff", font: "800 20px/1 Manrope, sans-serif" }}
+                      style={{
+                        border: `1px solid ${REG.lineDark}`,
+                        background: "#fff",
+                        font: "800 20px/1 Manrope, sans-serif",
+                      }}
                     >
                       +
                     </button>
@@ -346,22 +462,64 @@ function RegistrationPage() {
 
             {step === 2 && (
               <div>
-                <div style={{ font: "800 12px/1 Manrope, sans-serif", letterSpacing: "0.12em", color: REG.orange }}>
+                <div
+                  style={{
+                    font: "800 12px/1 Manrope, sans-serif",
+                    letterSpacing: "0.12em",
+                    color: REG.orange,
+                  }}
+                >
                   ÉTAPE 2 · IDENTITÉ
                 </div>
-                <h1 className="mt-3.5" style={{ font: "800 40px/1.08 Manrope, sans-serif", letterSpacing: "-0.035em" }}>
+                <h1
+                  className="mt-3.5"
+                  style={{ font: "800 40px/1.08 Manrope, sans-serif", letterSpacing: "-0.035em" }}
+                >
                   Qui participe ?
                 </h1>
-                <p className="mt-4 max-w-[520px]" style={{ font: "400 15.5px/1.7 Manrope, sans-serif", color: REG.muted }}>
-                  Ces informations sont imprimées sur le badge. Le numéro WhatsApp reçoit la confirmation
-                  et les mises à jour du programme.
+                <p
+                  className="mt-4 max-w-[520px]"
+                  style={{ font: "400 15.5px/1.7 Manrope, sans-serif", color: REG.muted }}
+                >
+                  Ces informations sont imprimées sur le badge. Le numéro WhatsApp reçoit la
+                  confirmation et les mises à jour du programme.
                 </p>
 
                 <div className="mt-8 grid grid-cols-1 gap-[18px_20px] sm:grid-cols-2">
-                  <RegField id="first_name" label="PRÉNOM" placeholder="Aïssatou" value={form.first_name} error={errors["first_name"]} onChange={(v) => set("first_name", v)} />
-                  <RegField id="last_name" label="NOM" placeholder="Ndiaye" value={form.last_name} error={errors["last_name"]} onChange={(v) => set("last_name", v)} />
-                  <RegField id="email" label="EMAIL" type="email" placeholder="aissatou@cooperative.sn" value={form.email} error={errors["email"]} onChange={(v) => set("email", v)} />
-                  <RegField id="phone" label="TÉLÉPHONE / WHATSAPP" type="tel" placeholder="+221 77 000 00 00" value={form.phone} error={errors["phone"]} onChange={(v) => set("phone", v)} />
+                  <RegField
+                    id="first_name"
+                    label="PRÉNOM"
+                    placeholder="Aïssatou"
+                    value={form.first_name}
+                    error={errors["first_name"]}
+                    onChange={(v) => set("first_name", v)}
+                  />
+                  <RegField
+                    id="last_name"
+                    label="NOM"
+                    placeholder="Ndiaye"
+                    value={form.last_name}
+                    error={errors["last_name"]}
+                    onChange={(v) => set("last_name", v)}
+                  />
+                  <RegField
+                    id="email"
+                    label="EMAIL"
+                    type="email"
+                    placeholder="aissatou@cooperative.sn"
+                    value={form.email}
+                    error={errors["email"]}
+                    onChange={(v) => set("email", v)}
+                  />
+                  <RegField
+                    id="phone"
+                    label="TÉLÉPHONE / WHATSAPP"
+                    type="tel"
+                    placeholder="+221 77 000 00 00"
+                    value={form.phone}
+                    error={errors["phone"]}
+                    onChange={(v) => set("phone", v)}
+                  />
                   <RegSelectField
                     id="country"
                     label="PAYS"
@@ -369,7 +527,14 @@ function RegistrationPage() {
                     onChange={(v) => set("country", v)}
                     options={[...COUNTRIES, OTHER_COUNTRY]}
                   />
-                  <RegField id="city" label="VILLE" placeholder="Dakar" value={form.city} error={errors["city"]} onChange={(v) => set("city", v)} />
+                  <RegField
+                    id="city"
+                    label="VILLE"
+                    placeholder="Dakar"
+                    value={form.city}
+                    error={errors["city"]}
+                    onChange={(v) => set("city", v)}
+                  />
                   {form.country === OTHER_COUNTRY && (
                     <div className="flex flex-col gap-2 sm:col-span-2">
                       <RegLabel>PRÉCISEZ VOTRE PAYS</RegLabel>
@@ -378,32 +543,61 @@ function RegistrationPage() {
                         onChange={(e) => set("otherCountry", e.target.value)}
                         placeholder="Cameroun, Maroc, France…"
                         className="h-[52px] rounded-[14px] px-4 outline-none"
-                        style={{ border: `2px solid ${REG.green}`, background: "#fff", font: "600 15px/1 Manrope, sans-serif", color: REG.dark }}
+                        style={{
+                          border: `2px solid ${REG.green}`,
+                          background: "#fff",
+                          font: "600 15px/1 Manrope, sans-serif",
+                          color: REG.dark,
+                        }}
                       />
-                      {errors["otherCountry"] && <p className="text-xs text-destructive">{errors["otherCountry"]}</p>}
-                      <span style={{ font: "500 12.5px/1.5 Manrope, sans-serif", color: REG.mutedLight }}>
+                      {errors["otherCountry"] && (
+                        <p className="text-xs text-destructive">{errors["otherCountry"]}</p>
+                      )}
+                      <span
+                        style={{
+                          font: "500 12.5px/1.5 Manrope, sans-serif",
+                          color: REG.mutedLight,
+                        }}
+                      >
                         Le pays saisi ici apparaît sur le badge, sous votre organisation.
                       </span>
                     </div>
                   )}
                   <div className="flex flex-col gap-2 sm:col-span-2">
                     <RegLabel>
-                      {isPartenaire(profileLabel) ? "NOM DE L'ORGANISATION" : "ORGANISATION"} · TELLE QU&rsquo;ELLE APPARAÎTRA SUR LE BADGE
+                      {isPartenaire(profileLabel) ? "NOM DE L'ORGANISATION" : "ORGANISATION"} ·
+                      TELLE QU&rsquo;ELLE APPARAÎTRA SUR LE BADGE
                     </RegLabel>
                     <input
                       value={form.company ?? ""}
                       onChange={(e) => set("company", e.target.value)}
                       placeholder="Coopérative Takku Ligey"
                       className="h-[52px] rounded-[14px] px-4 outline-none"
-                      style={{ border: `1px solid ${REG.lineDark}`, background: "#fff", font: "600 15px/1 Manrope, sans-serif", color: REG.dark }}
+                      style={{
+                        border: `1px solid ${REG.lineDark}`,
+                        background: "#fff",
+                        font: "600 15px/1 Manrope, sans-serif",
+                        color: REG.dark,
+                      }}
                     />
-                    {errors["company"] && <p className="text-xs text-destructive">{errors["company"]}</p>}
+                    {errors["company"] && (
+                      <p className="text-xs text-destructive">{errors["company"]}</p>
+                    )}
                   </div>
                   {isExposant(profileLabel) && (
                     <div className="flex flex-col gap-2 sm:col-span-2">
                       <RegLabel>SECTEUR D&rsquo;ACTIVITÉ</RegLabel>
-                      <RegSelectField id="sector" hideLabel value={form.sector ?? ""} onChange={(v) => set("sector", v)} options={SECTORS} placeholder="Choisir un secteur" />
-                      {errors["sector"] && <p className="text-xs text-destructive">{errors["sector"]}</p>}
+                      <RegSelectField
+                        id="sector"
+                        hideLabel
+                        value={form.sector ?? ""}
+                        onChange={(v) => set("sector", v)}
+                        options={SECTORS}
+                        placeholder="Choisir un secteur"
+                      />
+                      {errors["sector"] && (
+                        <p className="text-xs text-destructive">{errors["sector"]}</p>
+                      )}
                     </div>
                   )}
                   {(delegations ?? []).length > 0 && (
@@ -415,7 +609,11 @@ function RegistrationPage() {
                         value={delegationId ?? "none"}
                         onChange={(v) => setDelegationId(v === "none" ? null : v)}
                         options={["none", ...(delegations ?? []).map((d) => d.id)]}
-                        renderLabel={(v) => (v === "none" ? "Aucune délégation" : delegations?.find((d) => d.id === v)?.primary_contact_name ?? v)}
+                        renderLabel={(v) =>
+                          v === "none"
+                            ? "Aucune délégation"
+                            : (delegations?.find((d) => d.id === v)?.primary_contact_name ?? v)
+                        }
                       />
                     </div>
                   )}
@@ -425,13 +623,25 @@ function RegistrationPage() {
 
             {step === 3 && (
               <div>
-                <div style={{ font: "800 12px/1 Manrope, sans-serif", letterSpacing: "0.12em", color: REG.orange }}>
+                <div
+                  style={{
+                    font: "800 12px/1 Manrope, sans-serif",
+                    letterSpacing: "0.12em",
+                    color: REG.orange,
+                  }}
+                >
                   ÉTAPE 3 · PAIEMENT
                 </div>
-                <h1 className="mt-3.5" style={{ font: "800 40px/1.08 Manrope, sans-serif", letterSpacing: "-0.035em" }}>
+                <h1
+                  className="mt-3.5"
+                  style={{ font: "800 40px/1.08 Manrope, sans-serif", letterSpacing: "-0.035em" }}
+                >
                   Paiement sécurisé
                 </h1>
-                <p className="mt-4 max-w-[520px]" style={{ font: "400 15.5px/1.7 Manrope, sans-serif", color: REG.muted }}>
+                <p
+                  className="mt-4 max-w-[520px]"
+                  style={{ font: "400 15.5px/1.7 Manrope, sans-serif", color: REG.muted }}
+                >
                   Vous serez redirigé vers votre prestataire de paiement. Le badge est généré dès la
                   confirmation du paiement.
                 </p>
@@ -441,14 +651,28 @@ function RegistrationPage() {
                   style={{ border: `1px solid ${REG.line}`, background: "#fff" }}
                 >
                   <div>
-                    <div style={{ font: "500 13px/1.55 Manrope, sans-serif", color: REG.mutedLight }}>Montant à régler</div>
+                    <div
+                      style={{ font: "500 13px/1.55 Manrope, sans-serif", color: REG.mutedLight }}
+                    >
+                      Montant à régler
+                    </div>
                     <div className="mt-1.5" style={{ font: "800 30px/1 Manrope, sans-serif" }}>
-                      {fmt(total)} <span style={{ font: "700 13px/1 Manrope, sans-serif", color: REG.mutedLight }}>FCFA</span>
+                      {fmt(total)}{" "}
+                      <span
+                        style={{ font: "700 13px/1 Manrope, sans-serif", color: REG.mutedLight }}
+                      >
+                        FCFA
+                      </span>
                     </div>
                   </div>
                   <div
                     className="rounded-full px-4 py-2"
-                    style={{ background: REG.dark, color: REG.cream, font: "800 12px/1 Manrope, sans-serif", letterSpacing: "0.06em" }}
+                    style={{
+                      background: REG.dark,
+                      color: REG.cream,
+                      font: "800 12px/1 Manrope, sans-serif",
+                      letterSpacing: "0.06em",
+                    }}
                   >
                     {offer?.name}
                   </div>
@@ -461,7 +685,11 @@ function RegistrationPage() {
                     className="flex h-14 items-center justify-center gap-2.5"
                     style={{ background: REG.dark, color: "#fff" }}
                   >
-                    {submitting ? <Loader2 className="size-4 animate-spin" /> : <CreditCard className="size-4" />}
+                    {submitting ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <CreditCard className="size-4" />
+                    )}
                     Payer avec PayTech
                   </Button>
                   <Button
@@ -476,7 +704,10 @@ function RegistrationPage() {
               </div>
             )}
 
-            <div className="mt-10 flex items-center justify-between gap-6 border-t pt-[26px]" style={{ borderColor: REG.line }}>
+            <div
+              className="mt-10 flex items-center justify-between gap-6 border-t pt-[26px]"
+              style={{ borderColor: REG.line }}
+            >
               <Button
                 variant="outline"
                 disabled={step === 1}
@@ -484,7 +715,8 @@ function RegistrationPage() {
                 className="h-[58px] rounded-2xl px-6"
                 style={{ visibility: step === 1 ? "hidden" : "visible" }}
               >
-                <ArrowLeft className="size-4" /> {step === 2 ? "Retour aux tarifs" : "Étape précédente"}
+                <ArrowLeft className="size-4" />{" "}
+                {step === 2 ? "Retour aux tarifs" : "Étape précédente"}
               </Button>
               {step !== 3 && (
                 <div className="flex items-center gap-4">
@@ -495,7 +727,11 @@ function RegistrationPage() {
                     style={{ background: REG.orange, color: "#fff" }}
                   >
                     {submitting && <Loader2 className="size-4 animate-spin" />}
-                    {step === 1 ? "Continuer vers l'identité" : needsPayment ? "Continuer vers le paiement" : "Valider mon inscription"}
+                    {step === 1
+                      ? "Continuer vers l'identité"
+                      : needsPayment
+                        ? "Continuer vers le paiement"
+                        : "Valider mon inscription"}
                     <ArrowRight className="size-4" />
                   </Button>
                 </div>
@@ -506,51 +742,103 @@ function RegistrationPage() {
           <div className="flex flex-col gap-4" style={{ position: "sticky", top: 24 }}>
             <div className="rounded-[20px] p-7" style={{ background: REG.dark, color: REG.cream }}>
               <div className="flex items-baseline justify-between">
-                <div style={{ font: "800 12px/1 Manrope, sans-serif", letterSpacing: "0.1em", color: "#f0913f" }}>
+                <div
+                  style={{
+                    font: "800 12px/1 Manrope, sans-serif",
+                    letterSpacing: "0.1em",
+                    color: "#f0913f",
+                  }}
+                >
                   VOTRE INSCRIPTION
                 </div>
-                <div style={{ font: "800 11px/1 Manrope, sans-serif", letterSpacing: "0.08em", color: "rgba(251,247,240,0.5)" }}>
+                <div
+                  style={{
+                    font: "800 11px/1 Manrope, sans-serif",
+                    letterSpacing: "0.08em",
+                    color: "rgba(251,247,240,0.5)",
+                  }}
+                >
                   ÉTAPE {step}/3
                 </div>
               </div>
               <div className="mt-4" style={{ font: "800 22px/1.2 Manrope, sans-serif" }}>
                 {offer?.name ?? "Choisissez votre formule"}
               </div>
-              <div className="mt-1.5" style={{ font: "500 13px/1.6 Manrope, sans-serif", color: "rgba(251,247,240,0.66)" }}>
+              <div
+                className="mt-1.5"
+                style={{
+                  font: "500 13px/1.6 Manrope, sans-serif",
+                  color: "rgba(251,247,240,0.66)",
+                }}
+              >
                 {offer?.description ?? "Sélectionnez une formule pour voir les détails."}
               </div>
               <div className="my-5 h-px" style={{ background: "rgba(251,247,240,0.14)" }} />
               <div className="flex flex-col gap-3">
-                <SummaryLine label={isStand ? "Stand" : "Badges"} value={offer ? `${isStand ? 1 : qty} × ${fmt(offer.price)}` : "—"} />
+                <SummaryLine
+                  label={isStand ? "Stand" : "Badges"}
+                  value={offer ? `${isStand ? 1 : qty} × ${fmt(offer.price)}` : "—"}
+                />
                 <SummaryLine label="Badges inclus" value={String(badgeQty)} />
                 <SummaryLine label="Catégorie" value={isStand ? "Exposant" : "Participant"} />
               </div>
               <div className="my-5 h-px" style={{ background: "rgba(251,247,240,0.14)" }} />
               <div className="flex items-baseline justify-between">
-                <div style={{ font: "800 13px/1 Manrope, sans-serif", letterSpacing: "0.06em", color: "rgba(251,247,240,0.7)" }}>
+                <div
+                  style={{
+                    font: "800 13px/1 Manrope, sans-serif",
+                    letterSpacing: "0.06em",
+                    color: "rgba(251,247,240,0.7)",
+                  }}
+                >
                   TOTAL
                 </div>
                 <div className="flex items-baseline gap-1.5">
                   <span style={{ font: "800 30px/1 Manrope, sans-serif" }}>{fmt(total)}</span>
-                  <span style={{ font: "700 13px/1 Manrope, sans-serif", color: "rgba(251,247,240,0.6)" }}>FCFA</span>
+                  <span
+                    style={{
+                      font: "700 13px/1 Manrope, sans-serif",
+                      color: "rgba(251,247,240,0.6)",
+                    }}
+                  >
+                    FCFA
+                  </span>
                 </div>
               </div>
-              <div className="mt-2.5" style={{ font: "500 12px/1.6 Manrope, sans-serif", color: "rgba(251,247,240,0.5)" }}>
+              <div
+                className="mt-2.5"
+                style={{ font: "500 12px/1.6 Manrope, sans-serif", color: "rgba(251,247,240,0.5)" }}
+              >
                 Frais de plateforme inclus. Facture disponible après paiement.
               </div>
             </div>
 
-            <div className="rounded-[20px] p-6" style={{ border: `1px solid ${REG.line}`, background: "#fff" }}>
-              <div style={{ font: "800 12px/1 Manrope, sans-serif", letterSpacing: "0.1em", color: REG.mutedLight }}>
+            <div
+              className="rounded-[20px] p-6"
+              style={{ border: `1px solid ${REG.line}`, background: "#fff" }}
+            >
+              <div
+                style={{
+                  font: "800 12px/1 Manrope, sans-serif",
+                  letterSpacing: "0.1em",
+                  color: REG.mutedLight,
+                }}
+              >
                 INCLUS DANS CETTE FORMULE
               </div>
               <div className="mt-3.5 flex flex-col gap-2.5">
-                {(offer?.perks ?? ["Sélectionnez une formule pour voir ce qui est inclus."]).map((p) => (
-                  <div key={p} className="flex gap-2.5" style={{ font: "500 13.5px/1.45 Manrope, sans-serif", color: REG.body }}>
-                    <span style={{ color: REG.green, fontWeight: 800 }}>✓</span>
-                    {p}
-                  </div>
-                ))}
+                {(offer?.perks ?? ["Sélectionnez une formule pour voir ce qui est inclus."]).map(
+                  (p) => (
+                    <div
+                      key={p}
+                      className="flex gap-2.5"
+                      style={{ font: "500 13.5px/1.45 Manrope, sans-serif", color: REG.body }}
+                    >
+                      <span style={{ color: REG.green, fontWeight: 800 }}>✓</span>
+                      {p}
+                    </div>
+                  ),
+                )}
               </div>
             </div>
 
@@ -582,7 +870,10 @@ function RegistrationPage() {
 
 function SummaryLine({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between gap-4" style={{ font: "600 13.5px/1.4 Manrope, sans-serif" }}>
+    <div
+      className="flex justify-between gap-4"
+      style={{ font: "600 13.5px/1.4 Manrope, sans-serif" }}
+    >
       <span style={{ color: "rgba(251,247,240,0.7)" }}>{label}</span>
       <span className="whitespace-nowrap">{value}</span>
     </div>
@@ -591,7 +882,15 @@ function SummaryLine({ label, value }: { label: string; value: string }) {
 
 function RegLabel({ children }: { children: ReactNode }) {
   return (
-    <span style={{ font: "800 11.5px/1 Manrope, sans-serif", letterSpacing: "0.08em", color: "#42544a" }}>{children}</span>
+    <span
+      style={{
+        font: "800 11.5px/1 Manrope, sans-serif",
+        letterSpacing: "0.08em",
+        color: "#42544a",
+      }}
+    >
+      {children}
+    </span>
   );
 }
 
@@ -625,7 +924,12 @@ function RegField({
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         className="h-[52px] rounded-[14px]"
-        style={{ border: `1px solid ${REG.lineDark}`, background: "#fff", font: "600 15px/1 Manrope, sans-serif", color: REG.dark }}
+        style={{
+          border: `1px solid ${REG.lineDark}`,
+          background: "#fff",
+          font: "600 15px/1 Manrope, sans-serif",
+          color: REG.dark,
+        }}
       />
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
@@ -662,7 +966,12 @@ function RegSelectField({
         <SelectTrigger
           id={id}
           className="h-[52px] rounded-[14px]"
-          style={{ border: `1px solid ${REG.lineDark}`, background: "#fff", font: "600 15px/1 Manrope, sans-serif", color: REG.dark }}
+          style={{
+            border: `1px solid ${REG.lineDark}`,
+            background: "#fff",
+            font: "600 15px/1 Manrope, sans-serif",
+            color: REG.dark,
+          }}
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>

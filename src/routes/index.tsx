@@ -23,11 +23,8 @@ import heroPhoto from "@/assets/hero-fesa.jpeg";
 import partnerLogos from "@/assets/fesa-partner-logos.png";
 import partnerFlyer from "@/assets/fesa-partner-flyer.png";
 import socialBanner from "@/assets/fesa-social-banner.png";
-import logoAsset from "@/assets/fesa-logo.png.asset.json";
-// No standalone PAAF mark has been provided yet (only the combined PAAF+FESA
-// header band in header-fesa-band.jpeg) — add a cropped/isolated logo file
-// under src/assets/ and set PAAF_LOGO_URL to it once available.
-const PAAF_LOGO_URL: string | null = null;
+import fesaLogo from "@/assets/logo-fesa.png";
+import paafLogo from "@/assets/logo-paaf.png";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useReveal } from "@/components/fesa/Reveal";
 import { eventQuery, subscribeToNewsletter } from "@/lib/event";
@@ -322,7 +319,7 @@ function Landing() {
       {/* Header */}
       <header className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-6 px-5 py-4 sm:px-8 lg:h-[86px] lg:flex-nowrap lg:gap-10 lg:px-16 lg:py-0">
         <Link to="/" className="flex items-center gap-4">
-          <img src={logoAsset.url} alt="FESA 2026" className="h-[42px] w-auto" />
+          <img src={fesaLogo} alt="FESA 2026" className="h-[42px] w-auto" />
           <span className="hidden h-8 w-px bg-[#ddd2c2] sm:block" />
           <span className="hidden max-w-[215px] text-[11.5px] font-bold leading-[1.35] text-[#5a6b62] sm:block">
             Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire
@@ -564,13 +561,7 @@ function Landing() {
 
           <aside className="lg:sticky lg:top-6">
             <div className="rounded-[20px] bg-[#0d3d21] p-[30px] text-[#fbf7f0]">
-              {PAAF_LOGO_URL ? (
-                <img src={PAAF_LOGO_URL} alt="Logo PAAF" className="mb-4 h-10 w-auto" />
-              ) : (
-                <div className="mb-4 flex h-10 w-32 items-center justify-center rounded-lg border border-dashed border-white/25 text-[10px] font-semibold uppercase tracking-wide text-white/40">
-                  Logo PAAF
-                </div>
-              )}
+              <img src={paafLogo} alt="Logo PAAF" className="mb-4 h-10 w-auto rounded" />
               <div className="text-[12px] font-extrabold tracking-[.1em] text-[#f0913f]">
                 PORTÉE PAR LA PAAF
               </div>
@@ -860,7 +851,7 @@ function Landing() {
         <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-16">
           <div className="grid gap-10 border-b border-[rgba(251,247,240,.14)] pb-10 sm:grid-cols-2 lg:grid-cols-[320px_repeat(3,minmax(0,1fr))_300px]">
             <div>
-              <img src={logoAsset.url} alt="FESA 2026" className="h-[38px] w-auto" />
+              <img src={fesaLogo} alt="FESA 2026" className="h-[38px] w-auto" />
               <p className="mt-4 text-[13.5px] leading-[1.7] text-[rgba(251,247,240,.62)]">
                 Forum Sous-régional de l'Entrepreneuriat Productif, organisé par la PAAF —
                 Plateforme Africaine pour l'Autonomisation des Femmes et des Filles.
