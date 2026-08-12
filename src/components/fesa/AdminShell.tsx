@@ -12,8 +12,10 @@ import {
   LogOut,
   Sun,
   Moon,
+  Menu,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useStaffSession, signOutStaff } from "@/lib/auth";
 import type { EventRow } from "@/lib/event";
 
@@ -35,28 +37,34 @@ function useAdminTheme() {
   return { theme, set };
 }
 
-function ThemeToggle({ theme, onChange }: { theme: "dark" | "light"; onChange: (t: "dark" | "light") => void }) {
+function ThemeToggle({
+  theme,
+  onChange,
+}: {
+  theme: "dark" | "light";
+  onChange: (t: "dark" | "light") => void;
+}) {
   return (
-    <div className="flex items-center gap-1 rounded-full border border-border bg-secondary p-1">
+    <div className="flex shrink-0 items-center gap-1 rounded-full border border-border bg-secondary p-1">
       <button
         type="button"
         onClick={() => onChange("light")}
         aria-pressed={theme === "light"}
-        className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+        className={`flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-colors sm:px-2.5 ${
           theme === "light" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
         }`}
       >
-        <Sun className="size-3.5" /> Clair
+        <Sun className="size-3.5" /> <span className="hidden sm:inline">Clair</span>
       </button>
       <button
         type="button"
         onClick={() => onChange("dark")}
         aria-pressed={theme === "dark"}
-        className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+        className={`flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-colors sm:px-2.5 ${
           theme === "dark" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
         }`}
       >
-        <Moon className="size-3.5" /> Sombre
+        <Moon className="size-3.5" /> <span className="hidden sm:inline">Sombre</span>
       </button>
     </div>
   );
@@ -86,6 +94,79 @@ const NAV_ITEMS: {
   { key: "segments", label: "Segmentation", to: "/dashboard", hash: "segmentation", icon: Target },
 ];
 
+function BrandMark() {
+  return (
+    <div className="flex items-center gap-2 px-2">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary font-display text-sm font-bold text-primary-foreground">
+        F
+      </span>
+      <span className="min-w-0 leading-tight">
+        <span className="block truncate font-display text-sm font-bold text-sidebar-foreground">
+          FESA 2026
+        </span>
+        <span className="block truncate text-[11px] text-muted-foreground">
+          Espace organisateur
+        </span>
+      </span>
+    </div>
+  );
+}
+
+function NavLinks({ active, onNavigate }: { active: AdminNavKey; onNavigate?: () => void }) {
+  return (
+    <nav className="mt-8 flex flex-1 flex-col gap-1">
+      {NAV_ITEMS.map((item) => {
+        const isActive = item.key === active;
+        return (
+          <Link
+            key={item.key}
+            to={item.to}
+            {...(item.hash ? { hash: item.hash } : {})}
+            onClick={onNavigate}
+            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+              isActive
+                ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
+            }`}
+          >
+            <item.icon className="size-4 shrink-0" />
+            <span className="truncate">{item.label}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+function AccountFooter({ email }: { email: string | null | undefined }) {
+  return (
+    <div className="mt-4 flex min-w-0 items-center justify-between gap-2 border-t border-sidebar-border px-1 pt-4">
+      <span className="min-w-0 truncate text-xs text-muted-foreground">{email}</span>
+      <button
+        type="button"
+        onClick={() => void signOutStaff()}
+        className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+        aria-label="Se déconnecter"
+      >
+        <LogOut className="size-4" />
+      </button>
+    </div>
+  );
+}
+
+function EventBadge({ event }: { event?: EventRow | null | undefined }) {
+  if (!event) return null;
+  return (
+    <div className="mt-6 min-w-0 rounded-xl border border-sidebar-border bg-sidebar-accent/40 p-4">
+      <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
+        <Radio className="size-3 shrink-0" /> {event.status === "live" ? "En direct" : event.status}
+      </p>
+      <p className="mt-2 truncate text-sm font-semibold text-sidebar-foreground">{event.name}</p>
+      <p className="mt-0.5 truncate text-xs text-muted-foreground">{event.location}</p>
+    </div>
+  );
+}
+
 export function AdminShell({
   active,
   event,
@@ -99,70 +180,44 @@ export function AdminShell({
 }) {
   const { email } = useStaffSession();
   const { theme, set: setTheme } = useAdminTheme();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
     <div className={`admin-shell flex min-h-screen ${theme === "light" ? "light" : ""}`}>
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar px-4 py-6 lg:flex">
-        <div className="flex items-center gap-2 px-2">
-          <span className="flex size-9 items-center justify-center rounded-lg bg-primary font-display text-sm font-bold text-primary-foreground">
-            F
-          </span>
-          <span className="leading-tight">
-            <span className="block font-display text-sm font-bold text-sidebar-foreground">
-              FESA 2026
-            </span>
-            <span className="block text-[11px] text-muted-foreground">Espace organisateur</span>
-          </span>
-        </div>
-
-        <nav className="mt-8 flex flex-1 flex-col gap-1">
-          {NAV_ITEMS.map((item) => {
-            const isActive = item.key === active;
-            return (
-              <Link
-                key={item.key}
-                to={item.to}
-                {...(item.hash ? { hash: item.hash } : {})}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "text-muted-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
-                }`}
-              >
-                <item.icon className="size-4" />
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {event && (
-          <div className="mt-6 rounded-xl border border-sidebar-border bg-sidebar-accent/40 p-4">
-            <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
-              <Radio className="size-3" /> {event.status === "live" ? "En direct" : event.status}
-            </p>
-            <p className="mt-2 text-sm font-semibold text-sidebar-foreground">{event.name}</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">{event.location}</p>
-          </div>
-        )}
-
-        <div className="mt-4 flex items-center justify-between gap-2 border-t border-sidebar-border px-1 pt-4">
-          <span className="truncate text-xs text-muted-foreground">{email}</span>
-          <button
-            type="button"
-            onClick={() => void signOutStaff()}
-            className="shrink-0 rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
-            aria-label="Se déconnecter"
-          >
-            <LogOut className="size-4" />
-          </button>
-        </div>
+      {/* Desktop sidebar */}
+      <aside className="hidden w-56 shrink-0 flex-col border-r border-sidebar-border bg-sidebar px-3 py-6 lg:flex xl:w-64 xl:px-4">
+        <BrandMark />
+        <NavLinks active={active} />
+        <EventBadge event={event} />
+        <AccountFooter email={email} />
       </aside>
 
+      {/* Mobile nav drawer */}
+      <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
+        <SheetContent
+          side="left"
+          className="flex w-72 max-w-[85vw] flex-col bg-sidebar px-3 py-6 text-sidebar-foreground"
+        >
+          <BrandMark />
+          <NavLinks active={active} onNavigate={() => setMobileNavOpen(false)} />
+          <EventBadge event={event} />
+          <AccountFooter email={email} />
+        </SheetContent>
+      </Sheet>
+
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center gap-4 border-b border-border px-4 py-4 sm:px-8">
+        <header className="flex items-center gap-2 border-b border-border px-3 py-3 sm:gap-4 sm:px-4 sm:py-4 lg:px-8">
+          <button
+            type="button"
+            onClick={() => setMobileNavOpen(true)}
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border text-foreground lg:hidden"
+            aria-label="Ouvrir le menu"
+          >
+            <Menu className="size-4" />
+          </button>
+
           {search ? (
-            <div className="relative max-w-sm flex-1">
+            <div className="relative min-w-0 flex-1 sm:max-w-sm">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 value={search.value}
@@ -172,15 +227,15 @@ export function AdminShell({
               />
             </div>
           ) : (
-            <div className="flex-1" />
+            <div className="min-w-0 flex-1" />
           )}
-          <span className="hidden rounded-full border border-border bg-secondary px-3 py-1.5 text-xs font-medium text-muted-foreground sm:block">
+          <span className="hidden max-w-[220px] truncate rounded-full border border-border bg-secondary px-3 py-1.5 text-xs font-medium text-muted-foreground md:block">
             {event?.name ?? "Événement"}
           </span>
           <ThemeToggle theme={theme} onChange={setTheme} />
         </header>
 
-        <main className="flex-1 px-4 py-6 sm:px-8 sm:py-8">{children}</main>
+        <main className="min-w-0 flex-1 px-3 py-5 sm:px-4 sm:py-6 lg:px-8 lg:py-8">{children}</main>
       </div>
     </div>
   );

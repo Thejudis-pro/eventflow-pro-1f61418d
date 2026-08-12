@@ -225,23 +225,23 @@ function DashboardContent() {
       event={event}
       search={{ value: search, onChange: setSearch, placeholder: "Rechercher un participant…" }}
     >
-      <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
-        <div className="space-y-6">
+      <div className="grid gap-4 sm:gap-6 xl:grid-cols-[2fr_1fr]">
+        <div className="min-w-0 space-y-4 sm:space-y-6">
           {/* Hero */}
-          <section className="rounded-2xl border border-border bg-card p-6 shadow-card">
+          <section className="rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
+              <div className="min-w-0">
                 <p className="text-xs uppercase tracking-widest text-muted-foreground">
                   Inscriptions totales
                 </p>
-                <p className="mt-2 font-display text-4xl font-bold tabular-nums text-foreground">
+                <p className="mt-2 font-display text-3xl font-bold tabular-nums text-foreground sm:text-4xl">
                   {total}
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 truncate text-xs text-muted-foreground">
                   {event?.name ?? "Événement"} · {event?.location ?? ""}
                 </p>
               </div>
-              <div className="min-w-40 flex-1 max-w-xs">
+              <div className="min-w-40 flex-1 basis-40 sm:max-w-xs">
                 <TrendSparkline data={trendData} />
               </div>
             </div>
@@ -264,7 +264,7 @@ function DashboardContent() {
           </section>
 
           {/* Secondary tiles */}
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             <Tile label="Paiements confirmés" value={String(paid)} />
             <Tile label="Taux de conversion" value={`${conversion}%`} />
             <Tile label="Enregistrés sur site" value={`${checkedIn} (${attendanceRate}%)`} />
@@ -272,7 +272,7 @@ function DashboardContent() {
           </div>
 
           {/* Profile breakdown */}
-          <section className="rounded-2xl border border-border bg-card p-6 shadow-card">
+          <section className="min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
             <h2 className="text-sm font-semibold text-foreground">Répartition par profil</h2>
             <ProfileBarChart data={profileBarData} />
           </section>
@@ -280,12 +280,12 @@ function DashboardContent() {
           {/* Participants table */}
           <section
             id="participants"
-            className="scroll-mt-6 rounded-2xl border border-border bg-card shadow-card"
+            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card shadow-card"
           >
             <div className="flex flex-wrap items-center gap-3 border-b border-border p-4">
               <h2 className="mr-auto text-sm font-semibold text-foreground">Participants</h2>
               <Select value={profileFilter} onValueChange={setProfileFilter}>
-                <SelectTrigger className="w-48">
+                <SelectTrigger className="w-full sm:w-48">
                   <SelectValue placeholder="Profil" />
                 </SelectTrigger>
                 <SelectContent>
@@ -298,7 +298,7 @@ function DashboardContent() {
                 </SelectContent>
               </Select>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-44">
+                <SelectTrigger className="w-full sm:w-44">
                   <SelectValue placeholder="Statut" />
                 </SelectTrigger>
                 <SelectContent>
@@ -383,7 +383,7 @@ function DashboardContent() {
           {/* CSV import */}
           <section
             id="import"
-            className="scroll-mt-6 rounded-2xl border border-border bg-card p-6 shadow-card"
+            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
           >
             <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Upload className="size-4 text-accent" /> Import de délégations (CSV)
@@ -400,7 +400,7 @@ function DashboardContent() {
           {/* Segmentation */}
           <section
             id="segmentation"
-            className="scroll-mt-6 rounded-2xl border border-border bg-card p-6 shadow-card"
+            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
           >
             <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Send className="size-4 text-accent" /> Segmentation pour communication ciblée
@@ -411,7 +411,7 @@ function DashboardContent() {
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <Select value={segmentProfile} onValueChange={setSegmentProfile}>
-                <SelectTrigger className="w-56">
+                <SelectTrigger className="w-full sm:w-56">
                   <SelectValue placeholder="Segment" />
                 </SelectTrigger>
                 <SelectContent>
@@ -439,10 +439,10 @@ function DashboardContent() {
         </div>
 
         {/* Right rail */}
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-4 sm:space-y-6">
           <section
             id="paiements"
-            className="scroll-mt-6 rounded-2xl border border-border bg-card p-6 shadow-card"
+            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
           >
             <h2 className="text-sm font-semibold text-foreground">Paiements</h2>
             <p className="mt-1 text-xs text-muted-foreground">Par prestataire, ce mois-ci</p>
@@ -451,12 +451,12 @@ function DashboardContent() {
             </div>
           </section>
 
-          <section className="rounded-2xl border border-border bg-card p-6 shadow-card">
+          <section className="min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
             <h2 className="text-sm font-semibold text-foreground">Santé de l'événement</h2>
             <EventHealthRadar data={healthData} />
           </section>
 
-          <section className="rounded-2xl border border-border bg-card p-6 shadow-card">
+          <section className="min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
             <h2 className="text-sm font-semibold text-foreground">Segments</h2>
             <ul className="mt-4 space-y-2">
               {profileBarData.map((p) => (
@@ -465,8 +465,10 @@ function DashboardContent() {
                   className="flex items-center justify-between gap-3 rounded-lg border-l-4 bg-secondary/40 py-2.5 pl-3 pr-4"
                   style={{ borderColor: p.color }}
                 >
-                  <span className="text-sm font-medium text-foreground">{p.label}</span>
-                  <span className="font-display text-sm font-bold tabular-nums text-foreground">
+                  <span className="min-w-0 truncate text-sm font-medium text-foreground">
+                    {p.label}
+                  </span>
+                  <span className="shrink-0 font-display text-sm font-bold tabular-nums text-foreground">
                     {p.value}
                   </span>
                 </li>
@@ -481,9 +483,11 @@ function DashboardContent() {
 
 function Tile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
-      <p className="text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
-      <p className="mt-2 font-display text-2xl font-bold tabular-nums text-primary-deep">{value}</p>
+    <div className="min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-5">
+      <p className="truncate text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
+      <p className="mt-2 break-words font-display text-xl font-bold tabular-nums text-primary-deep sm:text-2xl">
+        {value}
+      </p>
     </div>
   );
 }

@@ -98,8 +98,8 @@ export function PaymentsDonut({
 }) {
   const total = data.reduce((sum, d) => sum + d.value, 0);
   return (
-    <div className="flex items-center gap-6">
-      <div className="relative shrink-0">
+    <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:gap-6">
+      <div className="relative w-[120px] shrink-0">
         <ResponsiveContainer width={120} height={120}>
           <PieChart>
             <Tooltip content={<ChartTooltip />} />
@@ -123,14 +123,17 @@ export function PaymentsDonut({
           <span className="text-[10px] text-muted-foreground">total</span>
         </div>
       </div>
-      <ul className="flex-1 space-y-2">
+      <ul className="min-w-0 flex-1 space-y-2">
         {data.map((d) => (
           <li key={d.label} className="flex items-center justify-between gap-3 text-sm">
-            <span className="flex items-center gap-2 text-muted-foreground">
-              <span className="size-2.5 rounded-full" style={{ backgroundColor: d.color }} />
-              {d.label}
+            <span className="flex min-w-0 items-center gap-2 text-muted-foreground">
+              <span
+                className="size-2.5 shrink-0 rounded-full"
+                style={{ backgroundColor: d.color }}
+              />
+              <span className="truncate">{d.label}</span>
             </span>
-            <span className="font-semibold text-foreground">{d.value}</span>
+            <span className="shrink-0 font-semibold text-foreground">{d.value}</span>
           </li>
         ))}
         {data.length === 0 && <li className="text-sm text-muted-foreground">Aucune transaction</li>}

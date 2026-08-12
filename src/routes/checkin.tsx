@@ -167,14 +167,14 @@ function CheckinContent() {
 
   return (
     <AdminShell active="checkin" event={event}>
-      <div className="mx-auto max-w-3xl">
-        <h1 className="text-3xl font-bold sm:text-4xl">Check-in sur site</h1>
+      <div className="mx-auto max-w-3xl min-w-0">
+        <h1 className="text-2xl font-bold sm:text-3xl lg:text-4xl">Check-in sur site</h1>
         <p className="mt-2 text-muted-foreground">
           {event?.name ?? "Événement"} · scannez le badge (caméra ou douchette) pour valider
           l'entrée.
         </p>
 
-        <div className="mt-6 flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-card">
+        <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-border bg-card p-4 shadow-card">
           <span className="text-sm text-muted-foreground">Présents</span>
           <span className="font-display text-2xl font-bold text-primary-deep">
             {checkedIn} / {total}
@@ -184,8 +184,8 @@ function CheckinContent() {
           </span>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-border bg-card p-6 shadow-card">
-          <div className="flex items-center justify-between">
+        <div className="mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-lg font-semibold">Scanner caméra</h2>
             <Button
               type="button"
@@ -209,14 +209,14 @@ function CheckinContent() {
           <canvas ref={canvasRef} className="hidden" />
 
           <form
-            className="mt-6 flex items-end gap-3"
+            className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-end"
             onSubmit={(e) => {
               e.preventDefault();
               void processCode(manualValue);
               setManualValue("");
             }}
           >
-            <div className="flex-1 space-y-2">
+            <div className="min-w-0 flex-1 space-y-2">
               <Label htmlFor="manual-code">Douchette / saisie manuelle du code badge</Label>
               <Input
                 id="manual-code"
@@ -226,13 +226,15 @@ function CheckinContent() {
                 placeholder="Scanner ou coller le code…"
               />
             </div>
-            <Button type="submit">Valider</Button>
+            <Button type="submit" className="sm:shrink-0">
+              Valider
+            </Button>
           </form>
         </div>
 
         {result && (
           <div
-            className={`mt-6 rounded-2xl border p-6 shadow-card ${
+            className={`mt-6 min-w-0 rounded-2xl border p-4 shadow-card sm:p-6 ${
               result.kind === "ok"
                 ? "border-primary bg-secondary"
                 : result.kind === "already"
@@ -241,33 +243,37 @@ function CheckinContent() {
             }`}
           >
             {result.kind === "ok" && (
-              <p className="flex items-center gap-2 text-lg font-bold text-primary-deep">
-                <CheckCircle2 className="size-6" /> VALIDÉ — {result.name} —{" "}
-                <span
-                  className="size-2.5 rounded-full"
-                  style={{ backgroundColor: result.profileColor }}
-                />
-                {result.profileLabel}
+              <p className="flex flex-wrap items-center gap-2 text-lg font-bold text-primary-deep">
+                <CheckCircle2 className="size-6 shrink-0" /> VALIDÉ — {result.name} —
+                <span className="inline-flex items-center gap-2">
+                  <span
+                    className="size-2.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: result.profileColor }}
+                  />
+                  {result.profileLabel}
+                </span>
               </p>
             )}
             {result.kind === "already" && (
-              <p className="flex items-center gap-2 text-lg font-bold text-accent">
-                <AlertTriangle className="size-6" /> DÉJÀ SCANNÉ — {result.name} —{" "}
-                <span
-                  className="size-2.5 rounded-full"
-                  style={{ backgroundColor: result.profileColor }}
-                />
-                {result.profileLabel}
+              <p className="flex flex-wrap items-center gap-2 text-lg font-bold text-accent">
+                <AlertTriangle className="size-6 shrink-0" /> DÉJÀ SCANNÉ — {result.name} —
+                <span className="inline-flex items-center gap-2">
+                  <span
+                    className="size-2.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: result.profileColor }}
+                  />
+                  {result.profileLabel}
+                </span>
               </p>
             )}
             {result.kind === "invalid" && (
-              <p className="flex items-center gap-2 text-lg font-bold text-destructive">
-                <XCircle className="size-6" /> Badge invalide ou introuvable
+              <p className="flex flex-wrap items-center gap-2 text-lg font-bold text-destructive">
+                <XCircle className="size-6 shrink-0" /> Badge invalide ou introuvable
               </p>
             )}
             {result.kind === "error" && (
-              <p className="flex items-center gap-2 text-lg font-bold text-destructive">
-                <XCircle className="size-6" /> Erreur de vérification, réessayez
+              <p className="flex flex-wrap items-center gap-2 text-lg font-bold text-destructive">
+                <XCircle className="size-6 shrink-0" /> Erreur de vérification, réessayez
               </p>
             )}
             <Button className="mt-4" variant="outline" onClick={() => setResult(null)}>
