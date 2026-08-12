@@ -311,7 +311,6 @@ function Landing() {
           <div className="flex flex-wrap items-center gap-[18px]">
             <span>presidence@paafs.org</span>
             <span>+221 77 477 83 60</span>
-            <span className="font-extrabold text-[#fbf7f0]">FR</span>
           </div>
         </div>
       </div>
