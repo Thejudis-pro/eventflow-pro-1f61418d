@@ -155,6 +155,35 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          event_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          event_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          event_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_subscribers_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offers: {
         Row: {
           created_at: string
