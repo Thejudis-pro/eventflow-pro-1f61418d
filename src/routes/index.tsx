@@ -19,12 +19,14 @@ import {
   Users2,
 } from "lucide-react";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import heroAsset from "@/assets/fesa-hero.jpg.asset.json";
-import partnersAsset from "@/assets/fesa-partenaires.png.asset.json";
+import heroPhoto from "@/assets/hero-fesa.jpeg";
+import partnerLogos from "@/assets/fesa-partner-logos.png";
+import partnerFlyer from "@/assets/fesa-partner-flyer.png";
+import socialBanner from "@/assets/fesa-social-banner.png";
 import logoAsset from "@/assets/fesa-logo.png.asset.json";
-// Once the PAAF logo file is provided, add it under src/assets/ and swap this
-// for: import paafLogoAsset from "@/assets/paaf-logo.png.asset.json"; then
-// replace PAAF_LOGO_URL below with paafLogoAsset.url.
+// No standalone PAAF mark has been provided yet (only the combined PAAF+FESA
+// header band in header-fesa-band.jpeg) — add a cropped/isolated logo file
+// under src/assets/ and set PAAF_LOGO_URL to it once available.
 const PAAF_LOGO_URL: string | null = null;
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useReveal } from "@/components/fesa/Reveal";
@@ -43,6 +45,9 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:url", content: "https://fesa2026.com/" },
+      { property: "og:image", content: `https://fesa2026.com${socialBanner}` },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: `https://fesa2026.com${socialBanner}` },
     ],
     links: [{ rel: "canonical", href: "https://fesa2026.com/" }],
   }),
@@ -460,7 +465,7 @@ function Landing() {
 
         <div className="relative min-h-[380px] lg:min-h-0">
           <img
-            src={heroAsset.url}
+            src={heroPhoto}
             alt="Productrice agricole utilisant une tablette"
             className="absolute inset-0 size-full object-cover"
           />
@@ -781,7 +786,7 @@ function Landing() {
               Plus de 21 partenaires
             </h2>
             <img
-              src={partnersAsset.url}
+              src={partnerLogos}
               alt="Ministères, agences nationales et partenaires techniques et financiers du FESA 2026"
               loading="lazy"
               className="mt-6 block h-auto w-full max-w-[1104px]"
@@ -808,6 +813,13 @@ function Landing() {
               className="mt-5 flex h-12 items-center justify-center rounded-[14px] bg-[#e8722a] text-[14px] font-extrabold text-white transition hover:bg-[#c85c18]"
             >
               Contactez-nous
+            </a>
+            <a
+              href={partnerFlyer}
+              download="FESA-2026-Brochure-Partenariat.png"
+              className="mt-2.5 flex h-11 items-center justify-center gap-2 rounded-[14px] border border-white/15 bg-white/10 text-[13px] font-bold text-[#fbf7f0] transition hover:bg-white/20"
+            >
+              Télécharger la brochure partenaire
             </a>
           </div>
         </div>
