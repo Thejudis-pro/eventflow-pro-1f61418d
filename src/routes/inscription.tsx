@@ -456,7 +456,7 @@ function RegistrationPage() {
                 </div>
 
                 <div
-                  className="mt-6 flex items-center justify-between gap-8 rounded-[18px] px-6 py-[22px]"
+                  className="mt-6 flex flex-wrap items-center justify-between gap-5 rounded-[18px] px-6 py-[22px] sm:gap-8"
                   style={{ border: `1px solid ${REG.line}`, background: "#fff" }}
                 >
                   <div>
@@ -695,7 +695,7 @@ function RegistrationPage() {
                 </p>
 
                 <div
-                  className="mt-8 flex items-center justify-between gap-8 rounded-[18px] px-6 py-[22px]"
+                  className="mt-8 flex flex-wrap items-center justify-between gap-5 rounded-[18px] px-6 py-[22px] sm:gap-8"
                   style={{ border: `1px solid ${REG.line}`, background: "#fff" }}
                 >
                   <div>
@@ -749,29 +749,36 @@ function RegistrationPage() {
                     <CreditCard className="size-4" /> Payer avec PayDunya
                   </Button>
                 </div>
+                <p
+                  className="mt-4 max-w-[520px]"
+                  style={{ font: "500 13px/1.6 Manrope, sans-serif", color: REG.mutedLight }}
+                >
+                  Wave, Orange Money, Free Money, carte bancaire (Visa/Mastercard) et virement sont
+                  proposés à l&rsquo;étape suivante, sur la page sécurisée de PayTech ou PayDunya.
+                </p>
               </div>
             )}
 
             <div
-              className="mt-10 flex items-center justify-between gap-6 border-t pt-[26px]"
+              className="mt-10 flex flex-col-reverse gap-4 border-t pt-[26px] sm:flex-row sm:items-center sm:justify-between sm:gap-6"
               style={{ borderColor: REG.line }}
             >
               <Button
                 variant="outline"
                 disabled={step === 1}
                 onClick={() => setStep((s) => (s === 3 ? 2 : s === 2 ? 1 : s))}
-                className="h-[58px] rounded-2xl px-6"
+                className="h-[58px] w-full rounded-2xl px-6 sm:w-auto"
                 style={{ visibility: step === 1 ? "hidden" : "visible" }}
               >
                 <ArrowLeft className="size-4" />{" "}
                 {step === 2 ? "Retour aux tarifs" : "Étape précédente"}
               </Button>
               {step !== 3 && (
-                <div className="flex items-center gap-4">
+                <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
                   <Button
                     disabled={(step === 1 && !offerId) || submitting}
                     onClick={() => (step === 1 ? setStep(2) : void continueFromIdentity())}
-                    className="flex h-[58px] items-center gap-2.5 rounded-2xl px-7"
+                    className="flex h-[58px] w-full items-center justify-center gap-2.5 rounded-2xl px-7 sm:w-auto"
                     style={{ background: REG.orange, color: "#fff" }}
                   >
                     {submitting && <Loader2 className="size-4 animate-spin" />}
