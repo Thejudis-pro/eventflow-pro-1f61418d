@@ -538,6 +538,7 @@ function RegistrationPage() {
                     id="first_name"
                     label="PRÉNOM"
                     placeholder="Aïssatou"
+                    autoComplete="given-name"
                     value={form.first_name}
                     error={errors["first_name"]}
                     onChange={(v) => set("first_name", v)}
@@ -546,6 +547,7 @@ function RegistrationPage() {
                     id="last_name"
                     label="NOM"
                     placeholder="Ndiaye"
+                    autoComplete="family-name"
                     value={form.last_name}
                     error={errors["last_name"]}
                     onChange={(v) => set("last_name", v)}
@@ -555,6 +557,7 @@ function RegistrationPage() {
                     label="EMAIL"
                     type="email"
                     placeholder="aissatou@cooperative.sn"
+                    autoComplete="email"
                     value={form.email}
                     error={errors["email"]}
                     onChange={(v) => set("email", v)}
@@ -564,6 +567,7 @@ function RegistrationPage() {
                     label="TÉLÉPHONE / WHATSAPP"
                     type="tel"
                     placeholder="+221 77 000 00 00"
+                    autoComplete="tel"
                     value={form.phone}
                     error={errors["phone"]}
                     onChange={(v) => set("phone", v)}
@@ -579,6 +583,7 @@ function RegistrationPage() {
                     id="city"
                     label="VILLE"
                     placeholder="Dakar"
+                    autoComplete="address-level2"
                     value={form.city}
                     error={errors["city"]}
                     onChange={(v) => set("city", v)}
@@ -590,6 +595,8 @@ function RegistrationPage() {
                         value={form.otherCountry ?? ""}
                         onChange={(e) => set("otherCountry", e.target.value)}
                         placeholder="Cameroun, Maroc, France…"
+                        name="otherCountry"
+                        autoComplete="country-name"
                         className="h-[52px] rounded-[14px] px-4 outline-none"
                         style={{
                           border: `2px solid ${REG.green}`,
@@ -620,6 +627,8 @@ function RegistrationPage() {
                       value={form.company ?? ""}
                       onChange={(e) => set("company", e.target.value)}
                       placeholder="Coopérative Takku Ligey"
+                      name="company"
+                      autoComplete="organization"
                       className="h-[52px] rounded-[14px] px-4 outline-none"
                       style={{
                         border: `1px solid ${REG.lineDark}`,
@@ -957,6 +966,7 @@ function RegField({
   error,
   type = "text",
   placeholder,
+  autoComplete,
 }: {
   id: string;
   label: string;
@@ -965,6 +975,7 @@ function RegField({
   error?: string | undefined;
   type?: string | undefined;
   placeholder?: string | undefined;
+  autoComplete?: string | undefined;
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -973,6 +984,8 @@ function RegField({
       </Label>
       <Input
         id={id}
+        name={id}
+        autoComplete={autoComplete}
         type={type}
         value={value}
         maxLength={255}
