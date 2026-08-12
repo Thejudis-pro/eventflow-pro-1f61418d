@@ -17,9 +17,13 @@ import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as InscriptionRouteImport } from './routes/inscription'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
+import { Route as RetrouverMonBadgeRouteImport } from './routes/retrouver-mon-badge'
 import { Route as ConfirmationRegistrationIdRouteImport } from './routes/confirmation.$registrationId'
 import { Route as StaffLoginRouteImport } from './routes/staff.login'
 import { Route as StaffSignupRouteImport } from './routes/staff.signup'
+import { Route as ApiWebhooksPaydunyaRouteImport } from './routes/api.webhooks.paydunya'
+import { Route as ApiWebhooksPaytechRouteImport } from './routes/api.webhooks.paytech'
+import { Route as DevMockPayPaymentIdRouteImport } from './routes/dev.mock-pay.$paymentId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -61,6 +65,11 @@ const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
   path: '/mentions-legales',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RetrouverMonBadgeRoute = RetrouverMonBadgeRouteImport.update({
+  id: '/retrouver-mon-badge',
+  path: '/retrouver-mon-badge',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConfirmationRegistrationIdRoute =
   ConfirmationRegistrationIdRouteImport.update({
     id: '/confirmation/$registrationId',
@@ -77,6 +86,21 @@ const StaffSignupRoute = StaffSignupRouteImport.update({
   path: '/staff/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiWebhooksPaydunyaRoute = ApiWebhooksPaydunyaRouteImport.update({
+  id: '/api/webhooks/paydunya',
+  path: '/api/webhooks/paydunya',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWebhooksPaytechRoute = ApiWebhooksPaytechRouteImport.update({
+  id: '/api/webhooks/paytech',
+  path: '/api/webhooks/paytech',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevMockPayPaymentIdRoute = DevMockPayPaymentIdRouteImport.update({
+  id: '/dev/mock-pay/$paymentId',
+  path: '/dev/mock-pay/$paymentId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -87,9 +111,13 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/retrouver-mon-badge': typeof RetrouverMonBadgeRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
+  '/api/webhooks/paydunya': typeof ApiWebhooksPaydunyaRoute
+  '/api/webhooks/paytech': typeof ApiWebhooksPaytechRoute
+  '/dev/mock-pay/$paymentId': typeof DevMockPayPaymentIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -100,9 +128,13 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/retrouver-mon-badge': typeof RetrouverMonBadgeRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
+  '/api/webhooks/paydunya': typeof ApiWebhooksPaydunyaRoute
+  '/api/webhooks/paytech': typeof ApiWebhooksPaytechRoute
+  '/dev/mock-pay/$paymentId': typeof DevMockPayPaymentIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -114,9 +146,13 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/retrouver-mon-badge': typeof RetrouverMonBadgeRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
+  '/api/webhooks/paydunya': typeof ApiWebhooksPaydunyaRoute
+  '/api/webhooks/paytech': typeof ApiWebhooksPaytechRoute
+  '/dev/mock-pay/$paymentId': typeof DevMockPayPaymentIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -129,9 +165,13 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/inscription'
     | '/mentions-legales'
+    | '/retrouver-mon-badge'
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
+    | '/api/webhooks/paydunya'
+    | '/api/webhooks/paytech'
+    | '/dev/mock-pay/$paymentId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -142,9 +182,13 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/inscription'
     | '/mentions-legales'
+    | '/retrouver-mon-badge'
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
+    | '/api/webhooks/paydunya'
+    | '/api/webhooks/paytech'
+    | '/dev/mock-pay/$paymentId'
   id:
     | '__root__'
     | '/'
@@ -155,9 +199,13 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/inscription'
     | '/mentions-legales'
+    | '/retrouver-mon-badge'
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
+    | '/api/webhooks/paydunya'
+    | '/api/webhooks/paytech'
+    | '/dev/mock-pay/$paymentId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -169,9 +217,13 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   InscriptionRoute: typeof InscriptionRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
+  RetrouverMonBadgeRoute: typeof RetrouverMonBadgeRoute
   ConfirmationRegistrationIdRoute: typeof ConfirmationRegistrationIdRoute
   StaffLoginRoute: typeof StaffLoginRoute
   StaffSignupRoute: typeof StaffSignupRoute
+  ApiWebhooksPaydunyaRoute: typeof ApiWebhooksPaydunyaRoute
+  ApiWebhooksPaytechRoute: typeof ApiWebhooksPaytechRoute
+  DevMockPayPaymentIdRoute: typeof DevMockPayPaymentIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -232,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MentionsLegalesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/retrouver-mon-badge': {
+      id: '/retrouver-mon-badge'
+      path: '/retrouver-mon-badge'
+      fullPath: '/retrouver-mon-badge'
+      preLoaderRoute: typeof RetrouverMonBadgeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/confirmation/$registrationId': {
       id: '/confirmation/$registrationId'
       path: '/confirmation/$registrationId'
@@ -253,6 +312,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaffSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/webhooks/paydunya': {
+      id: '/api/webhooks/paydunya'
+      path: '/api/webhooks/paydunya'
+      fullPath: '/api/webhooks/paydunya'
+      preLoaderRoute: typeof ApiWebhooksPaydunyaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/webhooks/paytech': {
+      id: '/api/webhooks/paytech'
+      path: '/api/webhooks/paytech'
+      fullPath: '/api/webhooks/paytech'
+      preLoaderRoute: typeof ApiWebhooksPaytechRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/mock-pay/$paymentId': {
+      id: '/dev/mock-pay/$paymentId'
+      path: '/dev/mock-pay/$paymentId'
+      fullPath: '/dev/mock-pay/$paymentId'
+      preLoaderRoute: typeof DevMockPayPaymentIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -265,9 +345,13 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   InscriptionRoute: InscriptionRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
+  RetrouverMonBadgeRoute: RetrouverMonBadgeRoute,
   ConfirmationRegistrationIdRoute: ConfirmationRegistrationIdRoute,
   StaffLoginRoute: StaffLoginRoute,
   StaffSignupRoute: StaffSignupRoute,
+  ApiWebhooksPaydunyaRoute: ApiWebhooksPaydunyaRoute,
+  ApiWebhooksPaytechRoute: ApiWebhooksPaytechRoute,
+  DevMockPayPaymentIdRoute: DevMockPayPaymentIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

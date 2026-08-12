@@ -23,12 +23,34 @@ export type ProfileType = {
   price: number | null;
   sort_order: number;
   is_public?: boolean;
+  badge_prefix?: string | null;
+  ink_color?: string;
+  zone_label?: string | null;
+};
+
+/** A purchasable line on the public "Formule" step — decoupled from
+ * ProfileType so two price tiers (e.g. Participant sénégalais/non-sénégalais)
+ * can share one badge category. */
+export type Offer = {
+  id: string;
+  event_id: string;
+  profile_type_id: string;
+  kicker: string;
+  name: string;
+  description: string;
+  price: number;
+  unit_label: string;
+  included_badges: number;
+  is_public: boolean;
+  sort_order: number;
+  perks: string[];
 };
 
 export type Participant = {
   id: string;
   event_id: string;
   profile_type_id: string | null;
+  offer_id: string | null;
   delegation_id: string | null;
   full_name: string;
   email: string;
@@ -37,6 +59,8 @@ export type Participant = {
   sector: string | null;
   function: string | null;
   country: string | null;
+  city: string | null;
+  badge_quantity: number;
   registration_id: string;
   status: string;
   created_at: string;
@@ -67,15 +91,25 @@ export type Registration = {
   full_name: string;
   function: string | null;
   company: string | null;
+  country: string | null;
+  city: string | null;
   profile_label: string | null;
   profile_color: string | null;
+  profile_ink: string | null;
+  zone_label: string | null;
+  badge_prefix: string | null;
+  offer_name: string | null;
   registration_id: string;
   status: string;
   qr_payload: string | null;
   badge_url: string | null;
+  /** Status of the most recent payment row, if any ("pending" | "success" | "failed"). */
+  payment_status: string | null;
 };
 
 export type DelegationName = { id: string; primary_contact_name: string };
+
+export type EmailRegistrationMatch = { registration_id: string; full_name: string; status: string };
 
 export const eventQuery = {
   queryKey: ["event", CURRENT_EVENT_SLUG],
@@ -101,6 +135,24 @@ export const profileTypesQuery = (eventId?: string) => ({
       .order("sort_order");
     if (error) throw error;
     return (data ?? []) as ProfileType[];
+  },
+});
+
+/** Public "Formule" step offers, joined to profile_types for the badge color dot. */
+export const offersQuery = (eventId?: string) => ({
+  queryKey: ["offers", eventId],
+  enabled: Boolean(eventId),
+  queryFn: async (): Promise<(Offer & { profile_types: Pick<ProfileType, "color_code" | "label"> | null })[]> => {
+    const { data, error } = await supabase
+      .from("offers")
+      .select("*, profile_types(color_code, label)")
+      .eq("event_id", eventId!)
+      .eq("is_public", true)
+      .order("sort_order");
+    if (error) throw error;
+    return (data ?? []) as unknown as (Offer & {
+      profile_types: Pick<ProfileType, "color_code" | "label"> | null;
+    })[];
   },
 });
 
@@ -172,6 +224,20 @@ export const publicDelegationNamesQuery = (eventId?: string) => ({
     return (data ?? []) as DelegationName[];
   },
 });
+
+/** "Retrouver mon badge": lookup by email, deliberately never reveals
+ * whether the email exists — an empty array just means no matches. */
+export async function findRegistrationsByEmail(
+  eventId: string,
+  email: string,
+): Promise<EmailRegistrationMatch[]> {
+  const { data, error } = await supabase.rpc("find_registrations_by_email", {
+    p_event_id: eventId,
+    p_email: email,
+  });
+  if (error) throw error;
+  return (data ?? []) as EmailRegistrationMatch[];
+}
 
 export async function subscribeToNewsletter(eventId: string, email: string) {
   const { error } = await supabase

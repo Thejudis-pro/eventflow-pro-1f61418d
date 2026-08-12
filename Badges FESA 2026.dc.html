@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="_ds/modernist-f6da5228-21f7-46a2-aec0-3a3f54a2c445/styles.css">
+<script src="_ds/modernist-f6da5228-21f7-46a2-aec0-3a3f54a2c445/_ds_bundle.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e8e6e1;font-family:Archivo,system-ui,sans-serif}
+a{color:#ae1800}a:hover{color:#dd2b0f}
+</style></helmet>
+
+<div style="padding:44px 48px 60px;display:flex;flex-direction:column;gap:26px">
+
+<div style="max-width:1020px;display:flex;flex-direction:column;gap:10px">
+  <div style="font:900 30px/1.05 Archivo;letter-spacing:-.02em;color:#201e1d">Badges FESA 2026 — 95 × 135 mm</div>
+  <div style="font:400 13px/1.6 Archivo;color:#444141;max-width:790px">Dix-neuf catégories sur une structure unique : bandeau officiel PAAF × FESA 2026 en tête, filet or, titre, dates et lieu, identité du porteur, pastille de catégorie, QR d'accès, zone autorisée, bandeau graphique en pied. Seules la pastille, sa couleur et la ligne de zone changent — le gabarit est réutilisable d'une édition à l'autre. Les champs <strong>NOM &amp; PRÉNOM</strong>, organisation et identifiant sont remplis automatiquement à la validation du paiement.</div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start">
+<sc-for list="{{ cats }}" as="c" hint-placeholder-count="19">
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font:600 10px/1 Archivo;letter-spacing:.14em;text-transform:uppercase;color:#7d7979">{{ c.label }}</div>
+    <div style="width:359px;height:530px;background:#fff;box-shadow:0 3px 10px rgba(45,43,43,.16);display:flex;flex-direction:column">
+      <div style="flex:none;line-height:0">
+        <img src="header-fesa-band.png" alt="FESA 2026 — Forum de l'entrepreneuriat et de la souveraineté alimentaire" style="display:block;width:100%;height:auto">
+      </div>
+      <div style="height:2px;flex:none;background:#f2b632"></div>
+      <div style="padding:14px 18px 0;flex:none;text-align:center">
+        <div style="font:900 22px/1.02 Archivo;letter-spacing:-.02em;color:#0b7a3c">FORUM ÉCONOMIQUE</div>
+        <div style="font:800 11px/1.3 Archivo;letter-spacing:.02em;color:#0b2d5c;margin-top:4px">DES ÉTATS DE L'AFRIQUE DE L'OUEST</div>
+      </div>
+      <div style="padding:12px 18px 0;flex:none;display:flex;flex-direction:column;gap:4px;align-items:center;color:#201e1d">
+        <div style="display:flex;align-items:center;gap:6px;font:600 13px/1 Archivo">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0b7a3c" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16"></rect><path d="M8 3v4M16 3v4M3 11h18"></path></svg>
+          21 &amp; 22 septembre 2026
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font:500 11.5px/1 Archivo">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0b7a3c" stroke-width="2.2" stroke-linecap="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"></path><circle cx="12" cy="10" r="2.6"></circle></svg>
+          DAKAR, CICES
+        </div>
+      </div>
+      <div style="padding:16px 18px 0;flex:none;text-align:center">
+        <div style="font:900 21px/1.05 Archivo;letter-spacing:-.015em;color:#201e1d">NOM &amp; PRÉNOM</div>
+        <div style="font:500 10.5px/1.4 Archivo;letter-spacing:.06em;color:#7d7979;margin-top:3px">ORGANISATION · PAYS</div>
+      </div>
+      <div style="padding:10px 34px 0;flex:none">
+        <div style="background:{{ c.color }};padding:7px 0;text-align:center;font:800 15px/1.15 Archivo;color:{{ c.ink }}">{{ c.name }}</div>
+      </div>
+      <div style="padding:10px 0 0;flex:none;display:flex;flex-direction:column;align-items:center;gap:5px">
+        <div style="width:114px;height:114px;background:#fff;padding:5px;border:1px solid #d7d3d3">{{ c.qr }}</div>
+        <div style="font:500 9px/1.3 Archivo;letter-spacing:.1em;color:#9b9797">{{ c.code }} · SCAN À L'ENTRÉE</div>
+      </div>
+      <div style="padding:10px 30px 12px;flex:none">
+        <div style="border:2px solid {{ c.color }};padding:6px 0;text-align:center;font:900 17px/1.1 Archivo;color:#201e1d">{{ c.access }}</div>
+      </div>
+      <div style="height:40px;flex:none;margin-top:auto;background:#fff;overflow:hidden">
+        <img src="uploads/pasted-1786463789737-0.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:bottom">
+      </div>
+    </div>
+  </div>
+</sc-for>
+</div>
+
+<div style="max-width:1020px;background:#fff;border-left:3px solid #0b7a3c;padding:18px 22px;font:400 12.5px/1.7 Archivo;color:#444141">
+  <div style="font:800 11px/1 Archivo;letter-spacing:.12em;text-transform:uppercase;color:#0b7a3c;margin-bottom:8px">Ce que la plateforme génère</div>
+  Le QR encode l'identifiant d'inscription signé (préfixe par catégorie : <strong>ACC, PRE, ORG, PAR…</strong>), vérifiable hors ligne par l'application de scan. Le PDF sort en 95 × 135 mm avec 3 mm de fond perdu, un fichier par porteur, plus une planche de 6 pour l'impression au guichet. Ajouter une catégorie côté back-office = une ligne (libellé, couleur, zone) : aucune retouche graphique.<br>
+  <strong>À confirmer :</strong> le titre exact du forum, les zones réellement autorisées par catégorie, et si certaines catégories doivent partager une même couleur pour simplifier le contrôle visuel à l'entrée.
+</div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1640,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  qr(seed, dark) {
+    const N = 25, cells = [];
+    let s = seed;
+    const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+    const isFinder = (r, c) => (r < 7 && c < 7) || (r < 7 && c > N - 8) || (r > N - 8 && c < 7);
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      if (isFinder(r, c)) continue;
+      if (rnd() > 0.52) cells.push(React.createElement('rect', { key: r + '-' + c, x: c, y: r, width: 1, height: 1, fill: dark }));
+    }
+    const finder = (x, y) => [
+      React.createElement('rect', { key: 'a' + x + y, x, y, width: 7, height: 7, fill: dark }),
+      React.createElement('rect', { key: 'b' + x + y, x: x + 1, y: y + 1, width: 5, height: 5, fill: '#fff' }),
+      React.createElement('rect', { key: 'c' + x + y, x: x + 2, y: y + 2, width: 3, height: 3, fill: dark })
+    ];
+    return React.createElement('svg', { viewBox: '0 0 ' + N + ' ' + N, width: '100%', height: '100%', shapeRendering: 'crispEdges', role: 'img', 'aria-label': 'QR du badge' },
+      cells, finder(0, 0), finder(N - 7, 0), finder(0, N - 7));
+  }
+  renderVals() {
+    const NAVY = '#0b2d5c', GREEN = '#0b7a3c', GOLD = '#f2b632', RED = '#b8321f', INK = '#201e1d', SLATE = '#5a6b8a';
+    const rows = [
+      ['ACCÈS TOTAL', 'All access', 'TOUTES ZONES', NAVY, '#fff', 'ACC'],
+      ['PRESSE / MÉDIAS', 'Presse et médias', 'ZONE MÉDIAS', RED, '#fff', 'PRE'],
+      ['STAFF ORGANISATION', "Staff d'organisation", 'TOUTES ZONES', INK, '#fff', 'ORG'],
+      ['PARTICIPANT', 'Participant', 'ZONES PUBLIQUES', GREEN, '#fff', 'PAR'],
+      ['COMITÉ SCIENTIFIQUE', 'Comité scientifique', 'SALLES + SCÈNE', NAVY, '#fff', 'SCI'],
+      ['VOLONTAIRE', 'Volontaire', 'ZONES ASSIGNÉES', GREEN, '#fff', 'VOL'],
+      ['COORDINATION', 'Coordination', 'TOUTES ZONES', INK, '#fff', 'COO'],
+      ['EXPOSANT', 'Exposant', "HALL D'EXPOSITION", GOLD, INK, 'EXP'],
+      ['DÉLÉGATION OFFICIELLE', 'Délégation officielle', 'ACCÈS TOTAL + VIP', NAVY, '#fff', 'DEL'],
+      ['RAPPORTEUR', 'Rapporteur', 'SALLES DE SESSION', SLATE, '#fff', 'RAP'],
+      ['PARTENAIRE', 'Partenaire', 'ZONES PUBLIQUES + VIP', GOLD, INK, 'PTN'],
+      ['HÔTESSE D\u2019ACCUEIL', "Hôtesse d'accueil", 'ACCUEIL + HALLS', GREEN, '#fff', 'HOT'],
+      ['PANÉLISTE', 'Panéliste', 'SCÈNE + SALONS', GOLD, INK, 'PAN'],
+      ['RESTAURATION', 'Restauration', 'ESPACES RESTAURATION', SLATE, '#fff', 'RES'],
+      ['COMMUNICATION', 'Communication', 'TOUTES ZONES', RED, '#fff', 'COM'],
+      ['INTERPRÈTE', 'Interprète', 'CABINES + SALLES', SLATE, '#fff', 'INT'],
+      ['MODÉRATEUR', 'Modérateur', 'SCÈNE + SALONS', GOLD, INK, 'MOD'],
+      ['PROTOCOLE', 'Protocole', 'TOUTES ZONES', NAVY, '#fff', 'PRO'],
+      ['STAFF TECHNIQUE', 'Staff technique', 'RÉGIE + BACKSTAGE', INK, '#fff', 'TEC']
+    ];
+    return {
+      cats: rows.map((r, i) => ({
+        name: r[0], label: r[1], access: r[2], color: r[3], ink: r[4],
+        code: r[5] + '-0' + (101 + i * 7),
+        qr: this.qr(97 + i * 131, '#201e1d')
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>
