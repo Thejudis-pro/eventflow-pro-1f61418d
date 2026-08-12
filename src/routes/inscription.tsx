@@ -21,6 +21,7 @@ import { createCheckoutSession } from "@/lib/payments/checkout.functions";
 import {
   eventQuery,
   offersQuery,
+  profileTypesQuery,
   publicDelegationNamesQuery,
   SECTORS,
   type Offer,
@@ -99,7 +100,49 @@ function RegistrationPage() {
     isLoading: offersLoading,
     isError: offersErrored,
   } = useQuery(offersQuery(event?.id));
+  const {
+    data: profileTypes,
+    isLoading: profileTypesLoading,
+    isError: profileTypesErrored,
+  } = useQuery(profileTypesQuery(event?.id));
   const { data: delegations } = useQuery(publicDelegationNamesQuery(event?.id));
+
+  const isLoadingFormules = offersLoading || profileTypesLoading;
+
+  // The "offers" table joined to its profile_type for color/label. If it's
+  // empty (e.g. not yet seeded, or a PostgREST relationship-cache hiccup
+  // right after the table was created), fall back to synthesizing one offer
+  // per public, priced profile_type directly — keeps registration working
+  // even when the richer multi-tier-offer data isn't available yet.
+  const offersMerged = useMemo<OfferWithProfile[]>(() => {
+    const publicProfileTypes = (profileTypes ?? []).filter((p) => p.is_public);
+    if (offers && offers.length > 0) {
+      return offers.map((o) => {
+        const pt = publicProfileTypes.find((p) => p.id === o.profile_type_id);
+        return { ...o, profile_types: pt ? { color_code: pt.color_code, label: pt.label } : null };
+      });
+    }
+    if (!isLoadingFormules && publicProfileTypes.length > 0) {
+      return publicProfileTypes
+        .filter((p) => p.requires_payment && p.price)
+        .map((p) => ({
+          id: `pt:${p.id}`,
+          event_id: p.event_id,
+          profile_type_id: p.id,
+          kicker: "TICKET",
+          name: p.label,
+          description: "",
+          price: Number(p.price),
+          unit_label: "par badge",
+          included_badges: 0,
+          is_public: true,
+          sort_order: p.sort_order,
+          perks: [],
+          profile_types: { color_code: p.color_code, label: p.label },
+        }));
+    }
+    return [];
+  }, [offers, profileTypes, isLoadingFormules]);
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [offerId, setOfferId] = useState<string | null>(null);
@@ -111,8 +154,8 @@ function RegistrationPage() {
   const [registered, setRegistered] = useState<{ id: string; registrationId: string } | null>(null);
 
   const offer = useMemo<OfferWithProfile | null>(
-    () => (offers as OfferWithProfile[] | undefined)?.find((o) => o.id === offerId) ?? null,
-    [offers, offerId],
+    () => offersMerged.find((o) => o.id === offerId) ?? null,
+    [offersMerged, offerId],
   );
   const isStand = (offer?.included_badges ?? 0) > 0;
   const badgeQty = isStand ? (offer?.included_badges ?? 1) : qty;
@@ -154,7 +197,10 @@ function RegistrationPage() {
     const { data, error } = await supabase.rpc("register_participant", {
       p_event_id: event.id,
       p_profile_type_id: offer.profile_type_id,
-      p_offer_id: offer.id,
+      // Synthetic fallback offers (built client-side from profile_types when
+      // the offers table is empty/unreachable) use a "pt:" id — there's no
+      // real offers row to reference for those.
+      p_offer_id: offer.id.startsWith("pt:") ? null : offer.id,
       p_delegation_id: delegationId ?? "",
       p_full_name: fullName,
       p_email: form.email.trim(),
@@ -317,29 +363,31 @@ function RegistrationPage() {
                   nommerez les porteurs après le paiement.
                 </p>
 
-                {offersLoading && (
+                {isLoadingFormules && (
                   <div className="mt-8 flex items-center gap-2" style={{ color: REG.muted }}>
                     <Loader2 className="size-4 animate-spin" /> Chargement des formules…
                   </div>
                 )}
 
-                {!offersLoading && (offersErrored || (offers ?? []).length === 0) && (
-                  <div
-                    className="mt-8 rounded-[18px] px-6 py-5"
-                    style={{
-                      border: `1px solid ${REG.line}`,
-                      background: "#fff",
-                      font: "500 14px/1.6 Manrope, sans-serif",
-                      color: REG.muted,
-                    }}
-                  >
-                    Les formules ne sont pas disponibles pour le moment. Réessayez dans un instant
-                    ou contactez le secrétariat technique au +221 77 477 83 60.
-                  </div>
-                )}
+                {!isLoadingFormules &&
+                  (offersErrored || profileTypesErrored) &&
+                  offersMerged.length === 0 && (
+                    <div
+                      className="mt-8 rounded-[18px] px-6 py-5"
+                      style={{
+                        border: `1px solid ${REG.line}`,
+                        background: "#fff",
+                        font: "500 14px/1.6 Manrope, sans-serif",
+                        color: REG.muted,
+                      }}
+                    >
+                      Les formules ne sont pas disponibles pour le moment. Réessayez dans un instant
+                      ou contactez le secrétariat technique au +221 77 477 83 60.
+                    </div>
+                  )}
 
                 <div className="mt-8 flex flex-col gap-3">
-                  {(offers as OfferWithProfile[] | undefined)?.map((o) => {
+                  {offersMerged.map((o) => {
                     const on = o.id === offerId;
                     return (
                       <button

@@ -138,21 +138,23 @@ export const profileTypesQuery = (eventId?: string) => ({
   },
 });
 
-/** Public "Formule" step offers, joined to profile_types for the badge color dot. */
+/** Public "Formule" step offers. Plain select (no PostgREST relationship
+ * embedding) — embedding depends on foreign-key metadata that PostgREST
+ * caches separately from plain table access, which has been unreliable
+ * right after a table is created via the SQL editor rather than the normal
+ * migration pipeline. Callers join this to profileTypesQuery client-side. */
 export const offersQuery = (eventId?: string) => ({
   queryKey: ["offers", eventId],
   enabled: Boolean(eventId),
-  queryFn: async (): Promise<(Offer & { profile_types: Pick<ProfileType, "color_code" | "label"> | null })[]> => {
+  queryFn: async (): Promise<Offer[]> => {
     const { data, error } = await supabase
       .from("offers")
-      .select("*, profile_types(color_code, label)")
+      .select("*")
       .eq("event_id", eventId!)
       .eq("is_public", true)
       .order("sort_order");
     if (error) throw error;
-    return (data ?? []) as unknown as (Offer & {
-      profile_types: Pick<ProfileType, "color_code" | "label"> | null;
-    })[];
+    return (data ?? []) as Offer[];
   },
 });
 
