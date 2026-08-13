@@ -63,16 +63,24 @@ function ConfirmationPage() {
   }
 
   function handleAddToCalendar() {
-    if (!event) return;
-    downloadIcs({
-      uid: `${registrationId}@fesa2026.vercel.app`,
-      title: event.name,
-      description: `Votre inscription FESA 2026 — référence ${registrationId}.`,
-      location: event.location,
-      startDate: event.start_date,
-      endDate: event.end_date,
-      filename: `fesa2026-${registrationId}.ics`,
-    });
+    if (!event) {
+      toast.error("Chargement en cours, réessayez dans un instant.");
+      return;
+    }
+    try {
+      downloadIcs({
+        uid: `${registrationId}@fesa2026.vercel.app`,
+        title: event.name,
+        description: `Votre inscription FESA 2026 — référence ${registrationId}.`,
+        location: event.location,
+        startDate: event.start_date,
+        endDate: event.end_date,
+        filename: `fesa2026-${registrationId}.ics`,
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error("Le fichier calendrier n'a pas pu être généré.");
+    }
   }
 
   return (
