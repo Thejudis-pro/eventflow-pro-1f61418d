@@ -15,6 +15,7 @@ import { AccessLevelManager } from "@/components/fesa/AccessLevelManager";
 import { AdminShell } from "@/components/fesa/AdminShell";
 import { CreateFreeBadgeForm } from "@/components/fesa/CreateFreeBadgeForm";
 import { DelegationCsvImport } from "@/components/fesa/DelegationCsvImport";
+import { ParticipantDetailSheet } from "@/components/fesa/ParticipantDetailSheet";
 import { StaffAccessManager } from "@/components/fesa/StaffAccessManager";
 import { StaffGate } from "@/components/fesa/StaffGate";
 import {
@@ -24,7 +25,13 @@ import {
   TrendSparkline,
 } from "@/components/fesa/admin-charts";
 import { supabase } from "@/integrations/supabase/client";
-import { eventQuery, participantsQuery, paymentsQuery, profileTypesQuery } from "@/lib/event";
+import {
+  eventQuery,
+  participantsQuery,
+  paymentsQuery,
+  profileTypesQuery,
+  type Participant,
+} from "@/lib/event";
 
 const TITLE = "Tableau de bord organisateur — FESA 2026";
 const DESCRIPTION =
@@ -87,6 +94,7 @@ function DashboardContent() {
   const [profileFilter, setProfileFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [segmentProfile, setSegmentProfile] = useState("all");
+  const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
 
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -327,7 +335,11 @@ function DashboardContent() {
                 </thead>
                 <tbody>
                   {rows.map((r) => (
-                    <tr key={r.id} className="border-t border-border">
+                    <tr
+                      key={r.id}
+                      onClick={() => setSelectedParticipant(r)}
+                      className="cursor-pointer border-t border-border hover:bg-secondary/40"
+                    >
                       <td className="px-4 py-3 font-mono text-xs">{r.registration_id}</td>
                       <td className="px-4 py-3">
                         <span className="block font-medium text-foreground">{r.full_name}</span>
@@ -335,7 +347,7 @@ function DashboardContent() {
                           {r.company || r.email}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                         <Select
                           {...(r.profile_type_id ? { value: r.profile_type_id } : {})}
                           onValueChange={(v) => void assignCategory(r.id, v)}
@@ -530,6 +542,16 @@ function DashboardContent() {
           </section>
         </div>
       </div>
+
+      <ParticipantDetailSheet
+        participant={selectedParticipant}
+        profileLabel={profileLabel(selectedParticipant?.profile_type_id ?? null)}
+        profileColor={profileColor(selectedParticipant?.profile_type_id ?? null)}
+        payments={(payments ?? []).filter((p) => p.participant_id === selectedParticipant?.id)}
+        onOpenChange={(open) => {
+          if (!open) setSelectedParticipant(null);
+        }}
+      />
     </AdminShell>
   );
 }
