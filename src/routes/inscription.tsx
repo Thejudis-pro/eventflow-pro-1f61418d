@@ -200,7 +200,7 @@ function RegistrationPage() {
       // Synthetic fallback offers (built client-side from profile_types when
       // the offers table is empty/unreachable) use a "pt:" id — there's no
       // real offers row to reference for those.
-      p_offer_id: offer.id.startsWith("pt:") ? null : offer.id,
+      p_offer_id: (offer.id.startsWith("pt:") ? null : offer.id) as unknown as string,
       p_delegation_id: delegationId ?? "",
       p_full_name: fullName,
       p_email: form.email.trim(),
