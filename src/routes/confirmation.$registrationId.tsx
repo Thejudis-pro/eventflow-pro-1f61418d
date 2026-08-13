@@ -49,6 +49,15 @@ function ConfirmationPage() {
   const isPendingPayment = registration?.payment_status === "pending";
   const firstName = (registration?.full_name ?? "").split(" ")[0] ?? "";
 
+  // No WhatsApp Business API credentials -- instead, this opens the
+  // participant's own WhatsApp pre-filled with a message to the PAAF
+  // secretariat's number, so staff can send the badge back manually.
+  const whatsappHref = registration
+    ? `https://wa.me/221774778360?text=${encodeURIComponent(
+        `Bonjour, je souhaite recevoir mon badge FESA 2026 par WhatsApp.\nRéférence : ${registrationId}\nNom : ${registration.full_name}`,
+      )}`
+    : undefined;
+
   async function handleDownloadPdf() {
     if (!badgeRef.current) return;
     setDownloading(true);
@@ -186,16 +195,16 @@ function ConfirmationPage() {
                     Ajouter au calendrier
                     <CalendarPlus className="size-[18px]" />
                   </button>
-                  <button
-                    type="button"
-                    disabled
-                    onClick={() => toast.info("Bientôt disponible")}
-                    className="flex h-14 cursor-not-allowed items-center justify-between rounded-2xl px-[22px] opacity-60"
+                  <a
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-14 items-center justify-between rounded-2xl px-[22px]"
                     style={{ background: REG.creamLight, font: "800 15px/1 Manrope, sans-serif" }}
                   >
                     Recevoir le badge sur WhatsApp
                     <MessageCircle className="size-[18px]" />
-                  </button>
+                  </a>
                 </div>
 
                 <div
