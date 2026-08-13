@@ -28,6 +28,7 @@ import {
   type ProfileType,
 } from "@/lib/event";
 import { COUNTRIES } from "@/lib/countries";
+import { DIAL_CODES, PRIORITY_DIAL_COUNTRIES } from "@/lib/dial-codes";
 import { fmt, REG } from "@/lib/fesa-registration-theme";
 
 const TITLE = "Inscription FESA 2026 | Dakar, 21-22 septembre 2026";
@@ -36,6 +37,12 @@ const DESCRIPTION =
 const ARCHIVO_FONT_HREF =
   "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap";
 const OTHER_COUNTRY = "Autre pays";
+
+// CEDEAO neighbors first (most of this event's audience), then the rest of COUNTRIES alphabetically.
+const PHONE_COUNTRY_ORDER = [
+  ...PRIORITY_DIAL_COUNTRIES,
+  ...COUNTRIES.filter((c) => !(PRIORITY_DIAL_COUNTRIES as readonly string[]).includes(c)),
+];
 
 const inscriptionSearchSchema = z.object({
   intent: z.enum(["stand"]).optional(),
@@ -69,6 +76,7 @@ const detailsSchema = z.object({
   otherCountry: z.string().trim().max(80).optional().or(z.literal("")),
   city: z.string().trim().min(1, "Ville requise").max(80),
   email: z.string().trim().email("Adresse e-mail invalide").max(255),
+  phoneCode: z.string().trim().min(1),
   phone: z.string().trim().regex(PHONE_REGEX, "Numéro de téléphone invalide"),
   company: z.string().trim().max(160).optional().or(z.literal("")),
   sector: z.string().trim().max(80).optional().or(z.literal("")),
@@ -83,6 +91,7 @@ const EMPTY: Details = {
   otherCountry: "",
   city: "",
   email: "",
+  phoneCode: "+221",
   phone: "",
   company: "",
   sector: "",
@@ -162,6 +171,7 @@ function RegistrationPage() {
   const [qty, setQty] = useState(1);
   const [delegationId, setDelegationId] = useState<string | null>(null);
   const [form, setForm] = useState<Details>(EMPTY);
+  const [phoneCountry, setPhoneCountry] = useState("Sénégal");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [registered, setRegistered] = useState<{ id: string; registrationId: string } | null>(null);
@@ -217,7 +227,7 @@ function RegistrationPage() {
       p_delegation_id: delegationId ?? "",
       p_full_name: fullName,
       p_email: form.email.trim(),
-      p_phone: form.phone.trim(),
+      p_phone: `${form.phoneCode} ${form.phone.trim()}`.trim(),
       p_company: form.company?.trim() ?? "",
       p_function: "",
       p_sector: form.sector?.trim() ?? "",
@@ -575,17 +585,64 @@ function RegistrationPage() {
                     error={errors["email"]}
                     onChange={(v) => set("email", v)}
                   />
-                  <RegField
-                    id="phone"
-                    label="TÉLÉPHONE / WHATSAPP"
-                    type="tel"
-                    placeholder="+221 77 000 00 00"
-                    autoComplete="tel"
-                    value={form.phone}
-                    error={errors["phone"]}
-                    onChange={(v) => set("phone", v)}
-                    hint="Ajoutez l'indicatif de votre pays si possible, ex : +221 (Sénégal), +225 (Côte d'Ivoire), +234 (Nigéria)…"
-                  />
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="phone">
+                      <RegLabel>TÉLÉPHONE / WHATSAPP</RegLabel>
+                    </Label>
+                    <div className="flex gap-2">
+                      <Select
+                        value={phoneCountry}
+                        onValueChange={(name) => {
+                          setPhoneCountry(name);
+                          set("phoneCode", DIAL_CODES[name] ?? form.phoneCode);
+                        }}
+                      >
+                        <SelectTrigger
+                          id="phoneCode"
+                          className="h-[52px] w-[92px] shrink-0 rounded-[14px] px-3"
+                          style={{
+                            border: `1px solid ${REG.lineDark}`,
+                            background: "#fff",
+                            font: "600 15px/1 Manrope, sans-serif",
+                            color: REG.dark,
+                          }}
+                        >
+                          <SelectValue>{form.phoneCode}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {PHONE_COUNTRY_ORDER.map((name) => (
+                            <SelectItem key={name} value={name}>
+                              {DIAL_CODES[name] ?? ""} · {name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        autoComplete="tel"
+                        placeholder="77 000 00 00"
+                        maxLength={255}
+                        value={form.phone}
+                        onChange={(e) => set("phone", e.target.value)}
+                        className="h-[52px] flex-1 rounded-[14px]"
+                        style={{
+                          border: `1px solid ${REG.lineDark}`,
+                          background: "#fff",
+                          font: "600 15px/1 Manrope, sans-serif",
+                          color: REG.dark,
+                        }}
+                      />
+                    </div>
+                    {errors["phone"] ? (
+                      <p className="text-xs text-destructive">{errors["phone"]}</p>
+                    ) : (
+                      <p style={{ font: "500 11.5px/1.4 Manrope, sans-serif", color: REG.mutedLight }}>
+                        Numéro WhatsApp de préférence — l'indicatif est ajouté automatiquement.
+                      </p>
+                    )}
+                  </div>
                   <RegSelectField
                     id="country"
                     label="PAYS"
