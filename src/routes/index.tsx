@@ -154,8 +154,8 @@ const TIERS: Tier[] = [
   {
     kicker: "TICKET",
     title: ["Participant", "non-sénégalais"],
-    price: "20 000",
-    note: "Délégations des 15 pays invités et autres",
+    price: "13 120",
+    note: "Délégations des 15 pays invités et autres · équivalent 20 €",
     cta: "S'inscrire",
     included: [
       "Plénières et panels",
@@ -276,7 +276,7 @@ function Landing() {
       eventStatus: "https://schema.org/EventScheduled",
       location: {
         "@type": "Place",
-        name: event?.location ?? "Dakar, Sénégal",
+        name: event?.location ?? "CICES, Dakar, Sénégal",
         address: { "@type": "PostalAddress", addressLocality: "Dakar", addressCountry: "SN" },
       },
       organizer: { "@type": "Organization", name: "PAAF", url: "https://www.paafs.org" },
@@ -610,6 +610,7 @@ function Landing() {
               <br />à Dakar
             </h2>
             <p className="mt-4 text-[14.5px] leading-[1.7] text-[rgba(251,247,240,.68)]">
+              Le forum se tient au CICES (Centre International du Commerce Extérieur du Sénégal).
               Le détail des ateliers et des intervenants est publié progressivement. Les inscrits
               reçoivent chaque mise à jour par WhatsApp.
             </p>
@@ -825,7 +826,7 @@ function Landing() {
               partent vite.
             </h2>
             <p className="mt-3 text-[15px] font-medium leading-[1.6] text-[rgba(255,255,255,.9)]">
-              21 &amp; 22 septembre 2026 · Dakar, Sénégal
+              21 &amp; 22 septembre 2026 · CICES, Dakar
             </p>
           </div>
           <div className="flex flex-none flex-wrap gap-3">

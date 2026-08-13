@@ -55,7 +55,7 @@ export const Route = createFileRoute("/inscription")({
   component: RegistrationPage,
 });
 
-const PHONE_REGEX = /^\+[1-9]\d{0,3}[\d\s-]{6,14}$/;
+const PHONE_REGEX = /^\+?[0-9][0-9\s-]{6,17}$/;
 
 const detailsSchema = z.object({
   last_name: z.string().trim().min(2, "Nom requis").max(60),
@@ -64,7 +64,7 @@ const detailsSchema = z.object({
   otherCountry: z.string().trim().max(80).optional().or(z.literal("")),
   city: z.string().trim().min(1, "Ville requise").max(80),
   email: z.string().trim().email("Adresse e-mail invalide").max(255),
-  phone: z.string().trim().regex(PHONE_REGEX, "Format international requis, ex : +221771234567"),
+  phone: z.string().trim().regex(PHONE_REGEX, "Numéro de téléphone invalide"),
   company: z.string().trim().max(160).optional().or(z.literal("")),
   sector: z.string().trim().max(80).optional().or(z.literal("")),
 });
@@ -571,6 +571,7 @@ function RegistrationPage() {
                     value={form.phone}
                     error={errors["phone"]}
                     onChange={(v) => set("phone", v)}
+                    hint="Ajoutez l'indicatif de votre pays si possible, ex : +221 (Sénégal), +225 (Côte d'Ivoire), +234 (Nigéria)…"
                   />
                   <RegSelectField
                     id="country"
@@ -803,7 +804,7 @@ function RegistrationPage() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-4" style={{ position: "sticky", top: 24 }}>
+          <div className="flex flex-col gap-4 lg:sticky lg:top-6">
             <div className="rounded-[20px] p-7" style={{ background: REG.dark, color: REG.cream }}>
               <div className="flex items-baseline justify-between">
                 <div
@@ -906,7 +907,7 @@ function RegistrationPage() {
               </div>
             </div>
 
-            <div className="hidden lg:block">
+            <div className="flex justify-center overflow-x-auto">
               <BadgePreview
                 data={{
                   eventName: event?.name ?? "FESA 2026",
@@ -967,6 +968,7 @@ function RegField({
   type = "text",
   placeholder,
   autoComplete,
+  hint,
 }: {
   id: string;
   label: string;
@@ -976,6 +978,7 @@ function RegField({
   type?: string | undefined;
   placeholder?: string | undefined;
   autoComplete?: string | undefined;
+  hint?: string | undefined;
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -999,6 +1002,9 @@ function RegField({
           color: REG.dark,
         }}
       />
+      {hint && !error && (
+        <p style={{ font: "500 11.5px/1.4 Manrope, sans-serif", color: REG.mutedLight }}>{hint}</p>
+      )}
       {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   );

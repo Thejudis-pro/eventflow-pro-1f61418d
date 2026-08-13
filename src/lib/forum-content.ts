@@ -8,7 +8,7 @@ export const FORUM_INTRO =
 
 export const OBJECTIVES = [
   "Un agenda commun de formalisation",
-  "L'accès au financement CEDEAO / UEMOA",
+  "L'accès au financement",
   "Des passerelles projets ↔ investisseurs",
   "Les initiatives des femmes et des jeunes",
   "L'ESS et la gouvernance coopérative",
