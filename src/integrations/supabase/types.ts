@@ -506,47 +506,28 @@ export type Database = {
           primary_contact_name: string
         }[]
       }
-      register_participant:
-        | {
-            Args: {
-              p_company: string
-              p_delegation_id: string
-              p_email: string
-              p_event_id: string
-              p_full_name: string
-              p_function: string
-              p_phone: string
-              p_profile_type_id: string
-              p_sector: string
-              p_status: string
-            }
-            Returns: {
-              id: string
-              registration_id: string
-            }[]
-          }
-        | {
-            Args: {
-              p_badge_quantity?: number
-              p_city: string
-              p_company: string
-              p_country: string
-              p_delegation_id: string
-              p_email: string
-              p_event_id: string
-              p_full_name: string
-              p_function: string
-              p_offer_id: string
-              p_phone: string
-              p_profile_type_id: string
-              p_sector: string
-              p_status: string
-            }
-            Returns: {
-              id: string
-              registration_id: string
-            }[]
-          }
+      register_participant: {
+        Args: {
+          p_badge_quantity?: number
+          p_city: string
+          p_company: string
+          p_country: string
+          p_delegation_id: string
+          p_email: string
+          p_event_id: string
+          p_full_name: string
+          p_function: string
+          p_offer_id: string
+          p_phone: string
+          p_profile_type_id: string
+          p_sector: string
+          p_status: string
+        }
+        Returns: {
+          id: string
+          registration_id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
