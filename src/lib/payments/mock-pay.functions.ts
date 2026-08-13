@@ -8,9 +8,9 @@ function assertMockMode() {
   }
 }
 
-/** Stand-in "hosted checkout page" used before real PayTech/PayDunya
- * credentials exist — exercises the exact same confirmPayment() path a real
- * webhook would use, so the async pending→paid flow is fully testable. */
+/** Stand-in "hosted checkout page" used before real PayTech credentials
+ * exist — exercises the exact same confirmPayment() path a real webhook
+ * would use, so the async pending→paid flow is fully testable. */
 export const getMockPayment = createServerFn({ method: "GET" })
   .validator(z.object({ paymentId: z.string().uuid() }))
   .handler(async ({ data }) => {

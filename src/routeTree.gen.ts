@@ -21,7 +21,6 @@ import { Route as RetrouverMonBadgeRouteImport } from './routes/retrouver-mon-ba
 import { Route as ConfirmationRegistrationIdRouteImport } from './routes/confirmation.$registrationId'
 import { Route as StaffLoginRouteImport } from './routes/staff.login'
 import { Route as StaffSignupRouteImport } from './routes/staff.signup'
-import { Route as ApiWebhooksPaydunyaRouteImport } from './routes/api.webhooks.paydunya'
 import { Route as ApiWebhooksPaytechRouteImport } from './routes/api.webhooks.paytech'
 import { Route as DevMockPayPaymentIdRouteImport } from './routes/dev.mock-pay.$paymentId'
 
@@ -86,11 +85,6 @@ const StaffSignupRoute = StaffSignupRouteImport.update({
   path: '/staff/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiWebhooksPaydunyaRoute = ApiWebhooksPaydunyaRouteImport.update({
-  id: '/api/webhooks/paydunya',
-  path: '/api/webhooks/paydunya',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiWebhooksPaytechRoute = ApiWebhooksPaytechRouteImport.update({
   id: '/api/webhooks/paytech',
   path: '/api/webhooks/paytech',
@@ -115,7 +109,6 @@ export interface FileRoutesByFullPath {
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
-  '/api/webhooks/paydunya': typeof ApiWebhooksPaydunyaRoute
   '/api/webhooks/paytech': typeof ApiWebhooksPaytechRoute
   '/dev/mock-pay/$paymentId': typeof DevMockPayPaymentIdRoute
 }
@@ -132,7 +125,6 @@ export interface FileRoutesByTo {
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
-  '/api/webhooks/paydunya': typeof ApiWebhooksPaydunyaRoute
   '/api/webhooks/paytech': typeof ApiWebhooksPaytechRoute
   '/dev/mock-pay/$paymentId': typeof DevMockPayPaymentIdRoute
 }
@@ -150,7 +142,6 @@ export interface FileRoutesById {
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
-  '/api/webhooks/paydunya': typeof ApiWebhooksPaydunyaRoute
   '/api/webhooks/paytech': typeof ApiWebhooksPaytechRoute
   '/dev/mock-pay/$paymentId': typeof DevMockPayPaymentIdRoute
 }
@@ -169,7 +160,6 @@ export interface FileRouteTypes {
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
-    | '/api/webhooks/paydunya'
     | '/api/webhooks/paytech'
     | '/dev/mock-pay/$paymentId'
   fileRoutesByTo: FileRoutesByTo
@@ -186,7 +176,6 @@ export interface FileRouteTypes {
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
-    | '/api/webhooks/paydunya'
     | '/api/webhooks/paytech'
     | '/dev/mock-pay/$paymentId'
   id:
@@ -203,7 +192,6 @@ export interface FileRouteTypes {
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
-    | '/api/webhooks/paydunya'
     | '/api/webhooks/paytech'
     | '/dev/mock-pay/$paymentId'
   fileRoutesById: FileRoutesById
@@ -221,7 +209,6 @@ export interface RootRouteChildren {
   ConfirmationRegistrationIdRoute: typeof ConfirmationRegistrationIdRoute
   StaffLoginRoute: typeof StaffLoginRoute
   StaffSignupRoute: typeof StaffSignupRoute
-  ApiWebhooksPaydunyaRoute: typeof ApiWebhooksPaydunyaRoute
   ApiWebhooksPaytechRoute: typeof ApiWebhooksPaytechRoute
   DevMockPayPaymentIdRoute: typeof DevMockPayPaymentIdRoute
 }
@@ -312,13 +299,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaffSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/webhooks/paydunya': {
-      id: '/api/webhooks/paydunya'
-      path: '/api/webhooks/paydunya'
-      fullPath: '/api/webhooks/paydunya'
-      preLoaderRoute: typeof ApiWebhooksPaydunyaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/webhooks/paytech': {
       id: '/api/webhooks/paytech'
       path: '/api/webhooks/paytech'
@@ -349,7 +329,6 @@ const rootRouteChildren: RootRouteChildren = {
   ConfirmationRegistrationIdRoute: ConfirmationRegistrationIdRoute,
   StaffLoginRoute: StaffLoginRoute,
   StaffSignupRoute: StaffSignupRoute,
-  ApiWebhooksPaydunyaRoute: ApiWebhooksPaydunyaRoute,
   ApiWebhooksPaytechRoute: ApiWebhooksPaytechRoute,
   DevMockPayPaymentIdRoute: DevMockPayPaymentIdRoute,
 }

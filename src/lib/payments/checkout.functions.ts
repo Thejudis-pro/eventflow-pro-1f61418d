@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const inputSchema = z.object({
   participantId: z.string().uuid(),
-  provider: z.enum(["paytech", "paydunya"]),
+  provider: z.literal("paytech"),
 });
 
 /**
@@ -60,32 +60,15 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
     const ipnUrl = `${origin}/api/webhooks/${data.provider}`;
     const itemName = `FESA 2026 — ${offer?.name ?? profileType?.label ?? "Inscription"}`;
 
-    if (data.provider === "paytech") {
-      const { createPaytechSession } = await import("./paytech.server");
-      const session = await createPaytechSession({
-        amount,
-        refCommand: participant.registration_id ?? payment.id,
-        itemName,
-        successUrl,
-        cancelUrl: successUrl,
-        ipnUrl,
-        customField: { paymentId: payment.id },
-      });
-      await supabaseAdmin
-        .from("payments")
-        .update({ checkout_url: session.checkoutUrl, provider_session_id: session.providerSessionId })
-        .eq("id", payment.id);
-      return { checkoutUrl: session.checkoutUrl };
-    }
-
-    const { createPaydunyaSession } = await import("./paydunya.server");
-    const session = await createPaydunyaSession({
+    const { createPaytechSession } = await import("./paytech.server");
+    const session = await createPaytechSession({
       amount,
-      description: itemName,
-      returnUrl: successUrl,
+      refCommand: participant.registration_id ?? payment.id,
+      itemName,
+      successUrl,
       cancelUrl: successUrl,
       ipnUrl,
-      customData: { paymentId: payment.id },
+      customField: { paymentId: payment.id },
     });
     await supabaseAdmin
       .from("payments")

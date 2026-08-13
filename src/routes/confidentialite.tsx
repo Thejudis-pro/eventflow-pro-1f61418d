@@ -44,7 +44,7 @@ function ConfidentialitePage() {
           <p>
             Aucune donnée bancaire (numéro de carte, identifiants de paiement) n'est collectée ni
             stockée par le site : les paiements sont traités directement par les prestataires (Wave,
-            Orange Money, PayTech, PayDunya, établissements bancaires).
+            Orange Money, PayTech, établissements bancaires).
           </p>
         </LegalSection>
 

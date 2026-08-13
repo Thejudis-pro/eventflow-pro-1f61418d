@@ -255,7 +255,7 @@ function RegistrationPage() {
     }
   }
 
-  async function pay(provider: "paytech" | "paydunya") {
+  async function pay(provider: "paytech") {
     if (!registered) return;
     setSubmitting(true);
     try {
@@ -763,21 +763,13 @@ function RegistrationPage() {
                     )}
                     Payer avec PayTech
                   </Button>
-                  <Button
-                    variant="outline"
-                    disabled={submitting}
-                    onClick={() => void pay("paydunya")}
-                    className="flex h-14 items-center justify-center gap-2.5"
-                  >
-                    <CreditCard className="size-4" /> Payer avec PayDunya
-                  </Button>
                 </div>
                 <p
                   className="mt-4 max-w-[520px]"
                   style={{ font: "500 13px/1.6 Manrope, sans-serif", color: REG.mutedLight }}
                 >
                   Wave, Orange Money, Free Money, carte bancaire (Visa/Mastercard) et virement sont
-                  proposés à l&rsquo;étape suivante, sur la page sécurisée de PayTech ou PayDunya.
+                  proposés à l&rsquo;étape suivante, sur la page sécurisée de PayTech.
                 </p>
               </div>
             )}

@@ -13,8 +13,8 @@ export const Route = createFileRoute("/dev/mock-pay/$paymentId")({
 /**
  * Stand-in "hosted checkout page" used while PAYMENTS_MODE !== 'live' — lets
  * the full registration → payment → badge flow be exercised end-to-end
- * before real PayTech/PayDunya credentials exist. Both buttons run through
- * the exact same confirmPayment() path the real webhooks will use.
+ * before real PayTech credentials exist. Both buttons run through the
+ * exact same confirmPayment() path the real webhook will use.
  */
 function MockPayPage() {
   const { paymentId } = Route.useParams();

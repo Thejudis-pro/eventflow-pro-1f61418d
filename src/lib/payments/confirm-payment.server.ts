@@ -5,8 +5,8 @@ export type ConfirmPaymentResult = { participantId: string; status: "success" | 
 
 /**
  * The single place allowed to mark a payment — and, on success, the
- * participant — as paid. Shared by the real PayTech/PayDunya webhook
- * handlers and the dev mock-pay page so both exercise identical logic.
+ * participant — as paid. Shared by the real PayTech webhook handler and
+ * the dev mock-pay page so both exercise identical logic.
  * Never trust a client-supplied "it worked" signal; this only runs from
  * server routes/functions using the service-role client.
  */
