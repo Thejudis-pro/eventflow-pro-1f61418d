@@ -13,6 +13,7 @@ import {
   Sun,
   Moon,
   Menu,
+  BadgePlus,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -71,7 +72,7 @@ function ThemeToggle({
 }
 
 export type AdminNavKey =
-  "overview" | "participants" | "payments" | "checkin" | "import" | "segments";
+  "overview" | "participants" | "create" | "payments" | "checkin" | "import" | "segments";
 
 const NAV_ITEMS: {
   key: AdminNavKey;
@@ -88,6 +89,7 @@ const NAV_ITEMS: {
     hash: "participants",
     icon: Users,
   },
+  { key: "create", label: "Créer un badge", to: "/dashboard", hash: "creer", icon: BadgePlus },
   { key: "payments", label: "Paiements", to: "/dashboard", hash: "paiements", icon: CreditCard },
   { key: "checkin", label: "Check-in sur site", to: "/checkin", icon: QrCode },
   { key: "import", label: "Import CSV", to: "/dashboard", hash: "import", icon: Upload },

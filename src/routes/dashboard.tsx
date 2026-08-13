@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Download, Plus, QrCode, Send, Upload } from "lucide-react";
+import { BadgePlus, Download, Plus, QrCode, Send, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AdminShell } from "@/components/fesa/AdminShell";
+import { CreateFreeBadgeForm } from "@/components/fesa/CreateFreeBadgeForm";
 import { DelegationCsvImport } from "@/components/fesa/DelegationCsvImport";
 import { StaffGate } from "@/components/fesa/StaffGate";
 import {
@@ -377,6 +378,23 @@ function DashboardContent() {
                   )}
                 </tbody>
               </table>
+            </div>
+          </section>
+
+          {/* Manual free badge creation */}
+          <section
+            id="creer"
+            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
+          >
+            <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <BadgePlus className="size-4 text-accent" /> Créer un badge gratuit
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Pour la presse, le staff, les VIP ou toute personne à accréditer sans passer par le
+              formulaire d'inscription payant.
+            </p>
+            <div className="mt-4">
+              <CreateFreeBadgeForm eventId={event?.id} />
             </div>
           </section>
 
