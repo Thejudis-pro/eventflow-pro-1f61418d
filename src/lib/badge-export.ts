@@ -1,9 +1,17 @@
 /** Client-only exports for the confirmation page: badge PDF (via html2canvas
  * + jsPDF, capturing the same on-screen BadgePreview so there's zero
- * duplicated layout code) and an .ics calendar file (no library needed). */
+ * duplicated layout code) and an .ics calendar file (no library needed).
+ *
+ * Uses html2canvas-pro rather than html2canvas: the site's Tailwind v4
+ * theme defines every color as oklch(), which plain html2canvas can't
+ * parse (it throws immediately on any oklch()/lab()/color() computed
+ * style) -- html2canvas-pro is a drop-in fork that supports them. */
 
 export async function downloadBadgePdf(node: HTMLElement, filename: string): Promise<void> {
-  const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import("html2canvas"), import("jspdf")]);
+  const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+    import("html2canvas-pro"),
+    import("jspdf"),
+  ]);
 
   const canvas = await html2canvas(node, { scale: 3, backgroundColor: "#ffffff", useCORS: true });
   const imgData = canvas.toDataURL("image/png");
