@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { BadgePlus, Download, Plus, QrCode, Send, Upload } from "lucide-react";
+import { BadgePlus, Download, Plus, QrCode, Send, ShieldCheck, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +14,7 @@ import {
 import { AdminShell } from "@/components/fesa/AdminShell";
 import { CreateFreeBadgeForm } from "@/components/fesa/CreateFreeBadgeForm";
 import { DelegationCsvImport } from "@/components/fesa/DelegationCsvImport";
+import { StaffAccessManager } from "@/components/fesa/StaffAccessManager";
 import { StaffGate } from "@/components/fesa/StaffGate";
 import {
   EventHealthRadar,
@@ -452,6 +453,22 @@ function DashboardContent() {
               >
                 <Send className="size-4" /> Envoyer un message à ce segment
               </Button>
+            </div>
+          </section>
+
+          {/* Staff access management */}
+          <section
+            id="acces"
+            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
+          >
+            <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <ShieldCheck className="size-4 text-accent" /> Accès organisateurs
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Validez ou révoquez l'accès des comptes qui se sont inscrits à l'espace organisateur.
+            </p>
+            <div className="mt-2">
+              <StaffAccessManager />
             </div>
           </section>
         </div>

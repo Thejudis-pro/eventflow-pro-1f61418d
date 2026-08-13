@@ -14,6 +14,7 @@ import {
   Moon,
   Menu,
   BadgePlus,
+  ShieldCheck,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -72,7 +73,14 @@ function ThemeToggle({
 }
 
 export type AdminNavKey =
-  "overview" | "participants" | "create" | "payments" | "checkin" | "import" | "segments";
+  | "overview"
+  | "participants"
+  | "create"
+  | "payments"
+  | "checkin"
+  | "import"
+  | "segments"
+  | "access";
 
 const NAV_ITEMS: {
   key: AdminNavKey;
@@ -94,6 +102,7 @@ const NAV_ITEMS: {
   { key: "checkin", label: "Check-in sur site", to: "/checkin", icon: QrCode },
   { key: "import", label: "Import CSV", to: "/dashboard", hash: "import", icon: Upload },
   { key: "segments", label: "Segmentation", to: "/dashboard", hash: "segmentation", icon: Target },
+  { key: "access", label: "Accès organisateurs", to: "/dashboard", hash: "acces", icon: ShieldCheck },
 ];
 
 function BrandMark() {
