@@ -712,6 +712,7 @@ function Landing() {
                 </div>
                 <Link
                   to="/inscription"
+                  search={tier.kicker === "TICKET" ? {} : { intent: "stand" }}
                   className="mt-[22px] flex h-12 items-center justify-center rounded-[14px] bg-[#0b7a3c] px-3 text-center text-[14px] font-extrabold text-white transition hover:bg-[#0d3d21]"
                 >
                   {tier.cta}

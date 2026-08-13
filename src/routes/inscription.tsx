@@ -37,7 +37,12 @@ const ARCHIVO_FONT_HREF =
   "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap";
 const OTHER_COUNTRY = "Autre pays";
 
+const inscriptionSearchSchema = z.object({
+  intent: z.enum(["stand"]).optional(),
+});
+
 export const Route = createFileRoute("/inscription")({
+  validateSearch: inscriptionSearchSchema,
   head: () => ({
     meta: [
       { title: TITLE },
@@ -94,6 +99,7 @@ function isPartenaire(label?: string | null) {
 
 function RegistrationPage() {
   const navigate = useNavigate();
+  const { intent } = Route.useSearch();
   const { data: event } = useQuery(eventQuery);
   const {
     data: offers,
@@ -143,6 +149,13 @@ function RegistrationPage() {
     }
     return [];
   }, [offers, profileTypes, isLoadingFormules]);
+
+  // Arriving via a "Réserver un stand" CTA should only offer stand formulas,
+  // not the participant tickets alongside them.
+  const visibleOffers = useMemo(
+    () => (intent === "stand" ? offersMerged.filter((o) => o.included_badges > 0) : offersMerged),
+    [offersMerged, intent],
+  );
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [offerId, setOfferId] = useState<string | null>(null);
@@ -387,7 +400,7 @@ function RegistrationPage() {
                   )}
 
                 <div className="mt-8 flex flex-col gap-3">
-                  {offersMerged.map((o) => {
+                  {visibleOffers.map((o) => {
                     const on = o.id === offerId;
                     return (
                       <button
