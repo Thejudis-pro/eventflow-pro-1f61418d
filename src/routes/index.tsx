@@ -209,7 +209,7 @@ const FOOTER_COLS = [
   },
   {
     title: "PRATIQUE",
-    links: [{ label: "Contact", href: "mailto:presidence@paafs.org" }],
+    links: [{ label: "Contact", to: "/contact" as const }],
   },
 ];
 

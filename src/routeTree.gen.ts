@@ -14,6 +14,7 @@ import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as CheckinRouteImport } from './routes/checkin'
 import { Route as ConditionsInscriptionRouteImport } from './routes/conditions-inscription'
 import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as InscriptionRouteImport } from './routes/inscription'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
@@ -47,6 +48,11 @@ const ConditionsInscriptionRoute = ConditionsInscriptionRouteImport.update({
 const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
   id: '/confidentialite',
   path: '/confidentialite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/checkin': typeof CheckinRoute
   '/conditions-inscription': typeof ConditionsInscriptionRoute
   '/confidentialite': typeof ConfidentialiteRoute
+  '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/checkin': typeof CheckinRoute
   '/conditions-inscription': typeof ConditionsInscriptionRoute
   '/confidentialite': typeof ConfidentialiteRoute
+  '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/checkin': typeof CheckinRoute
   '/conditions-inscription': typeof ConditionsInscriptionRoute
   '/confidentialite': typeof ConfidentialiteRoute
+  '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/inscription': typeof InscriptionRoute
   '/mentions-legales': typeof MentionsLegalesRoute
@@ -153,6 +162,7 @@ export interface FileRouteTypes {
     | '/checkin'
     | '/conditions-inscription'
     | '/confidentialite'
+    | '/contact'
     | '/dashboard'
     | '/inscription'
     | '/mentions-legales'
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/checkin'
     | '/conditions-inscription'
     | '/confidentialite'
+    | '/contact'
     | '/dashboard'
     | '/inscription'
     | '/mentions-legales'
@@ -185,6 +196,7 @@ export interface FileRouteTypes {
     | '/checkin'
     | '/conditions-inscription'
     | '/confidentialite'
+    | '/contact'
     | '/dashboard'
     | '/inscription'
     | '/mentions-legales'
@@ -202,6 +214,7 @@ export interface RootRouteChildren {
   CheckinRoute: typeof CheckinRoute
   ConditionsInscriptionRoute: typeof ConditionsInscriptionRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
+  ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   InscriptionRoute: typeof InscriptionRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
@@ -248,6 +261,13 @@ declare module '@tanstack/react-router' {
       path: '/confidentialite'
       fullPath: '/confidentialite'
       preLoaderRoute: typeof ConfidentialiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -322,6 +342,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckinRoute: CheckinRoute,
   ConditionsInscriptionRoute: ConditionsInscriptionRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
+  ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   InscriptionRoute: InscriptionRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
