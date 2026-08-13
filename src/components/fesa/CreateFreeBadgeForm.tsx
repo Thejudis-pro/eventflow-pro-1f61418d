@@ -62,7 +62,8 @@ export function CreateFreeBadgeForm({ eventId }: { eventId?: string | undefined 
       const { data, error } = await supabase.rpc("register_participant", {
         p_event_id: eventId,
         p_profile_type_id: form.profileTypeId,
-        p_offer_id: null,
+        // No offer for free staff-created badges; the RPC accepts a NULL uuid.
+        p_offer_id: null as unknown as string,
         p_delegation_id: "",
         p_full_name: fullName,
         p_email: form.email.trim(),
