@@ -32,7 +32,7 @@ export const AXES = [
 
 export const PAAF_STATS = [
   { v: "+21 000", l: "femmes rurales structurées en coopératives" },
-  { v: "7", l: "pays d'intervention en Afrique de l'Ouest" },
+  { v: "3", l: "pays d'intervention en Afrique de l'Ouest" },
   { v: "2019", l: "accompagnement continu depuis" },
 ];
 
