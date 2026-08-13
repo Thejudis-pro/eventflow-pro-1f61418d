@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import headerBand from "@/assets/header-fesa-band.jpeg";
+import fesaLogo from "@/assets/logo-fesa.png";
 import { REG } from "@/lib/fesa-registration-theme";
 
 const navItems = [
@@ -40,7 +40,7 @@ export function RegistrationHeader() {
         style={{ borderTop: `1px solid ${REG.line}`, background: REG.cream }}
       >
         <Link to="/" className="flex items-center gap-4">
-          <img src={headerBand} alt="FESA 2026" style={{ height: 42, width: "auto" }} className="rounded" />
+          <img src={fesaLogo} alt="FESA 2026" style={{ height: 34, width: "auto" }} />
           <div className="hidden h-8 w-px lg:block" style={{ background: REG.lineDark }} />
           <div
             className="hidden max-w-[215px] lg:block"
