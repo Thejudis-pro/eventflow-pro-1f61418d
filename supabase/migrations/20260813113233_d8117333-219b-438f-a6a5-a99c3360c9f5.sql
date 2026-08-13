@@ -1,0 +1,14 @@
+REVOKE ALL ON FUNCTION public.create_badge_for_participant() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.mark_participant_checked_in() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.set_registration_id() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.is_approved_staff(uuid) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.ensure_staff_profile() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.ensure_staff_profile() TO authenticated;
+REVOKE ALL ON FUNCTION public.register_participant(uuid, uuid, uuid, text, text, text, text, text, text, text, text, text, text, integer) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.get_registration(text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.find_registrations_by_email(uuid, text) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.list_delegation_names(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.register_participant(uuid, uuid, uuid, text, text, text, text, text, text, text, text, text, text, integer) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.get_registration(text) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.find_registrations_by_email(uuid, text) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.list_delegation_names(uuid) TO anon, authenticated;
