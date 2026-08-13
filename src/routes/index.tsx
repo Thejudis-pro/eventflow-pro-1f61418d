@@ -762,56 +762,53 @@ function Landing() {
         id="partenaires"
         className="mx-auto max-w-[1440px] px-5 pt-16 sm:px-8 lg:px-16 lg:pt-[78px]"
       >
-        <div
-          ref={partenairesReveal.ref}
-          className={`grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-12 ${partenairesReveal.className}`}
-        >
-          <div className="min-w-0">
-            <div className="flex items-baseline gap-4">
-              <div className="text-[12px] font-extrabold tracking-[.12em] text-[#a8481a]">
-                ILS SOUTIENNENT LE FORUM
-              </div>
-              <div className="h-px flex-1 bg-[#e0d6c6]" />
+        <div ref={partenairesReveal.ref} className={partenairesReveal.className}>
+          <div className="flex items-baseline gap-4">
+            <div className="text-[12px] font-extrabold tracking-[.12em] text-[#a8481a]">
+              ILS SOUTIENNENT LE FORUM
             </div>
-            <h2 className="mt-[14px] text-[28px] font-extrabold leading-[1.1] tracking-[-.03em] text-[#0d3d21] lg:text-[34px]">
-              Plus de 21 partenaires
-            </h2>
+            <div className="h-px flex-1 bg-[#e0d6c6]" />
+          </div>
+          <h2 className="mt-[14px] text-[28px] font-extrabold leading-[1.1] tracking-[-.03em] text-[#0d3d21] lg:text-[34px]">
+            Plus de 21 partenaires
+          </h2>
+          <div className="mt-6 grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-12">
             <img
               src={partnerLogos}
               alt="Ministères, agences nationales et partenaires techniques et financiers du FESA 2026"
               loading="lazy"
-              className="mt-6 block h-auto w-full max-w-[1104px]"
+              className="block h-auto w-full max-w-[1104px]"
             />
-          </div>
-          <div className="rounded-[20px] bg-[#0d3d21] p-7 text-[#fbf7f0] lg:sticky lg:top-6">
-            <div className="text-[12px] font-extrabold tracking-[.1em] text-[#f0913f]">
-              PARTENARIAT
+            <div className="rounded-[20px] bg-[#0d3d21] p-7 text-[#fbf7f0] lg:sticky lg:top-6">
+              <div className="text-[12px] font-extrabold tracking-[.1em] text-[#f0913f]">
+                PARTENARIAT
+              </div>
+              <h3 className="mt-[14px] text-[22px] font-extrabold leading-[1.2]">
+                Devenez partenaire du FESA 2026
+              </h3>
+              <p className="mb-5 mt-3 text-[13.5px] leading-[1.7] text-[rgba(251,247,240,.72)]">
+                Visibilité, mise en réseau et accès à un écosystème sous-régional de coopératives,
+                PME et décideurs. Contactez notre secrétariat technique.
+              </p>
+              <div className="flex flex-col gap-2 text-[13.5px] font-bold leading-[1.5] text-[#f0913f]">
+                <span>+221 77 477 83 60</span>
+                <span>presidence@paafs.org</span>
+                <span>www.paafs.org</span>
+              </div>
+              <a
+                href="mailto:presidence@paafs.org?subject=Devenir%20partenaire%20du%20FESA%202026"
+                className="mt-5 flex h-12 items-center justify-center rounded-[14px] bg-[#a8481a] text-[14px] font-extrabold text-white transition hover:bg-[#8f3d10]"
+              >
+                Contactez-nous
+              </a>
+              <a
+                href={partnerFlyer}
+                download="FESA-2026-Brochure-Partenariat.png"
+                className="mt-2.5 flex h-11 items-center justify-center gap-2 rounded-[14px] border border-white/15 bg-white/10 text-[13px] font-bold text-[#fbf7f0] transition hover:bg-white/20"
+              >
+                Télécharger la brochure partenaire
+              </a>
             </div>
-            <h3 className="mt-[14px] text-[22px] font-extrabold leading-[1.2]">
-              Devenez partenaire du FESA 2026
-            </h3>
-            <p className="mb-5 mt-3 text-[13.5px] leading-[1.7] text-[rgba(251,247,240,.72)]">
-              Visibilité, mise en réseau et accès à un écosystème sous-régional de coopératives, PME
-              et décideurs. Contactez notre secrétariat technique.
-            </p>
-            <div className="flex flex-col gap-2 text-[13.5px] font-bold leading-[1.5] text-[#f0913f]">
-              <span>+221 77 477 83 60</span>
-              <span>presidence@paafs.org</span>
-              <span>www.paafs.org</span>
-            </div>
-            <a
-              href="mailto:presidence@paafs.org?subject=Devenir%20partenaire%20du%20FESA%202026"
-              className="mt-5 flex h-12 items-center justify-center rounded-[14px] bg-[#a8481a] text-[14px] font-extrabold text-white transition hover:bg-[#8f3d10]"
-            >
-              Contactez-nous
-            </a>
-            <a
-              href={partnerFlyer}
-              download="FESA-2026-Brochure-Partenariat.png"
-              className="mt-2.5 flex h-11 items-center justify-center gap-2 rounded-[14px] border border-white/15 bg-white/10 text-[13px] font-bold text-[#fbf7f0] transition hover:bg-white/20"
-            >
-              Télécharger la brochure partenaire
-            </a>
           </div>
         </div>
       </section>
