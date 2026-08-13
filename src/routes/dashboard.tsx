@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { BadgePlus, Download, Plus, QrCode, Send, ShieldCheck, Upload } from "lucide-react";
+import { BadgePlus, Download, KeyRound, Plus, QrCode, Send, ShieldCheck, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { AccessLevelManager } from "@/components/fesa/AccessLevelManager";
 import { AdminShell } from "@/components/fesa/AdminShell";
 import { CreateFreeBadgeForm } from "@/components/fesa/CreateFreeBadgeForm";
 import { DelegationCsvImport } from "@/components/fesa/DelegationCsvImport";
@@ -469,6 +470,23 @@ function DashboardContent() {
             </p>
             <div className="mt-2">
               <StaffAccessManager />
+            </div>
+          </section>
+
+          {/* Badge access levels */}
+          <section
+            id="niveaux-acces"
+            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
+          >
+            <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <KeyRound className="size-4 text-accent" /> Niveaux d'accès badges
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Chaque catégorie de badge a un niveau d'accès affiché dans la zone du badge : Accès
+              total ou Accès limité.
+            </p>
+            <div className="mt-2">
+              <AccessLevelManager eventId={event?.id} />
             </div>
           </section>
         </div>

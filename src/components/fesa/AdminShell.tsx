@@ -15,6 +15,7 @@ import {
   Menu,
   BadgePlus,
   ShieldCheck,
+  KeyRound,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -80,7 +81,8 @@ export type AdminNavKey =
   | "checkin"
   | "import"
   | "segments"
-  | "access";
+  | "access"
+  | "access-levels";
 
 const NAV_ITEMS: {
   key: AdminNavKey;
@@ -103,6 +105,13 @@ const NAV_ITEMS: {
   { key: "import", label: "Import CSV", to: "/dashboard", hash: "import", icon: Upload },
   { key: "segments", label: "Segmentation", to: "/dashboard", hash: "segmentation", icon: Target },
   { key: "access", label: "Accès organisateurs", to: "/dashboard", hash: "acces", icon: ShieldCheck },
+  {
+    key: "access-levels",
+    label: "Niveaux d'accès badges",
+    to: "/dashboard",
+    hash: "niveaux-acces",
+    icon: KeyRound,
+  },
 ];
 
 function BrandMark() {
