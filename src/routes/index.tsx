@@ -610,9 +610,8 @@ function Landing() {
               <br />à Dakar
             </h2>
             <p className="mt-4 text-[14.5px] leading-[1.7] text-[rgba(251,247,240,.68)]">
-              Le forum se tient au CICES (Centre International du Commerce Extérieur du Sénégal).
-              Le détail des ateliers et des intervenants est publié progressivement. Les inscrits
-              reçoivent chaque mise à jour par WhatsApp.
+              Le forum se tiendra au CICES. Le programme final sera publié dans les prochains
+              jours. Vous pourrez le télécharger directement ici !
             </p>
           </div>
           <div className="grid gap-10 md:grid-cols-2">
@@ -660,9 +659,9 @@ function Landing() {
                 TARIFS &amp; STANDS
               </div>
               <h2 className="mt-[14px] text-[30px] font-extrabold leading-[1.1] tracking-[-.03em] text-[#0d3d21] lg:text-[38px]">
-                Inscription en trois minutes,
+                Inscription en 1 minute,
                 <br />
-                depuis un téléphone
+                depuis un téléphone ou un ordinateur
               </h2>
             </div>
             <div>
@@ -692,7 +691,7 @@ function Landing() {
                 key={tier.title.join(" ")}
                 className={`flex flex-col ${
                   idx === 0 ? "lg:pr-7" : idx === TIERS.length - 1 ? "lg:pl-7" : "lg:px-7"
-                } ${idx > 0 ? "lg:border-l lg:border-[#0b7a3c]/25" : ""}`}
+                } ${idx > 0 ? "lg:border-l-2 lg:border-[#0b7a3c]" : ""}`}
               >
                 <div className="text-[11.5px] font-extrabold tracking-[.1em] text-[#7a8b81]">
                   {tier.kicker}
