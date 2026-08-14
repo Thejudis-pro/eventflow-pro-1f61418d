@@ -7,13 +7,11 @@ import { RegistrationFooter, RegistrationHeader } from "@/components/fesa/Regist
 import { BadgePreview } from "@/components/fesa/BadgePreview";
 import { eventQuery, registrationQuery } from "@/lib/event";
 import { downloadBadgePdf, downloadIcs } from "@/lib/badge-export";
-import { REG } from "@/lib/fesa-registration-theme";
+import { ARCHIVO_FONT_HREF, REG } from "@/lib/fesa-registration-theme";
 
 const TITLE = "Inscription confirmée — FESA 2026";
 const DESCRIPTION =
   "Votre inscription au FESA 2026 est confirmée. Votre badge nominatif vous est envoyé par e-mail et WhatsApp.";
-const ARCHIVO_FONT_HREF =
-  "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap";
 
 export const Route = createFileRoute("/confirmation/$registrationId")({
   head: () => ({

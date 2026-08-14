@@ -29,13 +29,11 @@ import {
 } from "@/lib/event";
 import { COUNTRIES } from "@/lib/countries";
 import { DIAL_CODES, PRIORITY_DIAL_COUNTRIES } from "@/lib/dial-codes";
-import { fmt, REG } from "@/lib/fesa-registration-theme";
+import { ARCHIVO_FONT_HREF, fmt, REG } from "@/lib/fesa-registration-theme";
 
 const TITLE = "Inscription FESA 2026 | Dakar, 21-22 septembre 2026";
 const DESCRIPTION =
   "Formulaire d'inscription au FESA 2026 : participant, stand Marché Forain (Exposant) ou stand institutionnel (Partenaire). Les autres accréditations (VIP, presse, staff...) sont attribuées par l'organisation.";
-const ARCHIVO_FONT_HREF =
-  "https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap";
 const OTHER_COUNTRY = "Autre pays";
 
 // CEDEAO neighbors first (most of this event's audience), then the rest of COUNTRIES alphabetically.

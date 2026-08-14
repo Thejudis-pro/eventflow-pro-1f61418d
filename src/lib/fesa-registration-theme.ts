@@ -30,3 +30,9 @@ export const BADGE = {
 export function fmt(n: number): string {
   return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
+
+/** Archivo weights actually used by BadgePreview.tsx (500/600/800/900) —
+ * shared by inscription.tsx and confirmation.$registrationId.tsx so it's
+ * only defined once and doesn't request unused weights (400/700). */
+export const ARCHIVO_FONT_HREF =
+  "https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;800;900&display=swap";
