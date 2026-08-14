@@ -52,6 +52,7 @@ export const Route = createFileRoute("/")({
       { rel: "preload", as: "image", href: heroPhoto },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(eventQuery),
   component: Landing,
 });
 
