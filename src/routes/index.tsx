@@ -707,7 +707,11 @@ function Landing() {
                 key={tier.title.join(" ")}
                 className={`flex flex-col ${
                   idx === 0 ? "lg:pr-7" : idx === TIERS.length - 1 ? "lg:pl-7" : "lg:px-7"
-                } ${idx > 0 ? "lg:border-l-2 lg:border-[#0b7a3c]" : ""}`}
+                } ${
+                  idx > 0
+                    ? "border-t-2 border-[#0b7a3c] pt-7 lg:border-t-0 lg:border-l-2 lg:pt-0"
+                    : ""
+                }`}
               >
                 <div className="text-[11.5px] font-extrabold tracking-[.1em] text-[#7a8b81]">
                   {tier.kicker}
