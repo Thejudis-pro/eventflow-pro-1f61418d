@@ -21,8 +21,8 @@ import {
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import heroPhoto from "@/assets/hero-fesa.jpeg";
 import partnerLogos from "@/assets/fesa-partner-logos.png";
-import partnerFlyer from "@/assets/fesa-partner-flyer.png";
-import socialBanner from "@/assets/fesa-social-banner.png";
+import partnerFlyer from "@/assets/fesa-partner-flyer.webp";
+import socialBanner from "@/assets/fesa-social-banner.jpg";
 import fesaLogo from "@/assets/logo-fesa.png";
 import paafLogo from "@/assets/logo-paaf.png";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -47,7 +47,10 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: `https://www.fesaforum.com${socialBanner}` },
     ],
-    links: [{ rel: "canonical", href: "https://www.fesaforum.com/" }],
+    links: [
+      { rel: "canonical", href: "https://www.fesaforum.com/" },
+      { rel: "preload", as: "image", href: heroPhoto },
+    ],
   }),
   component: Landing,
 });
@@ -482,6 +485,9 @@ function Landing() {
           <img
             src={heroPhoto}
             alt="Productrice agricole utilisant une tablette"
+            width={1600}
+            height={1066}
+            fetchPriority="high"
             className="absolute inset-0 size-full object-cover"
           />
           <div className="absolute bottom-6 left-4 w-[290px] overflow-hidden rounded-[18px] bg-white shadow-[0_20px_44px_rgba(13,61,33,.22)] lg:bottom-14 lg:left-[-90px]">
@@ -826,7 +832,7 @@ function Landing() {
               </a>
               <a
                 href={partnerFlyer}
-                download="FESA-2026-Brochure-Partenariat.png"
+                download="FESA-2026-Brochure-Partenariat.webp"
                 className="mt-2.5 flex h-11 items-center justify-center gap-2 rounded-[14px] border border-white/15 bg-white/10 text-[13px] font-bold text-[#fbf7f0] transition hover:bg-white/20"
               >
                 Télécharger la brochure partenaire

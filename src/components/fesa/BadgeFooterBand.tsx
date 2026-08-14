@@ -2,9 +2,7 @@ import { REG } from "@/lib/fesa-registration-theme";
 
 /**
  * Decorative footer strip for the badge card — a savanna skyline (acacia
- * trees, elephant, giraffe) in light silhouette on the dark green band,
- * matching the reference in src/assets/fesa-badge-reference.png (the
- * original uploads/pasted-....png source file itself wasn't provided).
+ * trees, elephant, giraffe) in light silhouette on the dark green band.
  * Plain shapes, no external image, so it renders reliably inside
  * html2canvas captures.
  */
