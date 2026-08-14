@@ -175,6 +175,13 @@ const TIERS: Tier[] = [
       "Stand équipé avec mobilier de base (table + 2 chaises + panneau nom)",
       "2 badges gratuits",
       "Accès site du forum",
+      "Opportunités de Sponsoring",
+      "Visibilité Institutionnelle",
+      "Couverture Médiatique nationale et internationale",
+      "Opportunités d'Affaires",
+      "Leadership Reconnu",
+      "Partenariats Stratégiques",
+      "Présence de hautes autorités",
     ],
   },
   {
@@ -184,9 +191,18 @@ const TIERS: Tier[] = [
     note: "Visibilité sur tous les supports",
     cta: "Réserver un stand institutionnel",
     highlight: true,
-    included: ["Logo sur tous les supports", "3 badges gratuits", "Accès B2B"],
-    audience:
-      "Bailleurs · ONG · PME · Fondations · Entreprises nationales · Grandes institutions · Agences régionales · Ministères · Ambassades · Collectivités territoriales · PTF",
+    included: [
+      "Logo sur tous les supports",
+      "3 badges gratuits",
+      "Accès B2B",
+      "Opportunités de Sponsoring",
+      "Visibilité Institutionnelle",
+      "Couverture Médiatique nationale et internationale",
+      "Opportunités d'Affaires",
+      "Leadership Reconnu",
+      "Partenariats Stratégiques",
+      "Présence de hautes autorités",
+    ],
   },
 ];
 
