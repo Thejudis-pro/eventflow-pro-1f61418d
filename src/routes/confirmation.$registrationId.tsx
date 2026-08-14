@@ -78,7 +78,7 @@ function ConfirmationPage() {
     }
     try {
       downloadIcs({
-        uid: `${registrationId}@fesa2026.vercel.app`,
+        uid: `${registrationId}@fesaforum.com`,
         title: event.name,
         description: `Votre inscription FESA 2026 — référence ${registrationId}.`,
         location: event.location,

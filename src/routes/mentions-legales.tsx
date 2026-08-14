@@ -23,7 +23,7 @@ function MentionsLegalesPage() {
       <LegalLayout title="Mentions légales" updated="11 août 2026">
         <LegalSection title="1. Éditeur du site">
           <p>
-            Le site fesa2026.vercel.app est édité par la PAAF — Plateforme Africaine pour
+            Le site www.fesaforum.com est édité par la PAAF — Plateforme Africaine pour
             l'Autonomisation
             des Femmes et des Filles, organisatrice du Forum de l'Entrepreneuriat et de la
             Souveraineté Alimentaire (FESA 2026).

@@ -1,0 +1,17 @@
+{
+  "name": "FESA 2026 — Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire",
+  "short_name": "FESA 2026",
+  "description": "Inscription officielle au FESA 2026, Dakar 21-22 septembre 2026.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbf7f0",
+  "theme_color": "#0d3d21",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    }
+  ]
+}

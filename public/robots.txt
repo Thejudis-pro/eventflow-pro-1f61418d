@@ -4,6 +4,8 @@ Disallow: /dashboard
 Disallow: /checkin
 Disallow: /staff/
 Disallow: /confirmation/
+Disallow: /retrouver-mon-badge
+Disallow: /dev/
 
 User-agent: Bingbot
 Allow: /
@@ -11,6 +13,8 @@ Disallow: /dashboard
 Disallow: /checkin
 Disallow: /staff/
 Disallow: /confirmation/
+Disallow: /retrouver-mon-badge
+Disallow: /dev/
 
 User-agent: Twitterbot
 Allow: /
@@ -24,5 +28,7 @@ Disallow: /dashboard
 Disallow: /checkin
 Disallow: /staff/
 Disallow: /confirmation/
+Disallow: /retrouver-mon-badge
+Disallow: /dev/
 
-Sitemap: https://fesa2026.vercel.app/sitemap.xml
+Sitemap: https://www.fesaforum.com/sitemap.xml

@@ -22,9 +22,9 @@ export const Route = createFileRoute("/a-propos")({
       { name: "description", content: DESCRIPTION },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
-      { property: "og:url", content: "https://fesa2026.vercel.app/a-propos" },
+      { property: "og:url", content: "https://www.fesaforum.com/a-propos" },
     ],
-    links: [{ rel: "canonical", href: "https://fesa2026.vercel.app/a-propos" }],
+    links: [{ rel: "canonical", href: "https://www.fesaforum.com/a-propos" }],
   }),
   component: AProposPage,
 });

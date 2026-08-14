@@ -13,7 +13,9 @@ export const Route = createFileRoute("/contact")({
       { name: "description", content: DESCRIPTION },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
+      { property: "og:url", content: "https://www.fesaforum.com/contact" },
     ],
+    links: [{ rel: "canonical", href: "https://www.fesaforum.com/contact" }],
   }),
   component: ContactPage,
 });
