@@ -66,11 +66,33 @@ export async function createPaytechSession(
 }
 
 /**
- * PROVISIONAL: PayTech IPNs are documented to include an `hmac_compute`
- * field derived from the API key/secret. This checks presence only — swap
- * in the exact documented HMAC recipe once confirmed against the live
- * PayTech dashboard, before relying on this for real traffic.
+ * PayTech IPNs carry `api_key_sha256` and `api_secret_sha256`: the SHA-256
+ * hex digests of the merchant's own API key/secret. We recompute both from
+ * our server-side credentials and compare in constant time.
  */
-export function verifyPaytechIpn(payload: Record<string, unknown>): boolean {
-  return typeof payload["hmac_compute"] === "string" && payload["hmac_compute"].length > 0;
+async function sha256Hex(value: string): Promise<string> {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
+export async function verifyPaytechIpn(payload: Record<string, unknown>): Promise<boolean> {
+  const apiKey = process.env["PAYTECH_API_KEY"];
+  const apiSecret = process.env["PAYTECH_API_SECRET"];
+  if (!apiKey || !apiSecret) return false;
+
+  const sentKey = String(payload["api_key_sha256"] ?? "").toLowerCase();
+  const sentSecret = String(payload["api_secret_sha256"] ?? "").toLowerCase();
+  if (!sentKey || !sentSecret) return false;
+
+  const [expectedKey, expectedSecret] = await Promise.all([sha256Hex(apiKey), sha256Hex(apiSecret)]);
+  return safeEqual(sentKey, expectedKey) && safeEqual(sentSecret, expectedSecret);
 }
