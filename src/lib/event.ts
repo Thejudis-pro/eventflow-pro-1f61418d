@@ -113,12 +113,19 @@ export type EmailRegistrationMatch = { registration_id: string; full_name: strin
 
 export const eventQuery = {
   queryKey: ["event", CURRENT_EVENT_SLUG],
+  retry: 5,
+  retryDelay: (attempt: number) => Math.min(1000 * 2 ** attempt, 8000),
+  staleTime: 5 * 60_000,
   queryFn: async (): Promise<EventRow> => {
-    const { data, error } = await supabase
-      .from("events")
-      .select("*")
-      .eq("slug", CURRENT_EVENT_SLUG)
-      .single();
+    const { data, error } = await withTimeout(
+      (signal) =>
+        supabase
+          .from("events")
+          .select("*")
+          .eq("slug", CURRENT_EVENT_SLUG)
+          .abortSignal(signal)
+          .single(),
+    );
     if (error) throw error;
     return data as EventRow;
   },
@@ -128,12 +135,17 @@ export const profileTypesQuery = (eventId?: string) => ({
   queryKey: ["profile_types", eventId],
   enabled: Boolean(eventId),
   retry: 5,
+  retryDelay: (attempt: number) => Math.min(1000 * 2 ** attempt, 8000),
+  staleTime: 5 * 60_000,
   queryFn: async (): Promise<ProfileType[]> => {
-    const { data, error } = await supabase
-      .from("profile_types")
-      .select("*")
-      .eq("event_id", eventId!)
-      .order("sort_order");
+    const { data, error } = await withTimeout((signal) =>
+      supabase
+        .from("profile_types")
+        .select("*")
+        .eq("event_id", eventId!)
+        .order("sort_order")
+        .abortSignal(signal),
+    );
     if (error) throw error;
     return (data ?? []) as ProfileType[];
   },
@@ -148,13 +160,18 @@ export const offersQuery = (eventId?: string) => ({
   queryKey: ["offers", eventId],
   enabled: Boolean(eventId),
   retry: 5,
+  retryDelay: (attempt: number) => Math.min(1000 * 2 ** attempt, 8000),
+  staleTime: 5 * 60_000,
   queryFn: async (): Promise<Offer[]> => {
-    const { data, error } = await supabase
-      .from("offers")
-      .select("*")
-      .eq("event_id", eventId!)
-      .eq("is_public", true)
-      .order("sort_order");
+    const { data, error } = await withTimeout((signal) =>
+      supabase
+        .from("offers")
+        .select("*")
+        .eq("event_id", eventId!)
+        .eq("is_public", true)
+        .order("sort_order")
+        .abortSignal(signal),
+    );
     if (error) throw error;
     return (data ?? []) as Offer[];
   },
