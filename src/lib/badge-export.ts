@@ -7,7 +7,9 @@
  * parse (it throws immediately on any oklch()/lab()/color() computed
  * style) -- html2canvas-pro is a drop-in fork that supports them. */
 
-export async function downloadBadgePdf(node: HTMLElement, filename: string): Promise<void> {
+/** Renders the badge PDF and returns it as a Blob, so callers can either
+ * trigger a download or hand it to navigator.share() for WhatsApp/etc. */
+export async function renderBadgePdfBlob(node: HTMLElement): Promise<Blob> {
   const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
     import("html2canvas-pro"),
     import("jspdf"),
@@ -21,7 +23,19 @@ export async function downloadBadgePdf(node: HTMLElement, filename: string): Pro
   const pageHeight = 141;
   const doc = new jsPDF({ unit: "mm", format: [pageWidth, pageHeight] });
   doc.addImage(imgData, "PNG", (pageWidth - 95) / 2, (pageHeight - 135) / 2, 95, 135);
-  doc.save(filename);
+  return doc.output("blob");
+}
+
+export async function downloadBadgePdf(node: HTMLElement, filename: string): Promise<void> {
+  const blob = await renderBadgePdfBlob(node);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 function icsDate(yyyyMmDd: string, addDays = 0): string {

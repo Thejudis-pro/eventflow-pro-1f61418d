@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { RegistrationFooter, RegistrationHeader } from "@/components/fesa/RegistrationChrome";
 import { BadgePreview } from "@/components/fesa/BadgePreview";
 import { eventQuery, registrationQuery } from "@/lib/event";
-import { downloadBadgePdf, downloadIcs } from "@/lib/badge-export";
+import { downloadBadgePdf, downloadIcs, renderBadgePdfBlob } from "@/lib/badge-export";
 import { ARCHIVO_FONT_HREF, REG } from "@/lib/fesa-registration-theme";
 
 const TITLE = "Inscription confirmée — FESA 2026";
@@ -43,6 +43,7 @@ function ConfirmationPage() {
 
   const badgeRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
   const isPendingPayment = registration?.payment_status === "pending";
   const firstName = (registration?.full_name ?? "").split(" ")[0] ?? "";
@@ -66,6 +67,46 @@ function ConfirmationPage() {
       toast.error("Le badge n'a pas pu être téléchargé.");
     } finally {
       setDownloading(false);
+    }
+  }
+
+  // Sends the actual badge file (not just a text link) via the device's
+  // native share sheet, so the user can pick WhatsApp and it arrives as a
+  // real attachment. Falls back to downloading the PDF + opening WhatsApp
+  // for browsers without file-sharing support (mostly desktop).
+  async function handleShareBadgeOnWhatsapp() {
+    if (!badgeRef.current || !registration) return;
+    setSharing(true);
+    try {
+      const filename = `badge-fesa2026-${registrationId}.pdf`;
+      const blob = await renderBadgePdfBlob(badgeRef.current);
+      const file = new File([blob], filename, { type: "application/pdf" });
+
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "Mon badge FESA 2026",
+          text: `Badge FESA 2026 — ${registration.full_name} (réf. ${registrationId})`,
+        });
+        return;
+      }
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast.info("Le PDF a été téléchargé — joignez-le dans la conversation WhatsApp qui s'ouvre.");
+      window.open(whatsappHref, "_blank", "noopener,noreferrer");
+    } catch (error) {
+      if ((error as DOMException)?.name === "AbortError") return;
+      console.error(error);
+      toast.error("Le badge n'a pas pu être partagé.");
+    } finally {
+      setSharing(false);
     }
   }
 
@@ -193,16 +234,16 @@ function ConfirmationPage() {
                     Ajouter au calendrier
                     <CalendarPlus className="size-[18px]" />
                   </button>
-                  <a
-                    href={whatsappHref}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => void handleShareBadgeOnWhatsapp()}
+                    disabled={sharing}
                     className="flex h-14 items-center justify-between rounded-2xl px-[22px]"
                     style={{ background: REG.creamLight, font: "800 15px/1 Manrope, sans-serif" }}
                   >
-                    Recevoir le badge sur WhatsApp
-                    <MessageCircle className="size-[18px]" />
-                  </a>
+                    Envoyer le badge sur WhatsApp
+                    {sharing ? <Loader2 className="size-[18px] animate-spin" /> : <MessageCircle className="size-[18px]" />}
+                  </button>
                 </div>
 
                 <div
