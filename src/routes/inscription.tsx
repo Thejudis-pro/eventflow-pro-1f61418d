@@ -284,7 +284,18 @@ function RegistrationPage() {
       window.location.href = checkoutUrl;
     } catch (error) {
       console.error(error);
-      toast.error("Le paiement n'a pas pu être initié. Réessayez.");
+      // The server keeps these messages purposely non-sensitive (no keys/
+      // stack traces), so it's safe to surface them directly -- this is
+      // what actually tells us *why* a payment failed to initiate.
+      const detail =
+        error && typeof error === "object" && "message" in error
+          ? String((error as { message: unknown }).message)
+          : undefined;
+      toast.error(
+        detail
+          ? `Le paiement n'a pas pu être initié : ${detail}`
+          : "Le paiement n'a pas pu être initié. Réessayez.",
+      );
       setSubmitting(false);
     }
   }
