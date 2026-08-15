@@ -69,7 +69,7 @@ function ConditionsInscriptionPage() {
         <LegalSection title="5. Annulation et remboursement">
           <p>
             Toute demande d'annulation doit être adressée par écrit à{" "}
-            <a href="mailto:presidence@paafs.org">presidence@paafs.org</a>. Sauf disposition
+            <a href="mailto:contact@fesaforum.com">contact@fesaforum.com</a>. Sauf disposition
             contraire communiquée par l'organisation :
           </p>
           <ul>

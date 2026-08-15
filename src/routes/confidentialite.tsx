@@ -82,7 +82,7 @@ function ConfidentialitePage() {
             Conformément à la loi n° 2008-12 du 25 janvier 2008 relative à la protection des données
             à caractère personnel au Sénégal, vous disposez d'un droit d'accès, de rectification,
             d'opposition et de suppression de vos données. Vous pouvez exercer ces droits en
-            écrivant à <a href="mailto:presidence@paafs.org">presidence@paafs.org</a>. Vous disposez
+            écrivant à <a href="mailto:contact@fesaforum.com">contact@fesaforum.com</a>. Vous disposez
             également du droit d'introduire une réclamation auprès de la Commission de protection
             des données personnelles (CDP) du Sénégal.
           </p>
@@ -108,7 +108,7 @@ function ConfidentialitePage() {
         <LegalSection title="9. Contact">
           <p>
             Pour toute question relative à cette politique, contactez-nous à{" "}
-            <a href="mailto:presidence@paafs.org">presidence@paafs.org</a> ou au +221 77 477 83 60.
+            <a href="mailto:contact@fesaforum.com">contact@fesaforum.com</a> ou au +221 77 477 83 60.
           </p>
         </LegalSection>
       </LegalLayout>

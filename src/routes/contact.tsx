@@ -53,10 +53,10 @@ function ContactPage() {
 
             <ContactRow icon={Mail} label="Email" iconColor="#42544a">
               <a
-                href="mailto:presidence@paafs.org"
+                href="mailto:contact@fesaforum.com"
                 className="text-lg font-bold text-[#0d3d21] hover:text-[#0b7a3c]"
               >
-                presidence@paafs.org
+                contact@fesaforum.com
               </a>
             </ContactRow>
 

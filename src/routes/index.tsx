@@ -332,7 +332,7 @@ function Landing() {
             <span className="text-[#f0913f]">1ʳᵉ édition · Pays de la CEDEAO invités</span>
           </div>
           <div className="flex flex-wrap items-center gap-[18px]">
-            <span>presidence@paafs.org</span>
+            <span>contact@fesaforum.com</span>
             <span>+221 77 477 83 60</span>
           </div>
         </div>
@@ -822,11 +822,11 @@ function Landing() {
               </p>
               <div className="flex flex-col gap-2 text-[13.5px] font-bold leading-[1.5] text-[#f0913f]">
                 <span>+221 77 477 83 60</span>
-                <span>presidence@paafs.org</span>
+                <span>contact@fesaforum.com</span>
                 <span>www.paafs.org</span>
               </div>
               <a
-                href="mailto:presidence@paafs.org?subject=Devenir%20partenaire%20du%20FESA%202026"
+                href="mailto:contact@fesaforum.com?subject=Devenir%20partenaire%20du%20FESA%202026"
                 className="mt-5 flex h-12 items-center justify-center rounded-[14px] bg-[#a8481a] text-[14px] font-extrabold text-white transition hover:bg-[#8f3d10]"
               >
                 Contactez-nous

@@ -26,8 +26,8 @@ export function RegistrationHeader() {
           <span style={{ color: "#f0913f" }}>Paiement sécurisé · badge émis immédiatement</span>
         </div>
         <div className="ml-auto flex items-center gap-[18px]">
-          <a href="mailto:presidence@paafs.org" className="hidden md:inline hover:text-white">
-            presidence@paafs.org
+          <a href="mailto:contact@fesaforum.com" className="hidden md:inline hover:text-white">
+            contact@fesaforum.com
           </a>
           <a href="tel:+221774778360" className="hidden md:inline hover:text-white">
             +221 77 477 83 60

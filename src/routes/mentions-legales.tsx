@@ -31,7 +31,7 @@ function MentionsLegalesPage() {
           <ul>
             <li>Siège : Dakar, Sénégal</li>
             <li>Téléphone : +221 77 477 83 60</li>
-            <li>E-mail : presidence@paafs.org</li>
+            <li>E-mail : contact@fesaforum.com</li>
             <li>Site : www.paafs.org</li>
           </ul>
         </LegalSection>
