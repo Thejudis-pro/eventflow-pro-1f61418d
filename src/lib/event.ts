@@ -3,6 +3,24 @@ import { supabase } from "@/integrations/supabase/client";
 /** The event currently served by this deployment. Everything else filters by event_id. */
 export const CURRENT_EVENT_SLUG = "fesa26";
 
+/**
+ * Network requests can hang indefinitely on flaky mobile/proxy connections —
+ * a hung fetch leaves the UI stuck on "Chargement…" forever with no error.
+ * Abort after 12s so react-query can retry (and eventually surface an error).
+ */
+export async function withTimeout<T>(
+  run: (signal: AbortSignal) => PromiseLike<T>,
+  ms = 12_000,
+): Promise<T> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try {
+    return await run(controller.signal);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export type EventRow = {
   id: string;
   name: string;
