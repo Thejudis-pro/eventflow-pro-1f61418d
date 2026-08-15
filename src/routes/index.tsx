@@ -116,6 +116,7 @@ const NAV = [
   { label: "Programme", href: "#programme" },
   { label: "Tarifs & stands", href: "#tarifs" },
   { label: "Partenaires", href: "#partenaires" },
+  { label: "Contact", to: "/contact" as const },
 ];
 
 const DAY_21 = [

@@ -177,7 +177,6 @@ function RegistrationPage() {
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [offerId, setOfferId] = useState<string | null>(null);
-  const [qty, setQty] = useState(1);
   const [delegationId, setDelegationId] = useState<string | null>(null);
   const [form, setForm] = useState<Details>(EMPTY);
   const [phoneCountry, setPhoneCountry] = useState("Sénégal");
@@ -190,8 +189,10 @@ function RegistrationPage() {
     [offersMerged, offerId],
   );
   const isStand = (offer?.included_badges ?? 0) > 0;
-  const badgeQty = isStand ? (offer?.included_badges ?? 1) : qty;
-  const total = offer ? offer.price * (isStand ? 1 : qty) : 0;
+  // One registration form = one badge. Stands still include multiple badges
+  // (the exhibitor names those after paying), but tickets are always qty 1.
+  const badgeQty = isStand ? (offer?.included_badges ?? 1) : 1;
+  const total = offer?.price ?? 0;
   const needsPayment = total > 0;
   const profileLabel = offer?.profile_types?.label ?? "Profil";
   const profileColor = offer?.profile_types?.color_code ?? "#0b7a3c";
@@ -453,7 +454,6 @@ function RegistrationPage() {
                         onClick={() => {
                           setOfferId(o.id);
                           setRegistered(null);
-                          if (o.included_badges === 0) setQty(1);
                         }}
                         className="flex w-full items-center justify-between gap-8 rounded-[18px] px-6 py-[22px] text-left"
                         style={{
@@ -524,42 +524,14 @@ function RegistrationPage() {
                     >
                       {isStand
                         ? `${offer?.included_badges ?? 0} badges exposants sont inclus dans ce stand.`
-                        : "Un badge nominatif par personne, réglé en une seule fois."}
+                        : "Un badge nominatif par personne, réglé en une seule fois. Une inscription par formulaire."}
                     </div>
                   </div>
-                  <div className="flex flex-none items-center gap-3.5">
-                    <button
-                      type="button"
-                      disabled={isStand}
-                      onClick={() => setQty((q) => Math.max(1, q - 1))}
-                      className="flex size-11 items-center justify-center rounded-xl"
-                      style={{
-                        border: `1px solid ${REG.lineDark}`,
-                        background: "#fff",
-                        font: "800 20px/1 Manrope, sans-serif",
-                      }}
-                    >
-                      −
-                    </button>
-                    <div
-                      className="min-w-7 text-center"
-                      style={{ font: "800 22px/1 Manrope, sans-serif" }}
-                    >
-                      {isStand ? (offer?.included_badges ?? 0) : qty}
-                    </div>
-                    <button
-                      type="button"
-                      disabled={isStand}
-                      onClick={() => setQty((q) => Math.min(20, q + 1))}
-                      className="flex size-11 items-center justify-center rounded-xl"
-                      style={{
-                        border: `1px solid ${REG.lineDark}`,
-                        background: "#fff",
-                        font: "800 20px/1 Manrope, sans-serif",
-                      }}
-                    >
-                      +
-                    </button>
+                  <div
+                    className="min-w-7 flex-none text-center"
+                    style={{ font: "800 22px/1 Manrope, sans-serif" }}
+                  >
+                    {badgeQty}
                   </div>
                 </div>
               </div>
@@ -938,7 +910,7 @@ function RegistrationPage() {
               <div className="flex flex-col gap-3">
                 <SummaryLine
                   label={isStand ? "Stand" : "Badges"}
-                  value={offer ? `${isStand ? 1 : qty} × ${fmt(offer.price)}` : "—"}
+                  value={offer ? `1 × ${fmt(offer.price)}` : "—"}
                 />
                 <SummaryLine label="Badges inclus" value={String(badgeQty)} />
                 <SummaryLine label="Catégorie" value={isStand ? "Exposant" : "Participant"} />
