@@ -107,7 +107,12 @@ function isPartenaire(label?: string | null) {
 function RegistrationPage() {
   const navigate = useNavigate();
   const { intent } = Route.useSearch();
-  const { data: event } = useQuery(eventQuery);
+  const {
+    data: event,
+    isLoading: eventLoading,
+    isError: eventErrored,
+    refetch: refetchEvent,
+  } = useQuery(eventQuery);
   const {
     data: offers,
     isLoading: offersLoading,
@@ -122,7 +127,11 @@ function RegistrationPage() {
   } = useQuery(profileTypesQuery(event?.id));
   const { data: delegations } = useQuery(publicDelegationNamesQuery(event?.id));
 
-  const isLoadingFormules = offersLoading || profileTypesLoading;
+  // While the event itself is still loading, the offer/profile queries are
+  // disabled (isLoading === false) — count that as loading too, otherwise the
+  // page shows neither a spinner nor an error.
+  const isLoadingFormules = eventLoading || (!eventErrored && (offersLoading || profileTypesLoading));
+  const formulesErrored = eventErrored || offersErrored || profileTypesErrored;
 
   // The "offers" table joined to its profile_type for color/label. If it's
   // empty (e.g. not yet seeded, or a PostgREST relationship-cache hiccup
@@ -392,9 +401,7 @@ function RegistrationPage() {
                   </div>
                 )}
 
-                {!isLoadingFormules &&
-                  (offersErrored || profileTypesErrored) &&
-                  offersMerged.length === 0 && (
+                {!isLoadingFormules && offersMerged.length === 0 && (
                     <div
                       className="mt-8 rounded-[18px] px-6 py-5"
                       style={{
@@ -405,8 +412,9 @@ function RegistrationPage() {
                       }}
                     >
                       <p>
-                        Les formules ne sont pas disponibles pour le moment. Vérifiez votre connexion
-                        ou contactez le secrétariat technique au +221 77 477 83 60.
+                        {formulesErrored
+                          ? "Les formules n'ont pas pu être chargées. Vérifiez votre connexion puis réessayez, ou contactez le secrétariat technique au +221 77 477 83 60."
+                          : "Aucune formule n'est disponible pour le moment. Réessayez dans un instant ou contactez le secrétariat technique au +221 77 477 83 60."}
                       </p>
                       <Button
                         type="button"
@@ -414,6 +422,7 @@ function RegistrationPage() {
                         size="sm"
                         className="mt-3"
                         onClick={() => {
+                          refetchEvent();
                           refetchOffers();
                           refetchProfileTypes();
                         }}
