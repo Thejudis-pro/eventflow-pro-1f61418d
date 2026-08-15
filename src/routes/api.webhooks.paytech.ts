@@ -19,7 +19,7 @@ export const Route = createFileRoute("/api/webhooks/paytech")({
           ? await request.json()
           : Object.fromEntries((await request.formData()).entries());
 
-        if (!verifyPaytechIpn(payload)) {
+        if (!(await verifyPaytechIpn(payload))) {
           return new Response("invalid signature", { status: 401 });
         }
 
