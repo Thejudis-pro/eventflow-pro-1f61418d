@@ -127,6 +127,7 @@ export const eventQuery = {
 export const profileTypesQuery = (eventId?: string) => ({
   queryKey: ["profile_types", eventId],
   enabled: Boolean(eventId),
+  retry: 5,
   queryFn: async (): Promise<ProfileType[]> => {
     const { data, error } = await supabase
       .from("profile_types")
@@ -146,6 +147,7 @@ export const profileTypesQuery = (eventId?: string) => ({
 export const offersQuery = (eventId?: string) => ({
   queryKey: ["offers", eventId],
   enabled: Boolean(eventId),
+  retry: 5,
   queryFn: async (): Promise<Offer[]> => {
     const { data, error } = await supabase
       .from("offers")

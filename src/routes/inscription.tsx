@@ -112,11 +112,13 @@ function RegistrationPage() {
     data: offers,
     isLoading: offersLoading,
     isError: offersErrored,
+    refetch: refetchOffers,
   } = useQuery(offersQuery(event?.id));
   const {
     data: profileTypes,
     isLoading: profileTypesLoading,
     isError: profileTypesErrored,
+    refetch: refetchProfileTypes,
   } = useQuery(profileTypesQuery(event?.id));
   const { data: delegations } = useQuery(publicDelegationNamesQuery(event?.id));
 
@@ -402,8 +404,22 @@ function RegistrationPage() {
                         color: REG.muted,
                       }}
                     >
-                      Les formules ne sont pas disponibles pour le moment. Réessayez dans un instant
-                      ou contactez le secrétariat technique au +221 77 477 83 60.
+                      <p>
+                        Les formules ne sont pas disponibles pour le moment. Vérifiez votre connexion
+                        ou contactez le secrétariat technique au +221 77 477 83 60.
+                      </p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="mt-3"
+                        onClick={() => {
+                          refetchOffers();
+                          refetchProfileTypes();
+                        }}
+                      >
+                        Réessayer
+                      </Button>
                     </div>
                   )}
 
