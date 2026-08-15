@@ -3,9 +3,9 @@ import type { Json } from "@/integrations/supabase/types";
 
 /**
  * PayTech IPN receiver. Server-side only — this is what's allowed to mark a
- * payment successful, never the browser. PROVISIONAL: field names and the
- * signature check (see verifyPaytechIpn) are best-effort against PayTech's
- * public docs; re-verify against the real account before go-live.
+ * payment successful, never the browser. See verifyPaytechIpn in
+ * paytech.server.ts for the signature check (hmac_compute preferred, falls
+ * back to api_key_sha256/api_secret_sha256).
  */
 export const Route = createFileRoute("/api/webhooks/paytech")({
   server: {

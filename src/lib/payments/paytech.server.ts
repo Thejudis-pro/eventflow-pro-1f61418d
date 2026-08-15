@@ -1,9 +1,7 @@
 /**
- * PayTech (paytech.sn) checkout-session adapter, built against PayTech's
- * publicly documented "Payment Request" API. PROVISIONAL: written without
- * access to the user's actual PayTech account/docs — re-verify field names,
- * the IPN signature scheme, and the sandbox/live base URL against the real
- * dashboard before flipping PAYMENTS_MODE=live.
+ * PayTech (paytech.sn) checkout-session adapter — field names, response
+ * shape, and IPN verification confirmed against docs.intech.sn/doc_paytech
+ * (PayTech's real API reference, redirected from doc.paytech.sn).
  *
  * Only ever imported dynamically inside a server function/route handler
  * (never at module top level of a route or *.functions.ts file), so
@@ -66,13 +64,33 @@ export async function createPaytechSession(
 }
 
 /**
- * PayTech IPNs carry `api_key_sha256` and `api_secret_sha256`: the SHA-256
- * hex digests of the merchant's own API key/secret. We recompute both from
- * our server-side credentials and compare in constant time.
+ * PayTech IPNs can be verified two ways (per their docs):
+ *  1. hmac_compute = HMAC-SHA256("{final_item_price}|{ref_command}|{api_key}", api_secret)
+ *     — PayTech's own "recommended" method, since it's bound to the specific
+ *     transaction (amount + reference), not just proof of knowing our keys.
+ *  2. api_key_sha256 / api_secret_sha256 — SHA-256 hex digests of our own
+ *     API key/secret, compared directly. Simpler but not transaction-bound.
+ * We prefer #1 when hmac_compute is present, falling back to #2 otherwise —
+ * never require both, so a field PayTech omits on some event types can't
+ * silently break real payment confirmations.
  */
 async function sha256Hex(value: string): Promise<string> {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
   return Array.from(new Uint8Array(digest))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function hmacSha256Hex(message: string, secret: string): Promise<string> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(message));
+  return Array.from(new Uint8Array(signature))
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 }
@@ -88,6 +106,15 @@ export async function verifyPaytechIpn(payload: Record<string, unknown>): Promis
   const apiKey = process.env["PAYTECH_API_KEY"];
   const apiSecret = process.env["PAYTECH_API_SECRET"];
   if (!apiKey || !apiSecret) return false;
+
+  const sentHmac = String(payload["hmac_compute"] ?? "").toLowerCase();
+  if (sentHmac) {
+    const finalItemPrice = String(payload["final_item_price"] ?? payload["item_price"] ?? "");
+    const refCommand = String(payload["ref_command"] ?? "");
+    if (!finalItemPrice || !refCommand) return false;
+    const expectedHmac = await hmacSha256Hex(`${finalItemPrice}|${refCommand}|${apiKey}`, apiSecret);
+    return safeEqual(sentHmac, expectedHmac);
+  }
 
   const sentKey = String(payload["api_key_sha256"] ?? "").toLowerCase();
   const sentSecret = String(payload["api_secret_sha256"] ?? "").toLowerCase();
