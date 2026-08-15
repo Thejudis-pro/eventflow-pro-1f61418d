@@ -823,6 +823,7 @@ function Landing() {
               </p>
               <div className="flex flex-col gap-2 text-[13.5px] font-bold leading-[1.5] text-[#f0913f]">
                 <span>+221 77 477 83 60</span>
+                <span>+221 77 730 61 61</span>
                 <span>contact@fesaforum.com</span>
                 <span>www.paafs.org</span>
               </div>

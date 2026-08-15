@@ -119,6 +119,7 @@ export function SiteFooter() {
             <p className="font-semibold text-[#0d3d21]">Contact</p>
             <ul className="mt-2 space-y-2">
               <li>+221 77 477 83 60</li>
+              <li>+221 77 730 61 61</li>
               <li>contact@fesaforum.com</li>
               <li>www.paafs.org</li>
             </ul>

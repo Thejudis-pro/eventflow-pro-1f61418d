@@ -46,8 +46,11 @@ function ContactPage() {
             </ContactRow>
 
             <ContactRow icon={Phone} label="Appel" iconColor="#42544a">
-              <a href="tel:+221774778360" className="text-lg font-bold text-[#0d3d21] hover:text-[#0b7a3c]">
+              <a href="tel:+221774778360" className="block text-lg font-bold text-[#0d3d21] hover:text-[#0b7a3c]">
                 +221 77 477 83 60
+              </a>
+              <a href="tel:+221777306161" className="mt-1 block text-lg font-bold text-[#0d3d21] hover:text-[#0b7a3c]">
+                +221 77 730 61 61
               </a>
             </ContactRow>
 
