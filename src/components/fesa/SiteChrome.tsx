@@ -9,6 +9,7 @@ const navItems = [
   { label: "Programme", href: "/#programme" },
   { label: "Tarifs & stands", href: "/#tarifs" },
   { label: "Partenaires", href: "/#partenaires" },
+  { label: "Contact", to: "/contact" as const },
 ];
 
 export function SiteHeader() {
