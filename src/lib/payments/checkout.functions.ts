@@ -25,9 +25,9 @@ type PaymentSession = {
  * every privileged write here goes through SECURITY DEFINER RPCs instead
  * (see supabase/migrations/20260816000000_payments_without_service_role.sql).
  *
- * In PAYMENTS_MODE=mock (the default until real credentials are supplied),
- * the "checkout" is a local /dev/mock-pay page that exercises the exact
- * same confirmPayment() path a real webhook would use.
+ * Always creates a real PayTech hosted checkout session — there is no
+ * simulator fallback, so behaviour is identical inside and outside the
+ * Lovable sandbox.
  */
 export const createCheckoutSession = createServerFn({ method: "POST" })
   .validator(inputSchema)
@@ -45,12 +45,6 @@ export const createCheckoutSession = createServerFn({ method: "POST" })
 
     const origin = new URL(getRequest().url).origin;
     const successUrl = `${origin}/confirmation/${session.registration_id}`;
-    const mode = process.env["PAYMENTS_MODE"] ?? "mock";
-
-    if (mode !== "live") {
-      return { checkoutUrl: `/dev/mock-pay/${session.payment_id}` };
-    }
-
     const ipnUrl = `${origin}/api/webhooks/${data.provider}`;
 
     const { createPaytechSession } = await import("./paytech.server");

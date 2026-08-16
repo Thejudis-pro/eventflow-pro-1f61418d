@@ -23,7 +23,6 @@ import { Route as ConfirmationRegistrationIdRouteImport } from './routes/confirm
 import { Route as StaffLoginRouteImport } from './routes/staff.login'
 import { Route as StaffSignupRouteImport } from './routes/staff.signup'
 import { Route as ApiWebhooksPaytechRouteImport } from './routes/api.webhooks.paytech'
-import { Route as DevMockPayPaymentIdRouteImport } from './routes/dev.mock-pay.$paymentId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -96,11 +95,6 @@ const ApiWebhooksPaytechRoute = ApiWebhooksPaytechRouteImport.update({
   path: '/api/webhooks/paytech',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DevMockPayPaymentIdRoute = DevMockPayPaymentIdRouteImport.update({
-  id: '/dev/mock-pay/$paymentId',
-  path: '/dev/mock-pay/$paymentId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,7 +111,6 @@ export interface FileRoutesByFullPath {
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
   '/api/webhooks/paytech': typeof ApiWebhooksPaytechRoute
-  '/dev/mock-pay/$paymentId': typeof DevMockPayPaymentIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -134,7 +127,6 @@ export interface FileRoutesByTo {
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
   '/api/webhooks/paytech': typeof ApiWebhooksPaytechRoute
-  '/dev/mock-pay/$paymentId': typeof DevMockPayPaymentIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,7 +144,6 @@ export interface FileRoutesById {
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
   '/api/webhooks/paytech': typeof ApiWebhooksPaytechRoute
-  '/dev/mock-pay/$paymentId': typeof DevMockPayPaymentIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,7 +162,6 @@ export interface FileRouteTypes {
     | '/staff/login'
     | '/staff/signup'
     | '/api/webhooks/paytech'
-    | '/dev/mock-pay/$paymentId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -188,7 +178,6 @@ export interface FileRouteTypes {
     | '/staff/login'
     | '/staff/signup'
     | '/api/webhooks/paytech'
-    | '/dev/mock-pay/$paymentId'
   id:
     | '__root__'
     | '/'
@@ -205,7 +194,6 @@ export interface FileRouteTypes {
     | '/staff/login'
     | '/staff/signup'
     | '/api/webhooks/paytech'
-    | '/dev/mock-pay/$paymentId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -223,7 +211,6 @@ export interface RootRouteChildren {
   StaffLoginRoute: typeof StaffLoginRoute
   StaffSignupRoute: typeof StaffSignupRoute
   ApiWebhooksPaytechRoute: typeof ApiWebhooksPaytechRoute
-  DevMockPayPaymentIdRoute: typeof DevMockPayPaymentIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -326,13 +313,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiWebhooksPaytechRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dev/mock-pay/$paymentId': {
-      id: '/dev/mock-pay/$paymentId'
-      path: '/dev/mock-pay/$paymentId'
-      fullPath: '/dev/mock-pay/$paymentId'
-      preLoaderRoute: typeof DevMockPayPaymentIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -351,7 +331,6 @@ const rootRouteChildren: RootRouteChildren = {
   StaffLoginRoute: StaffLoginRoute,
   StaffSignupRoute: StaffSignupRoute,
   ApiWebhooksPaytechRoute: ApiWebhooksPaytechRoute,
-  DevMockPayPaymentIdRoute: DevMockPayPaymentIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
