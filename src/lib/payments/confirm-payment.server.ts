@@ -7,7 +7,7 @@ type ConfirmRow = { participant_id: string; status: string };
 /**
  * The single place allowed to mark a payment -- and, on success, the
  * participant -- as paid. Shared by the real PayTech webhook handler and
- * the dev mock-pay page so both exercise identical logic.
+ * server-side payment confirmation paths.
  * Never trust a client-supplied "it worked" signal; this only runs from
  * server routes/functions, and the underlying confirm_payment_secure RPC
  * additionally requires INTERNAL_PAYMENT_SECRET (a server-only secret --
@@ -33,8 +33,8 @@ export async function confirmPayment(params: {
   const { supabase } = await import("@/integrations/supabase/client");
   const { data, error } = await supabase
     .rpc("confirm_payment_secure", {
-      p_payment_id: paymentId ?? null,
-      p_provider_session_id: providerSessionId ?? null,
+      p_payment_id: (paymentId ?? null) as unknown as string,
+      p_provider_session_id: (providerSessionId ?? null) as unknown as string,
       p_status: status,
       p_webhook_payload: webhookPayload ?? null,
       p_secret: secret,
