@@ -468,12 +468,44 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      confirm_payment_secure: {
+        Args: {
+          p_payment_id: string | null
+          p_provider_session_id: string | null
+          p_secret: string
+          p_status: string
+          p_webhook_payload: Json | null
+        }
+        Returns: {
+          participant_id: string
+          status: string
+        }[]
+      }
       ensure_staff_profile: { Args: never; Returns: undefined }
+      finalize_payment_checkout: {
+        Args: {
+          p_checkout_url: string
+          p_payment_id: string
+          p_provider_session_id: string
+        }
+        Returns: undefined
+      }
       find_registrations_by_email: {
         Args: { p_email: string; p_event_id: string }
         Returns: {
           full_name: string
           registration_id: string
+          status: string
+        }[]
+      }
+      get_mock_payment_details: {
+        Args: { p_payment_id: string }
+        Returns: {
+          amount: number
+          full_name: string | null
+          payment_id: string
+          provider: string
+          registration_id: string | null
           status: string
         }[]
       }
@@ -504,6 +536,15 @@ export type Database = {
         Returns: {
           id: string
           primary_contact_name: string
+        }[]
+      }
+      prepare_payment_session: {
+        Args: { p_participant_id: string; p_provider: string }
+        Returns: {
+          amount: number
+          item_name: string
+          payment_id: string
+          registration_id: string
         }[]
       }
       register_participant: {
