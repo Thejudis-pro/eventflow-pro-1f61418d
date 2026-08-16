@@ -14,6 +14,21 @@ export type Database = {
   }
   public: {
     Tables: {
+      _internal_config: {
+        Row: {
+          key: string
+          value: string
+        }
+        Insert: {
+          key: string
+          value: string
+        }
+        Update: {
+          key?: string
+          value?: string
+        }
+        Relationships: []
+      }
       badges: {
         Row: {
           badge_url: string
@@ -470,11 +485,11 @@ export type Database = {
     Functions: {
       confirm_payment_secure: {
         Args: {
-          p_payment_id: string | null
-          p_provider_session_id: string | null
+          p_payment_id: string
+          p_provider_session_id: string
           p_secret: string
           p_status: string
-          p_webhook_payload: Json | null
+          p_webhook_payload: Json
         }
         Returns: {
           participant_id: string
@@ -502,10 +517,10 @@ export type Database = {
         Args: { p_payment_id: string }
         Returns: {
           amount: number
-          full_name: string | null
+          full_name: string
           payment_id: string
           provider: string
-          registration_id: string | null
+          registration_id: string
           status: string
         }[]
       }
