@@ -39,7 +39,7 @@ function ConditionsInscriptionPage() {
               Participant non-sénégalais — 13 120 FCFA (équivalent 20 €), pour les délégations des
               pays invités et autres participants internationaux
             </li>
-            <li>Stand exposant (Marché Forain, 9 m²) — 200 000 FCFA pour les deux jours</li>
+            <li>Stand exposant (Marché Forain, 9 m²) — 300 000 FCFA pour les deux jours</li>
             <li>Stand institutionnel (12 m²) — 1 500 000 FCFA</li>
           </ul>
           <p>

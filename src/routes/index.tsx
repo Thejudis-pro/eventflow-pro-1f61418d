@@ -174,7 +174,7 @@ const TIERS: Tier[] = [
   {
     kicker: "MARCHÉ FORAIN",
     title: ["Stand exposant", "9 m²"],
-    price: "200 000",
+    price: "300 000",
     note: "Emplacement pour les deux jours",
     cta: "Réserver un stand",
     included: [
