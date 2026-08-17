@@ -4,7 +4,7 @@ import { LegalLayout, LegalSection } from "@/components/fesa/LegalLayout";
 
 const TITLE = "Conditions d'inscription | FESA 2026";
 const DESCRIPTION =
-  "Conditions générales d'inscription et de participation au Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire 2026.";
+  "Conditions générales d'inscription et de participation au Forum Sous-régional de l'Entrepreneuriat Productif 2026.";
 
 export const Route = createFileRoute("/conditions-inscription")({
   head: () => ({
@@ -24,8 +24,8 @@ function ConditionsInscriptionPage() {
       <LegalLayout title="Conditions d'inscription" updated="11 août 2026">
         <LegalSection title="1. Objet">
           <p>
-            Les présentes conditions régissent l'inscription et la participation au Forum de
-            l'Entrepreneuriat et de la Souveraineté Alimentaire (FESA 2026), organisé par la PAAF
+            Les présentes conditions régissent l'inscription et la participation au Forum
+            Sous-régional de l'Entrepreneuriat Productif (FESA 2026), organisé par la PAAF
             les 21 et 22 septembre 2026 à Dakar, Sénégal. Toute inscription via{" "}
             <Link to="/inscription">le formulaire en ligne</Link> implique l'acceptation pleine et
             entière des présentes conditions.

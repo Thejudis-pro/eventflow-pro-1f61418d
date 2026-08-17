@@ -95,9 +95,9 @@ export function SiteFooter() {
         <div>
           <p className="font-display text-xl font-black text-[#0d3d21]">FESA 2026</p>
           <p className="mt-2 max-w-xl text-sm leading-6">
-            Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire — une plateforme de
-            dialogue, d'innovation et de mise en réseau pour les acteurs économiques et
-            institutionnels de la sous-région.
+            Forum Sous-régional de l'Entrepreneuriat Productif — une plateforme de dialogue,
+            d'innovation et de mise en réseau pour les acteurs économiques et institutionnels de la
+            sous-région.
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2">

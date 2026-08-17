@@ -1,7 +1,7 @@
 /** Shared "about the forum" content — used by the homepage's inline forum
  * section and by the standalone /a-propos page so the two never drift. */
 export const FORUM_TAGLINE =
-  "Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire — une plateforme de dialogue, d'innovation et de mise en réseau pour les acteurs économiques et institutionnels de la sous-région.";
+  "Forum Sous-régional de l'Entrepreneuriat Productif — une plateforme de dialogue, d'innovation et de mise en réseau pour les acteurs économiques et institutionnels de la sous-région.";
 
 export const FORUM_INTRO =
   "1ʳᵉ édition, dédiée aux entreprises et coopératives, à l'ESS et à la souveraineté alimentaire ouest-africaine.";

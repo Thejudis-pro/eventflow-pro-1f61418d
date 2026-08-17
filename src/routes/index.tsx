@@ -291,7 +291,7 @@ function Landing() {
     () => ({
       "@context": "https://schema.org",
       "@type": "Event",
-      name: "FESA 2026 — Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire",
+      name: "FESA 2026 — Forum Sous-régional de l'Entrepreneuriat Productif",
       url: "https://www.fesaforum.com/",
       image: `https://www.fesaforum.com${socialBanner}`,
       startDate: event?.start_date ?? "2026-09-21",
@@ -345,7 +345,7 @@ function Landing() {
           <img src={fesaLogo} alt="FESA 2026" className="h-[42px] w-auto" />
           <span className="hidden h-8 w-px bg-[#ddd2c2] sm:block" />
           <span className="hidden max-w-[215px] text-[11.5px] font-bold leading-[1.35] text-[#5a6b62] sm:block">
-            Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire
+            Forum Sous-régional de l'Entrepreneuriat Productif
           </span>
         </Link>
         <div className="flex items-center gap-[26px]">
@@ -436,9 +436,9 @@ function Landing() {
             </span>
           </div>
           <h1 className="mt-6 text-[40px] font-extrabold leading-[1.02] tracking-[-.038em] text-[#0d3d21] sm:text-[52px] lg:text-[58px]">
-            Forum de l'Entrepreneuriat et
+            Forum Sous-régional
             <br />
-            <span className="text-[#0b7a3c]">de la Souveraineté Alimentaire</span>
+            <span className="text-[#0b7a3c]">de l'Entrepreneuriat Productif</span>
           </h1>
           <p className="mt-5 max-w-[470px] border-l-[3px] border-[#a8481a] pl-4 text-[18px] font-semibold leading-[1.45] text-[#42544a]">
             Entrepreneuriat, économie sociale et solidaire et souveraineté alimentaire en Afrique de
