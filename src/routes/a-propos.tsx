@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Landmark, Sparkles, Target } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
 import { useReveal } from "@/components/fesa/Reveal";
+import presidenteAsset from "@/assets/presidente-paaf.jpg.asset.json";
 import {
   AXES,
   FORUM_INTRO,
@@ -33,6 +34,7 @@ function AProposPage() {
   const objectivesReveal = useReveal<HTMLElement>();
   const axesReveal = useReveal<HTMLElement>();
   const paafReveal = useReveal<HTMLElement>();
+  const motReveal = useReveal<HTMLElement>();
 
   return (
     <div className="min-h-screen bg-[#fbf7f0] text-[#0d3d21]">
@@ -135,6 +137,67 @@ function AProposPage() {
                 </span>
               ))}
             </p>
+          </div>
+        </section>
+
+        <section ref={motReveal.ref} className={`mt-14 ${motReveal.className}`}>
+          <h2 className="text-2xl font-extrabold tracking-tight">Mot de la Présidente</h2>
+          <div className="mt-6 grid gap-8 md:grid-cols-[260px_1fr] md:items-start">
+            <figure className="m-0">
+              <img
+                src={presidenteAsset.url}
+                alt="La Présidente de la PAAF, organisatrice du FESA 2026"
+                loading="lazy"
+                className="w-full rounded-[20px] border border-[#e0d6c6] object-cover"
+              />
+              <figcaption className="mt-3 text-[12px] font-extrabold uppercase tracking-[.1em] text-[#7a8b81]">
+                La Présidente · PAAF – FESA
+              </figcaption>
+            </figure>
+            <div className="space-y-4 text-[15px] leading-[1.75] text-[#42544a]">
+              <p>
+                Depuis plus de deux décennies, mon engagement se situe à l'interface des politiques
+                publiques, du secteur privé et des dynamiques communautaires, avec une conviction
+                forte : l'autonomisation économique des femmes est un puissant levier de
+                transformation durable de l'Afrique.
+              </p>
+              <p>
+                Formatrice certifiée par l'OIT/CIF et la GIZ, j'ai contribué à l'autonomisation de
+                plus de 21 000 femmes rurales en Afrique de l'Ouest, en les accompagnant dans la
+                structuration de leurs activités, le développement des chaînes de valeur et leur
+                accès à des modèles économiques plus formels, compétitifs et durables.
+              </p>
+              <p>
+                En tant que Présidente de la Plateforme Africaine pour l'Autonomisation des Femmes
+                (PAAF), je porte une vision panafricaine fondée sur la coopération, la mise en
+                réseau et la création d'opportunités.
+              </p>
+              <p>
+                C'est dans cette dynamique que s'inscrit le Forum Africain pour la Souveraineté
+                Alimentaire (FESA), conçu comme un espace de dialogue, de rencontres et surtout
+                d'action. Notre ambition est de connecter les femmes, les entrepreneurs, les
+                investisseurs, les institutions et les partenaires afin de faire émerger des
+                partenariats, des projets et des opportunités concrètes.
+              </p>
+              <p>
+                À travers le FESA, nous voulons contribuer à renforcer l'accès aux financements et
+                aux marchés, valoriser les initiatives africaines, favoriser la formalisation de
+                l'économie informelle et créer des passerelles capables de transformer les idées en
+                résultats durables.
+              </p>
+              <p>
+                Notre objectif est simple : passer du dialogue à l'action, des opportunités aux
+                partenariats et des partenariats à l'impact.
+              </p>
+              <p>
+                Je vous invite à rejoindre cette dynamique et à construire, ensemble, une Afrique
+                plus inclusive, entreprenante et solidaire.
+              </p>
+              <blockquote className="border-l-[3px] border-[#0b7a3c] pl-5 text-[15.5px] font-semibold italic leading-[1.7] text-[#0d3d21]">
+                « Transformer l'informel en opportunité, structurer les femmes en puissance
+                économique et faire de la coopération un levier de stabilité durable. »
+              </blockquote>
+            </div>
           </div>
         </section>
 
