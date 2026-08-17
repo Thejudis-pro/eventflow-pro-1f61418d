@@ -193,7 +193,7 @@ const TIERS: Tier[] = [
   },
   {
     kicker: "ESPACE INSTITUTIONNEL",
-    title: ["Stand institutionnel", "12 m²"],
+    title: ["Stand institutionnel", "9 m²"],
     price: "1 500 000",
     note: "Visibilité sur tous les supports",
     cta: "Réserver un stand institutionnel",

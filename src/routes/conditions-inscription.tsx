@@ -40,7 +40,7 @@ function ConditionsInscriptionPage() {
               pays invités et autres participants internationaux
             </li>
             <li>Stand exposant (Marché Forain, 9 m²) — 300 000 FCFA pour les deux jours</li>
-            <li>Stand institutionnel (12 m²) — 1 500 000 FCFA</li>
+            <li>Stand institutionnel (9 m²) — 1 500 000 FCFA</li>
           </ul>
           <p>
             Les accréditations VIP, presse, staff, comité scientifique et autres catégories
