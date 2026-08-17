@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Landmark, Sparkles, Target } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
 import { useReveal } from "@/components/fesa/Reveal";
+import presidenteAsset from "@/assets/presidente-paaf.jpg.asset.json";
 import {
   AXES,
   FORUM_INTRO,
@@ -33,6 +34,7 @@ function AProposPage() {
   const objectivesReveal = useReveal<HTMLElement>();
   const axesReveal = useReveal<HTMLElement>();
   const paafReveal = useReveal<HTMLElement>();
+  const motReveal = useReveal<HTMLElement>();
 
   return (
     <div className="min-h-screen bg-[#fbf7f0] text-[#0d3d21]">
