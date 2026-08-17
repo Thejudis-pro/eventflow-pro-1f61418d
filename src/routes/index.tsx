@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import heroPhoto from "@/assets/hero-fesa.jpeg";
+import presidentePhoto from "@/assets/presidente-paaf.jpeg";
 import partnerLogos from "@/assets/fesa-partner-logos.png";
 import partnerFlyer from "@/assets/fesa-partner-flyer.webp";
 import socialBanner from "@/assets/fesa-social-banner.jpg";
@@ -250,6 +251,7 @@ function Landing() {
   const [newsletterStatus, setNewsletterStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
+  const motReveal = useReveal<HTMLDivElement>();
   const forumReveal = useReveal<HTMLDivElement>();
   const programmeReveal = useReveal<HTMLDivElement>();
   const tarifsReveal = useReveal<HTMLDivElement>();
@@ -522,6 +524,50 @@ function Landing() {
                 <QrMark />
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mot de la Présidente */}
+      <section
+        ref={motReveal.ref}
+        className={`mx-auto mt-16 max-w-[1440px] px-5 sm:px-8 lg:mt-[78px] lg:px-16 ${motReveal.className}`}
+      >
+        <div className="grid gap-8 rounded-[28px] border border-[#e0d6c6] bg-white p-6 sm:p-8 md:grid-cols-[220px_1fr] md:items-center lg:p-10">
+          <img
+            src={presidentePhoto}
+            alt="La Présidente de la PAAF, organisatrice du FESA 2026"
+            loading="lazy"
+            className="mx-auto w-[180px] rounded-[20px] object-cover md:w-full"
+          />
+          <div>
+            <div
+              style={{
+                font: "800 11.5px/1 Manrope, sans-serif",
+                letterSpacing: "0.1em",
+                color: "#a8481a",
+              }}
+            >
+              MOT DE LA PRÉSIDENTE
+            </div>
+            <blockquote className="mt-4 text-[19px] font-extrabold leading-[1.4] tracking-[-.01em] text-[#0d3d21] sm:text-[22px]">
+              « Transformer l&rsquo;informel en opportunité, structurer les femmes en puissance
+              économique et faire de la coopération un levier de stabilité durable. »
+            </blockquote>
+            <p className="mt-4 max-w-[620px] text-[14.5px] leading-[1.7] text-[#5a6b62]">
+              En tant que Présidente de la Plateforme Africaine pour l&rsquo;Autonomisation des
+              Femmes (PAAF), je porte une vision panafricaine fondée sur la coopération, la mise en
+              réseau et la création d&rsquo;opportunités — c&rsquo;est dans cette dynamique que
+              s&rsquo;inscrit le FESA.
+            </p>
+            <Link
+              to="/a-propos"
+              hash="mot-presidente"
+              className="mt-5 inline-flex items-center gap-2"
+              style={{ font: "700 14px/1 Manrope, sans-serif", color: "#0b7a3c" }}
+            >
+              Lire le mot complet {ARROW}
+            </Link>
           </div>
         </div>
       </section>

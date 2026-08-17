@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Landmark, Sparkles, Target } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
 import { useReveal } from "@/components/fesa/Reveal";
-import presidenteAsset from "@/assets/presidente-paaf.jpg.asset.json";
+import presidentePhoto from "@/assets/presidente-paaf.jpeg";
 import {
   AXES,
   FORUM_INTRO,
@@ -140,12 +140,12 @@ function AProposPage() {
           </div>
         </section>
 
-        <section ref={motReveal.ref} className={`mt-14 ${motReveal.className}`}>
+        <section id="mot-presidente" ref={motReveal.ref} className={`mt-14 scroll-mt-24 ${motReveal.className}`}>
           <h2 className="text-2xl font-extrabold tracking-tight">Mot de la Présidente</h2>
           <div className="mt-6 grid gap-8 md:grid-cols-[260px_1fr] md:items-start">
             <figure className="m-0">
               <img
-                src={presidenteAsset.url}
+                src={presidentePhoto}
                 alt="La Présidente de la PAAF, organisatrice du FESA 2026"
                 loading="lazy"
                 className="w-full rounded-[20px] border border-[#e0d6c6] object-cover"
