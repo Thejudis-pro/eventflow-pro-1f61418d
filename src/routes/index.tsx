@@ -459,20 +459,22 @@ function Landing() {
               Réserver un stand
             </a>
           </div>
-          <dl className="mt-11 flex max-w-[600px]">
+          <dl className="mt-11 grid max-w-[600px] grid-cols-4">
             {[
               { v: "2", l: "jours" },
               { v: "15", l: "pays CEDEAO" },
-              { v: "+2 000", l: "participants" },
+              { v: "+2\u00a0000", l: "participants" },
               { v: "+21", l: "partenaires" },
             ].map((s, i) => (
               <div
                 key={s.l}
                 className={
-                  i === 0 ? "flex-1 pr-5" : "flex-1 border-l border-[#e0d6c6] px-3 sm:px-5"
+                  i === 0
+                    ? "min-w-0 pr-2 sm:pr-4"
+                    : "min-w-0 border-l border-[#e0d6c6] px-2 sm:px-4"
                 }
               >
-                <dt className="text-[24px] font-extrabold leading-none text-[#0d3d21] sm:text-[28px]">
+                <dt className="whitespace-nowrap text-[20px] font-extrabold leading-none text-[#0d3d21] sm:text-[28px]">
                   {s.v}
                 </dt>
                 <dd className="mt-[6px] text-[11.5px] font-medium leading-[1.4] text-[#7a8b81]">
