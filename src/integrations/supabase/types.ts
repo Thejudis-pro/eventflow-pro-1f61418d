@@ -562,14 +562,6 @@ export type Database = {
           registration_id: string
         }[]
       }
-      reset_event_signups: {
-        Args: { p_event_id: string }
-        Returns: {
-          delegations_deleted: number
-          newsletter_deleted: number
-          participants_deleted: number
-        }[]
-      }
       register_participant: {
         Args: {
           p_badge_quantity?: number
@@ -590,6 +582,14 @@ export type Database = {
         Returns: {
           id: string
           registration_id: string
+        }[]
+      }
+      reset_event_signups: {
+        Args: { p_event_id: string }
+        Returns: {
+          delegations_deleted: number
+          newsletter_deleted: number
+          participants_deleted: number
         }[]
       }
     }
