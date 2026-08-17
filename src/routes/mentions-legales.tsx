@@ -25,8 +25,8 @@ function MentionsLegalesPage() {
           <p>
             Le site www.fesaforum.com est édité par la PAAF — Plateforme Africaine pour
             l'Autonomisation
-            des Femmes et des Filles, organisatrice du Forum Sous-régional de l'Entrepreneuriat
-            Productif (FESA 2026).
+            des Femmes et des Filles, organisatrice du Forum de l'Entrepreneuriat et de la
+            Souveraineté Alimentaire (FESA 2026).
           </p>
           <ul>
             <li>Siège : Dakar, Sénégal</li>

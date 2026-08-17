@@ -89,7 +89,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         property: "og:description",
         content:
-          "Inscription en ligne au Forum Sous-régional de l'Entrepreneuriat Productif.",
+          "Inscription en ligne au Forum de l'Entrepreneuriat et de la Souveraineté Alimentaire.",
       },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "fr_FR" },

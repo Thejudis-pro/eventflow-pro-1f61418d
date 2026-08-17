@@ -46,7 +46,7 @@ export function RegistrationHeader() {
             className="hidden max-w-[215px] lg:block"
             style={{ font: "700 11.5px/1.35 Manrope, sans-serif", color: REG.muted }}
           >
-            Forum Sous-régional de l&rsquo;Entrepreneuriat Productif
+            Forum de l&rsquo;Entrepreneuriat et de la Souveraineté Alimentaire
           </div>
         </Link>
         <nav className="hidden items-center gap-6 md:flex">
