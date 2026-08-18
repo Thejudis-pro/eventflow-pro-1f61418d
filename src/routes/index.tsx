@@ -22,7 +22,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import heroPhoto from "@/assets/hero-fesa.jpeg";
 import presidentePhoto from "@/assets/presidente-paaf.jpeg";
 import partnerLogos from "@/assets/fesa-partner-logos.png";
-import partnerFlyer from "@/assets/fesa-partner-flyer.webp";
+import partnerBrochure from "@/assets/fesa-partner-brochure.pdf";
 import socialBanner from "@/assets/fesa-social-banner.jpg";
 import fesaLogo from "@/assets/logo-fesa.png";
 import paafLogo from "@/assets/logo-paaf.png";
@@ -122,7 +122,7 @@ const NAV = [
 
 const DAY_21 = [
   { t: "Cérémonie d'ouverture et discours officiels", s: "Plénière · toutes catégories" },
-  { t: "Panel institutionnel de haut niveau", s: "CEDEAO, UEMOA, ministères, PTF" },
+  { t: "Panel institutionnel de haut niveau", s: "Ministères, PTF" },
   { t: "Ateliers thématiques", s: "Sessions parallèles · sur inscription" },
 ];
 
@@ -882,8 +882,8 @@ function Landing() {
                 Contactez-nous
               </a>
               <a
-                href={partnerFlyer}
-                download="FESA-2026-Brochure-Partenariat.webp"
+                href={partnerBrochure}
+                download="FESA-2026-Plaquette-Partenariat.pdf"
                 className="mt-2.5 flex h-11 items-center justify-center gap-2 rounded-[14px] border border-white/15 bg-white/10 text-[13px] font-bold text-[#fbf7f0] transition hover:bg-white/20"
               >
                 Télécharger la brochure partenaire

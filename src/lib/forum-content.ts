@@ -37,6 +37,7 @@ export const PAAF_STATS = [
 ];
 
 export const INVITED_DELEGATIONS = [
+  "Sénégal (hôte)",
   "Bénin",
   "Burkina Faso",
   "Cabo Verde",
@@ -49,7 +50,6 @@ export const INVITED_DELEGATIONS = [
   "Mali",
   "Niger",
   "Nigéria",
-  "Sénégal (hôte)",
   "Sierra Leone",
   "Togo",
 ];
