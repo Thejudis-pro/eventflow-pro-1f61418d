@@ -35,6 +35,7 @@ export type Database = {
           generated_at: string
           id: string
           participant_id: string
+          printed_at: string | null
           qr_payload: string
           sent_email: boolean
           sent_whatsapp: boolean
@@ -44,6 +45,7 @@ export type Database = {
           generated_at?: string
           id?: string
           participant_id: string
+          printed_at?: string | null
           qr_payload: string
           sent_email?: boolean
           sent_whatsapp?: boolean
@@ -53,6 +55,7 @@ export type Database = {
           generated_at?: string
           id?: string
           participant_id?: string
+          printed_at?: string | null
           qr_payload?: string
           sent_email?: boolean
           sent_whatsapp?: boolean
@@ -552,6 +555,10 @@ export type Database = {
           id: string
           primary_contact_name: string
         }[]
+      }
+      mark_badge_printed: {
+        Args: { p_registration_id: string }
+        Returns: undefined
       }
       prepare_payment_session: {
         Args: { p_participant_id: string; p_provider: string }
