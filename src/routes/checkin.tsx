@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { AdminShell } from "@/components/fesa/AdminShell";
 import { StaffGate } from "@/components/fesa/StaffGate";
 import { supabase } from "@/integrations/supabase/client";
+import { useStaffSession } from "@/lib/auth";
 import { eventQuery, participantsQuery, profileTypesQuery } from "@/lib/event";
 
 const TITLE = "Check-in sur site — FESA 2026";
@@ -41,6 +42,7 @@ function CheckinPage() {
 
 function CheckinContent() {
   const queryClient = useQueryClient();
+  const { email: staffEmail } = useStaffSession();
   const { data: event } = useQuery(eventQuery);
   const { data: profiles } = useQuery(profileTypesQuery(event?.id));
   const { data: participants } = useQuery({
@@ -96,7 +98,7 @@ function CheckinContent() {
 
       const { error: insertError } = await supabase
         .from("checkins")
-        .insert({ participant_id: badge.participant_id, scanned_by: "staff-web" });
+        .insert({ participant_id: badge.participant_id, scanned_by: staffEmail ?? "staff-web" });
       if (insertError) throw insertError;
 
       setResult({
