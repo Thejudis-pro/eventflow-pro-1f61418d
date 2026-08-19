@@ -144,7 +144,7 @@ function ConfirmationPage() {
               sur place reste possible au guichet accréditation.
             </p>
 
-            <div className="mt-8 grid gap-8 xl:grid-cols-[567px_minmax(0,1fr)]">
+            <div className="mt-8 grid gap-8 lg:grid-cols-[359px_minmax(0,1fr)]">
               <div ref={badgeRef} className="w-fit max-w-full overflow-x-auto">
                 <BadgePreview
                   data={{

@@ -7,12 +7,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { badgesQuery, type EventRow, type Participant, type ProfileType } from "@/lib/event";
 import { BadgePreview } from "./BadgePreview";
 
-const PAGE_WIDTH_MM = 150;
-const PAGE_HEIGHT_MM = 105;
+const PAGE_WIDTH_MM = 105;
+const PAGE_HEIGHT_MM = 150;
 
 /**
  * Renders every participant currently passed in (the dashboard table's
- * filtered rows) into a single multi-page PDF -- one 150×105mm badge per
+ * filtered rows) into a single multi-page PDF -- one 105×150mm badge per
  * page -- and downloads it in one action, ready to send to a printer.
  * This is the realistic version of "automatic badge printing": a true
  * OS/printer-driver integration isn't reachable from a web app, but a
@@ -62,7 +62,7 @@ export function BulkBadgePrint({
         const doc = new jsPDF({
           unit: "mm",
           format: [PAGE_WIDTH_MM, PAGE_HEIGHT_MM],
-          orientation: "landscape",
+          orientation: "portrait",
         });
 
         for (let i = 0; i < nodes.length; i++) {
@@ -73,7 +73,7 @@ export function BulkBadgePrint({
             backgroundColor: "#ffffff",
             useCORS: true,
           });
-          if (i > 0) doc.addPage([PAGE_WIDTH_MM, PAGE_HEIGHT_MM], "landscape");
+          if (i > 0) doc.addPage([PAGE_WIDTH_MM, PAGE_HEIGHT_MM], "portrait");
           doc.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, PAGE_WIDTH_MM, PAGE_HEIGHT_MM);
         }
 

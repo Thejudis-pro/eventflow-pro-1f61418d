@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
@@ -176,6 +176,14 @@ function RegistrationPage() {
   );
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
+
+  // Each step has different content height, so without this a user who
+  // scrolled down to reach "Continuer" on the previous step lands mid-page
+  // on the new one instead of at its top.
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [step]);
+
   const [offerId, setOfferId] = useState<string | null>(null);
   const [delegationId, setDelegationId] = useState<string | null>(null);
   const [form, setForm] = useState<Details>(EMPTY);
@@ -328,7 +336,7 @@ function RegistrationPage() {
             const on = n === step;
             const done = n < step;
             return (
-              <div key={s.title} className="flex min-w-0 flex-1 items-center gap-0">
+              <div key={s.title} className="flex flex-none items-center gap-0 sm:flex-1 sm:min-w-0">
                 <button
                   type="button"
                   onClick={() => n < step && setStep(n as 1 | 2 | 3)}
