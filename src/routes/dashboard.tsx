@@ -38,6 +38,8 @@ import {
 } from "@/components/fesa/admin-charts";
 import { supabase } from "@/integrations/supabase/client";
 import {
+  badgesQuery,
+  checkinsQuery,
   eventQuery,
   participantsQuery,
   paymentsQuery,
@@ -88,6 +90,8 @@ function DashboardContent() {
   const { data: profiles } = useQuery(profileTypesQuery(event?.id));
   const { data: participants } = useQuery(participantsQuery(event?.id));
   const { data: payments } = useQuery(paymentsQuery(event?.id));
+  const { data: badges } = useQuery(badgesQuery(event?.id));
+  const { data: checkins } = useQuery(checkinsQuery(event?.id));
 
   async function assignCategory(participantId: string, profileTypeId: string) {
     const { error } = await supabase
@@ -126,6 +130,11 @@ function DashboardContent() {
   const conversion = total ? Math.round((paid / total) * 100) : 0;
   const checkedIn = (participants ?? []).filter((p) => p.status === "checked_in").length;
   const attendanceRate = total ? Math.round((checkedIn / total) * 100) : 0;
+  const confirmedOnly = (participants ?? []).filter((p) => p.status === "confirmed").length;
+  const absent = Math.max(total - checkedIn, 0);
+  const badgesGenerated = badges?.length ?? 0;
+  const badgesPrinted = (badges ?? []).filter((b) => b.printed_at !== null).length;
+  const checkinsCount = checkins?.length ?? 0;
 
   const segmentCount = useMemo(() => {
     if (segmentProfile === "all") return total;
@@ -290,8 +299,14 @@ function DashboardContent() {
           {/* Secondary tiles */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             <Tile label="Paiements confirmés" value={String(paid)} />
+            <Tile label="Participants confirmés" value={String(confirmedOnly)} />
             <Tile label="Taux de conversion" value={`${conversion}%`} />
             <Tile label="Enregistrés sur site" value={`${checkedIn} (${attendanceRate}%)`} />
+            <Tile label="Participants absents" value={String(absent)} />
+            <Tile label="Taux de présence" value={`${attendanceRate}%`} />
+            <Tile label="Badges générés" value={String(badgesGenerated)} />
+            <Tile label="Badges imprimés" value={String(badgesPrinted)} />
+            <Tile label="Check-in réalisés" value={String(checkinsCount)} />
             <Tile label="Recettes (mock)" value={`${(paid * 10000).toLocaleString("fr-FR")} F`} />
           </div>
 
@@ -576,8 +591,10 @@ function DashboardContent() {
 
       <ParticipantDetailSheet
         participant={selectedParticipant}
+        profile={profiles?.find((p) => p.id === selectedParticipant?.profile_type_id)}
         profileLabel={profileLabel(selectedParticipant?.profile_type_id ?? null)}
         profileColor={profileColor(selectedParticipant?.profile_type_id ?? null)}
+        event={event}
         payments={(payments ?? []).filter((p) => p.participant_id === selectedParticipant?.id)}
         onOpenChange={(open) => {
           if (!open) setSelectedParticipant(null);
