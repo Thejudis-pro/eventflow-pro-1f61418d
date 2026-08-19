@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { AccessLevelManager } from "@/components/fesa/AccessLevelManager";
 import { AdminShell } from "@/components/fesa/AdminShell";
+import { BulkBadgePrint } from "@/components/fesa/BulkBadgePrint";
 import { CreateFreeBadgeForm } from "@/components/fesa/CreateFreeBadgeForm";
 import { DelegationCsvImport } from "@/components/fesa/DelegationCsvImport";
 import { ParticipantDetailSheet } from "@/components/fesa/ParticipantDetailSheet";
@@ -271,6 +272,7 @@ function DashboardContent() {
               <Button variant="institutional" onClick={exportCsv}>
                 <Download className="size-4" /> Export CSV
               </Button>
+              <BulkBadgePrint participants={rows} profiles={profiles} event={event} />
               <Button asChild variant="outline">
                 <Link to="/checkin">
                   <QrCode className="size-4" /> Check-in sur site

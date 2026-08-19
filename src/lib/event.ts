@@ -84,6 +84,22 @@ export type Participant = {
   created_at: string;
 };
 
+export type Badge = {
+  id: string;
+  participant_id: string;
+  qr_payload: string;
+  badge_url: string;
+  generated_at: string;
+  printed_at: string | null;
+};
+
+export type Checkin = {
+  id: string;
+  participant_id: string;
+  scanned_by: string | null;
+  created_at: string;
+};
+
 export type Delegation = {
   id: string;
   event_id: string;
@@ -206,6 +222,52 @@ export const participantsQuery = (eventId?: string) => ({
       .order("created_at", { ascending: false });
     if (error) throw error;
     return (data ?? []) as Participant[];
+  },
+});
+
+/** Staff-only: one participant's badge (QR + print status), for the admin
+ * participant detail sheet. */
+export const badgeQuery = (participantId?: string) => ({
+  queryKey: ["badge", participantId],
+  enabled: Boolean(participantId),
+  queryFn: async (): Promise<Badge | null> => {
+    const { data, error } = await supabase
+      .from("badges")
+      .select("*")
+      .eq("participant_id", participantId!)
+      .maybeSingle();
+    if (error) throw error;
+    return (data as Badge | null) ?? null;
+  },
+});
+
+/** Staff-only: every badge for the event, for the "badges générés/imprimés"
+ * dashboard tiles. */
+export const badgesQuery = (eventId?: string) => ({
+  queryKey: ["badges", eventId],
+  enabled: Boolean(eventId),
+  queryFn: async (): Promise<Badge[]> => {
+    const { data, error } = await supabase
+      .from("badges")
+      .select("*, participants!inner(event_id)")
+      .eq("participants.event_id", eventId!);
+    if (error) throw error;
+    return (data ?? []) as unknown as Badge[];
+  },
+});
+
+/** Staff-only: every check-in for the event, for the "check-in réalisés"
+ * dashboard tile. */
+export const checkinsQuery = (eventId?: string) => ({
+  queryKey: ["checkins", eventId],
+  enabled: Boolean(eventId),
+  queryFn: async (): Promise<Checkin[]> => {
+    const { data, error } = await supabase
+      .from("checkins")
+      .select("*, participants!inner(event_id)")
+      .eq("participants.event_id", eventId!);
+    if (error) throw error;
+    return (data ?? []) as unknown as Checkin[];
   },
 });
 

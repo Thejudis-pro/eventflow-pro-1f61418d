@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { CalendarDays, MapPin, QrCode } from "lucide-react";
-import headerBand from "@/assets/header-fesa-band.jpeg";
+import fesaLogo from "@/assets/logo-fesa.png";
 import { BadgeFooterBand } from "./BadgeFooterBand";
-import { BADGE } from "@/lib/fesa-registration-theme";
+import { BADGE, REG } from "@/lib/fesa-registration-theme";
 
 export type BadgeData = {
   eventName: string;
@@ -51,9 +51,10 @@ function shortCode(registrationId: string): string {
 }
 
 /**
- * Fixed 359×530px badge card (95×135mm print), matching "Badges FESA 2026".
- * Shared by the registration wizard's live preview, the confirmation page,
- * and PDF export (rendered off-screen via html2canvas).
+ * Fixed 567×397px badge card (150×105mm print, matching the real "B4" card-
+ * case holders), landscape. Shared by the registration wizard's live
+ * preview, the confirmation page, the admin participant detail sheet, and
+ * PDF export (rendered via html2canvas).
  */
 export function BadgePreview({ data }: { data: BadgeData }) {
   const ink = data.profileInk ?? "#ffffff";
@@ -67,89 +68,88 @@ export function BadgePreview({ data }: { data: BadgeData }) {
   return (
     <div
       className="flex flex-col overflow-hidden bg-white shadow-[0_3px_10px_rgba(45,43,43,0.16)]"
-      style={{ width: 359, height: 530 }}
+      style={{ width: 567, height: 397 }}
     >
-      <div className="flex-none leading-none">
-        <img src={headerBand} alt="FESA 2026" className="block h-auto w-full" />
-      </div>
       <div className="h-[2px] flex-none" style={{ background: BADGE.gold }} />
 
-      <div className="flex-none px-[18px] pt-[14px] text-center">
-        <div style={{ font: "900 22px/1.02 Archivo, sans-serif", letterSpacing: "-0.02em", color: BADGE.green }}>
-          FORUM ÉCONOMIQUE
+      {/* Header: logo + dates/location */}
+      <div className="flex flex-none items-center justify-between px-6 py-3">
+        <img src={fesaLogo} alt="FESA 2026" className="h-[30px] w-auto" />
+        <div className="text-right" style={{ color: "#201e1d" }}>
+          <div
+            className="flex items-center justify-end gap-1.5 whitespace-nowrap"
+            style={{ font: "700 13px/1.2 Archivo, sans-serif" }}
+          >
+            {data.eventDates}
+            <CalendarDays size={14} color={BADGE.green} strokeWidth={2.2} />
+          </div>
+          <div
+            className="mt-[3px] flex items-center justify-end gap-1.5 whitespace-nowrap"
+            style={{ font: "500 11px/1.2 Archivo, sans-serif", color: "#5a6b62" }}
+          >
+            {data.location.toUpperCase()}
+            <MapPin size={14} color={BADGE.green} strokeWidth={2.2} />
+          </div>
         </div>
+      </div>
+      <div className="h-px flex-none" style={{ background: REG.line }} />
+
+      {/* Body: identity (left) + QR (right) */}
+      <div className="flex min-h-0 flex-1">
+        <div className="flex min-w-0 flex-1 flex-col justify-center px-7 py-4">
+          <div
+            className="truncate"
+            style={{ font: "900 27px/1.15 Archivo, sans-serif", letterSpacing: "-0.015em", color: "#201e1d" }}
+          >
+            {(data.fullName || "NOM PRÉNOM").toUpperCase()}
+          </div>
+          <div
+            className="mt-1 truncate"
+            style={{ font: "500 12px/1.4 Archivo, sans-serif", letterSpacing: "0.04em", color: "#7d7979" }}
+          >
+            {orgLine ? orgLine.toUpperCase() : "ORGANISATION · PAYS"}
+          </div>
+
+          <div className="mt-4">
+            <div
+              className="py-[9px] text-center"
+              style={{ background: data.profileColor, color: ink, font: "800 16px/1.15 Archivo, sans-serif" }}
+            >
+              {data.profileLabel.toUpperCase()}
+            </div>
+          </div>
+
+          <div className="mt-2.5">
+            <div
+              className="border-2 py-[7px] text-center"
+              style={{ borderColor: data.profileColor, font: "900 15px/1.1 Archivo, sans-serif", color: "#201e1d" }}
+            >
+              {zone}
+            </div>
+          </div>
+        </div>
+
         <div
-          className="mt-1"
-          style={{ font: "800 11px/1.3 Archivo, sans-serif", letterSpacing: "0.02em", color: BADGE.navy }}
+          className="flex flex-none flex-col items-center justify-center gap-2 px-5"
+          style={{ borderLeft: `1px solid ${REG.line}` }}
         >
-          DES ÉTATS DE L&rsquo;AFRIQUE DE L&rsquo;OUEST
+          <div
+            className="flex items-center justify-center border bg-white p-[5px]"
+            style={{ width: 108, height: 108, borderColor: "#d7d3d3" }}
+          >
+            {data.qrValue ? <BadgeQr value={data.qrValue} /> : <QrCode className="size-12 text-[#9b9797]" aria-hidden />}
+            <span className="sr-only">QR code du badge</span>
+          </div>
+          <div
+            className="whitespace-nowrap"
+            style={{ font: "500 8.5px/1.3 Archivo, sans-serif", letterSpacing: "0.08em", color: "#9b9797" }}
+          >
+            {code}
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-none flex-col items-center gap-1 px-[18px] pt-3" style={{ color: "#201e1d" }}>
-        <div
-          className="flex items-center gap-1.5 whitespace-nowrap"
-          style={{ font: "600 13px/1 Archivo, sans-serif" }}
-        >
-          <CalendarDays size={14} color={BADGE.green} strokeWidth={2.2} />
-          {data.eventDates}
-        </div>
-        <div
-          className="flex items-center gap-1.5 whitespace-nowrap"
-          style={{ font: "500 11.5px/1 Archivo, sans-serif" }}
-        >
-          <MapPin size={14} color={BADGE.green} strokeWidth={2.2} />
-          {data.location.toUpperCase()}
-        </div>
-      </div>
-
-      <div className="flex-none px-[18px] pt-4 text-center">
-        <div style={{ font: "900 21px/1.05 Archivo, sans-serif", letterSpacing: "-0.015em", color: "#201e1d" }}>
-          {(data.fullName || "NOM PRÉNOM").toUpperCase()}
-        </div>
-        <div
-          className="mt-[3px]"
-          style={{ font: "500 10.5px/1.4 Archivo, sans-serif", letterSpacing: "0.06em", color: "#7d7979" }}
-        >
-          {orgLine ? orgLine.toUpperCase() : "ORGANISATION · PAYS"}
-        </div>
-      </div>
-
-      <div className="flex-none px-[34px] pt-[10px]">
-        <div
-          className="py-[7px] text-center"
-          style={{ background: data.profileColor, color: ink, font: "800 15px/1.15 Archivo, sans-serif" }}
-        >
-          {data.profileLabel.toUpperCase()}
-        </div>
-      </div>
-
-      <div className="flex flex-none flex-col items-center gap-[5px] pt-[10px]">
-        <div
-          className="flex items-center justify-center border bg-white p-[5px]"
-          style={{ width: 114, height: 114, borderColor: "#d7d3d3" }}
-        >
-          {data.qrValue ? <BadgeQr value={data.qrValue} /> : <QrCode className="size-12 text-[#9b9797]" aria-hidden />}
-          <span className="sr-only">QR code du badge</span>
-        </div>
-        <div
-          className="whitespace-nowrap"
-          style={{ font: "500 9px/1.3 Archivo, sans-serif", letterSpacing: "0.1em", color: "#9b9797" }}
-        >
-          {code} · SCAN À L&rsquo;ENTRÉE
-        </div>
-      </div>
-
-      <div className="flex-none px-[30px] pb-3 pt-[10px]">
-        <div
-          className="border-2 py-[6px] text-center"
-          style={{ borderColor: data.profileColor, font: "900 17px/1.1 Archivo, sans-serif", color: "#201e1d" }}
-        >
-          {zone}
-        </div>
-      </div>
-
-      <div className="mt-auto flex-none overflow-hidden bg-white" style={{ height: 40 }}>
+      <div className="mt-auto flex-none overflow-hidden bg-white" style={{ height: 26 }}>
         <BadgeFooterBand />
       </div>
     </div>

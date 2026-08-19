@@ -5,6 +5,7 @@ import { CalendarPlus, Download, Loader2, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { RegistrationFooter, RegistrationHeader } from "@/components/fesa/RegistrationChrome";
 import { BadgePreview } from "@/components/fesa/BadgePreview";
+import { supabase } from "@/integrations/supabase/client";
 import { eventQuery, registrationQuery } from "@/lib/event";
 import { downloadBadgePdf, downloadIcs } from "@/lib/badge-export";
 import { ARCHIVO_FONT_HREF, REG } from "@/lib/fesa-registration-theme";
@@ -65,6 +66,7 @@ function ConfirmationPage() {
     setDownloading(true);
     try {
       await downloadBadgePdf(badgeRef.current, `badge-fesa2026-${registrationId}.pdf`);
+      void supabase.rpc("mark_badge_printed", { p_registration_id: registrationId });
     } catch (error) {
       console.error(error);
       toast.error("Le badge n'a pas pu être téléchargé.");
@@ -142,8 +144,8 @@ function ConfirmationPage() {
               sur place reste possible au guichet accréditation.
             </p>
 
-            <div className="mt-8 grid gap-8" style={{ gridTemplateColumns: "359px minmax(0,1fr)" }}>
-              <div ref={badgeRef} className="w-fit">
+            <div className="mt-8 grid gap-8 xl:grid-cols-[567px_minmax(0,1fr)]">
+              <div ref={badgeRef} className="w-fit max-w-full overflow-x-auto">
                 <BadgePreview
                   data={{
                     eventName: event?.name ?? "FESA 2026",

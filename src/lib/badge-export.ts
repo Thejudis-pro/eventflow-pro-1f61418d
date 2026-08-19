@@ -18,11 +18,12 @@ export async function renderBadgePdfBlob(node: HTMLElement): Promise<Blob> {
   const canvas = await html2canvas(node, { scale: 3, backgroundColor: "#ffffff", useCORS: true });
   const imgData = canvas.toDataURL("image/png");
 
-  // 95×135mm badge + 3mm bleed on each side, per the mockup's own print note.
-  const pageWidth = 101;
-  const pageHeight = 141;
-  const doc = new jsPDF({ unit: "mm", format: [pageWidth, pageHeight] });
-  doc.addImage(imgData, "PNG", (pageWidth - 95) / 2, (pageHeight - 135) / 2, 95, 135);
+  // 150×105mm, no bleed -- the badge slides into a pre-made plastic card
+  // holder (not cut to size), so the page is exactly the insert size.
+  const pageWidth = 150;
+  const pageHeight = 105;
+  const doc = new jsPDF({ unit: "mm", format: [pageWidth, pageHeight], orientation: "landscape" });
+  doc.addImage(imgData, "PNG", 0, 0, pageWidth, pageHeight);
   return doc.output("blob");
 }
 

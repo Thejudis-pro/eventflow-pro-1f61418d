@@ -524,6 +524,10 @@ export type Database = {
           status: string
         }[]
       }
+      mark_badge_printed: {
+        Args: { p_registration_id: string }
+        Returns: undefined
+      }
       get_registration: {
         Args: { p_registration_id: string }
         Returns: {
