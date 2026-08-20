@@ -39,7 +39,6 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import {
   badgesQuery,
-  checkinsQuery,
   eventQuery,
   participantsQuery,
   paymentsQuery,
@@ -91,7 +90,6 @@ function DashboardContent() {
   const { data: participants } = useQuery(participantsQuery(event?.id));
   const { data: payments } = useQuery(paymentsQuery(event?.id));
   const { data: badges } = useQuery(badgesQuery(event?.id));
-  const { data: checkins } = useQuery(checkinsQuery(event?.id));
 
   async function assignCategory(participantId: string, profileTypeId: string) {
     const { error } = await supabase
@@ -134,7 +132,10 @@ function DashboardContent() {
   const absent = Math.max(total - checkedIn, 0);
   const badgesGenerated = badges?.length ?? 0;
   const badgesPrinted = (badges ?? []).filter((b) => b.printed_at !== null).length;
-  const checkinsCount = checkins?.length ?? 0;
+  const pendingPayments = (payments ?? []).filter((p) => p.status === "pending").length;
+  const confirmedPayments = (payments ?? []).filter((p) => p.status === "success").length;
+  const senegaleseCount = (participants ?? []).filter((p) => p.country === "Sénégal").length;
+  const nonSenegaleseCount = Math.max(total - senegaleseCount, 0);
 
   const segmentCount = useMemo(() => {
     if (segmentProfile === "all") return total;
@@ -298,16 +299,16 @@ function DashboardContent() {
 
           {/* Secondary tiles */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            <Tile label="Paiements confirmés" value={String(paid)} />
+            <Tile label="Paiements confirmés" value={String(confirmedPayments)} />
+            <Tile label="Paiements en attente" value={String(pendingPayments)} />
             <Tile label="Participants confirmés" value={String(confirmedOnly)} />
             <Tile label="Taux de conversion" value={`${conversion}%`} />
             <Tile label="Enregistrés sur site" value={`${checkedIn} (${attendanceRate}%)`} />
             <Tile label="Participants absents" value={String(absent)} />
-            <Tile label="Taux de présence" value={`${attendanceRate}%`} />
             <Tile label="Badges générés" value={String(badgesGenerated)} />
             <Tile label="Badges imprimés" value={String(badgesPrinted)} />
-            <Tile label="Check-in réalisés" value={String(checkinsCount)} />
-            <Tile label="Recettes (mock)" value={`${(paid * 10000).toLocaleString("fr-FR")} F`} />
+            <Tile label="Inscriptions sénégalaises" value={String(senegaleseCount)} />
+            <Tile label="Inscriptions non sénégalaises" value={String(nonSenegaleseCount)} />
           </div>
 
           {/* Profile breakdown */}
