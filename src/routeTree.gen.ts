@@ -19,6 +19,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as InscriptionRouteImport } from './routes/inscription'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as RetrouverMonBadgeRouteImport } from './routes/retrouver-mon-badge'
+import { Route as ApiSyncPaymentSecretRouteImport } from './routes/api.sync-payment-secret'
 import { Route as ConfirmationRegistrationIdRouteImport } from './routes/confirmation.$registrationId'
 import { Route as StaffLoginRouteImport } from './routes/staff.login'
 import { Route as StaffSignupRouteImport } from './routes/staff.signup'
@@ -74,6 +75,11 @@ const RetrouverMonBadgeRoute = RetrouverMonBadgeRouteImport.update({
   path: '/retrouver-mon-badge',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSyncPaymentSecretRoute = ApiSyncPaymentSecretRouteImport.update({
+  id: '/api/sync-payment-secret',
+  path: '/api/sync-payment-secret',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConfirmationRegistrationIdRoute =
   ConfirmationRegistrationIdRouteImport.update({
     id: '/confirmation/$registrationId',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/inscription': typeof InscriptionRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/retrouver-mon-badge': typeof RetrouverMonBadgeRoute
+  '/api/sync-payment-secret': typeof ApiSyncPaymentSecretRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/inscription': typeof InscriptionRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/retrouver-mon-badge': typeof RetrouverMonBadgeRoute
+  '/api/sync-payment-secret': typeof ApiSyncPaymentSecretRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/inscription': typeof InscriptionRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/retrouver-mon-badge': typeof RetrouverMonBadgeRoute
+  '/api/sync-payment-secret': typeof ApiSyncPaymentSecretRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/inscription'
     | '/mentions-legales'
     | '/retrouver-mon-badge'
+    | '/api/sync-payment-secret'
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/inscription'
     | '/mentions-legales'
     | '/retrouver-mon-badge'
+    | '/api/sync-payment-secret'
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/inscription'
     | '/mentions-legales'
     | '/retrouver-mon-badge'
+    | '/api/sync-payment-secret'
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
@@ -207,6 +219,7 @@ export interface RootRouteChildren {
   InscriptionRoute: typeof InscriptionRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
   RetrouverMonBadgeRoute: typeof RetrouverMonBadgeRoute
+  ApiSyncPaymentSecretRoute: typeof ApiSyncPaymentSecretRoute
   ConfirmationRegistrationIdRoute: typeof ConfirmationRegistrationIdRoute
   StaffLoginRoute: typeof StaffLoginRoute
   StaffSignupRoute: typeof StaffSignupRoute
@@ -285,6 +298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RetrouverMonBadgeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/sync-payment-secret': {
+      id: '/api/sync-payment-secret'
+      path: '/api/sync-payment-secret'
+      fullPath: '/api/sync-payment-secret'
+      preLoaderRoute: typeof ApiSyncPaymentSecretRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/confirmation/$registrationId': {
       id: '/confirmation/$registrationId'
       path: '/confirmation/$registrationId'
@@ -327,6 +347,7 @@ const rootRouteChildren: RootRouteChildren = {
   InscriptionRoute: InscriptionRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
   RetrouverMonBadgeRoute: RetrouverMonBadgeRoute,
+  ApiSyncPaymentSecretRoute: ApiSyncPaymentSecretRoute,
   ConfirmationRegistrationIdRoute: ConfirmationRegistrationIdRoute,
   StaffLoginRoute: StaffLoginRoute,
   StaffSignupRoute: StaffSignupRoute,
