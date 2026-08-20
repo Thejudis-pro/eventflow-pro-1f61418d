@@ -3,7 +3,7 @@ import QRCode from "qrcode";
 import { CalendarDays, MapPin, QrCode } from "lucide-react";
 import headerBand from "@/assets/header-fesa-band.jpeg";
 import { BadgeFooterBand } from "./BadgeFooterBand";
-import { BADGE } from "@/lib/fesa-registration-theme";
+import { BADGE, REG } from "@/lib/fesa-registration-theme";
 
 export type BadgeData = {
   eventName: string;
@@ -76,14 +76,14 @@ export function BadgePreview({ data }: { data: BadgeData }) {
       <div className="h-[2px] flex-none" style={{ background: BADGE.gold }} />
 
       <div className="flex-none px-[18px] pt-[14px] text-center">
-        <div style={{ font: "900 22px/1.02 Archivo, sans-serif", letterSpacing: "-0.02em", color: BADGE.green }}>
-          FORUM ÉCONOMIQUE
+        <div style={{ font: "900 16px/1.15 Archivo, sans-serif", letterSpacing: "-0.01em", color: REG.dark }}>
+          FORUM DE L&rsquo;ENTREPRENEURIAT ET
         </div>
         <div
-          className="mt-1"
-          style={{ font: "800 11px/1.3 Archivo, sans-serif", letterSpacing: "0.02em", color: BADGE.navy }}
+          className="mt-[3px]"
+          style={{ font: "900 16px/1.15 Archivo, sans-serif", letterSpacing: "-0.01em", color: BADGE.green }}
         >
-          DES ÉTATS DE L&rsquo;AFRIQUE DE L&rsquo;OUEST
+          DE LA SOUVERAINETÉ ALIMENTAIRE
         </div>
       </div>
 
