@@ -1,6 +1,19 @@
+import { useState, type FormEvent } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarDays, Globe, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { CalendarDays, Globe, Loader2, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
+import { sendContactEmail } from "@/lib/email/send-contact-email.functions";
+
+const SUBJECT_OPTIONS = [
+  { value: "inscription", label: "Question inscription" },
+  { value: "stand", label: "Stand exposant" },
+  { value: "partenariat", label: "Partenariat" },
+  { value: "autre", label: "Autre" },
+] as const;
+
+const inputClass =
+  "h-12 w-full rounded-[14px] border border-[#ddd2c2] bg-white px-4 text-[15px] font-medium text-[#0d3d21] outline-none transition placeholder:text-[#7a8b81] focus:border-[#0b7a3c] disabled:opacity-60";
+const labelClass = "mb-1.5 block text-xs font-extrabold uppercase tracking-wide text-[#7a8b81]";
 
 const TITLE = "Contact | FESA 2026";
 const DESCRIPTION =
@@ -21,6 +34,32 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    const fullName = String(fd.get("fullName") ?? "").trim();
+    const email = String(fd.get("email") ?? "").trim();
+    const phone = String(fd.get("phone") ?? "").trim();
+    const subject = String(fd.get("subject") ?? "autre") as "inscription" | "stand" | "partenariat" | "autre";
+    const message = String(fd.get("message") ?? "").trim();
+    if (!fullName || !email || !message) return;
+
+    setStatus("submitting");
+    try {
+      await sendContactEmail({
+        data: { fullName, email, phone: phone || undefined, subject, message },
+      });
+      setStatus("success");
+      form.reset();
+    } catch (error) {
+      console.error(error);
+      setStatus("error");
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#fbf7f0] text-[#0d3d21]">
       <SiteHeader />
@@ -97,6 +136,117 @@ function ContactPage() {
               Organisé par la PAAF
             </p>
           </div>
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-[#e0d6c6] bg-white p-6 sm:p-8">
+          <h2 className="text-xl font-extrabold tracking-tight text-[#0d3d21]">
+            Envoyez-nous un message
+          </h2>
+          <p className="mt-1 text-sm text-[#5a6b62]">
+            Nous vous répondons sous 48h ouvrées.
+          </p>
+
+          <form className="mt-6 grid gap-4 sm:grid-cols-2" onSubmit={handleSubmit}>
+            <div>
+              <label className={labelClass} htmlFor="contact-fullName">
+                Nom complet
+              </label>
+              <input
+                id="contact-fullName"
+                name="fullName"
+                type="text"
+                required
+                disabled={status === "submitting"}
+                className={inputClass}
+                placeholder="Aïssatou Ndiaye"
+              />
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="contact-email">
+                Email
+              </label>
+              <input
+                id="contact-email"
+                name="email"
+                type="email"
+                required
+                disabled={status === "submitting"}
+                className={inputClass}
+                placeholder="vous@exemple.com"
+              />
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="contact-phone">
+                Téléphone (optionnel)
+              </label>
+              <input
+                id="contact-phone"
+                name="phone"
+                type="tel"
+                disabled={status === "submitting"}
+                className={inputClass}
+                placeholder="77 000 00 00"
+              />
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="contact-subject">
+                Sujet
+              </label>
+              <select
+                id="contact-subject"
+                name="subject"
+                defaultValue="autre"
+                disabled={status === "submitting"}
+                className={inputClass}
+              >
+                {SUBJECT_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="sm:col-span-2">
+              <label className={labelClass} htmlFor="contact-message">
+                Message
+              </label>
+              <textarea
+                id="contact-message"
+                name="message"
+                required
+                rows={5}
+                disabled={status === "submitting"}
+                className={`${inputClass} h-auto resize-none py-3`}
+                placeholder="Votre message…"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <button
+                type="submit"
+                disabled={status === "submitting"}
+                className="flex h-12 items-center gap-2 rounded-[14px] bg-[#a8481a] px-6 text-sm font-extrabold text-white transition hover:bg-[#0d3d21] disabled:opacity-60"
+              >
+                {status === "submitting" ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Send className="size-4" />
+                )}
+                Envoyer le message
+              </button>
+              {status === "success" && (
+                <p className="mt-3 text-sm font-semibold text-[#0b7a3c]">
+                  Merci, votre message a bien été envoyé. Nous revenons vers vous sous 48h.
+                </p>
+              )}
+              {status === "error" && (
+                <p className="mt-3 text-sm font-semibold text-[#a8481a]">
+                  Une erreur est survenue. Réessayez ou contactez-nous directement par WhatsApp ou
+                  téléphone ci-dessus.
+                </p>
+              )}
+            </div>
+          </form>
         </div>
       </main>
       <SiteFooter />

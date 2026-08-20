@@ -18,6 +18,7 @@ export async function sendEmail(input: {
   subject: string;
   html: string;
   text: string;
+  replyTo?: string;
 }): Promise<void> {
   const apiKey = process.env["RESEND_API_KEY"];
   const from = process.env["RESEND_FROM_EMAIL"];
@@ -37,6 +38,7 @@ export async function sendEmail(input: {
       subject: input.subject,
       html: input.html,
       text: input.text,
+      ...(input.replyTo ? { reply_to: input.replyTo } : {}),
     }),
   });
 
