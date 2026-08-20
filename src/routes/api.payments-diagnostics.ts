@@ -52,13 +52,13 @@ export const Route = createFileRoute("/api/payments-diagnostics")({
           internalPaymentSecretConfigured: Boolean(internalSecret),
           internalPaymentSecretMatchesDatabase,
           note:
-            paytechEnvResolvesTo !== "live"
-              ? "PAYTECH_ENV is not resolving to live -- checkout will be sandbox/test for everyone, on every device."
+            paytechEnvResolvesTo !== "prod"
+              ? "PAYTECH_ENV is not resolving to prod -- checkout will be sandbox/test for everyone, on every device."
               : !paytechApiKeyConfigured || !paytechApiSecretConfigured
                 ? "PAYTECH_API_KEY/PAYTECH_API_SECRET missing -- checkout will fail outright."
                 : internalPaymentSecretMatchesDatabase === false
                   ? "INTERNAL_PAYMENT_SECRET does not match the database -- payments will go through PayTech but never get marked paid."
-                  : "Config looks consistent. If checkout still shows test mode, PAYTECH_API_KEY/SECRET are likely PayTech's sandbox key pair rather than the production one.",
+                  : "Config looks consistent. If checkout still errors, PAYTECH_API_KEY/SECRET are likely PayTech's sandbox key pair, or PayTech support hasn't activated this account for production yet.",
         });
       },
     },

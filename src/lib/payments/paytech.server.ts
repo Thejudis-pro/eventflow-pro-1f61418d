@@ -11,15 +11,16 @@
 const PAYTECH_BASE_URL = "https://paytech.sn/api/payment/request-payment";
 
 /**
- * PayTech's API only recognizes the literal string "live" for production --
- * anything else (including reasonable-looking values like "prod" or
- * "production") silently falls through to sandbox mode with no error
- * anywhere, which is exactly how this bit us once already. Normalize the
- * common synonyms instead of trusting the secret's exact spelling.
+ * PayTech's API only recognizes the literal string "prod" for production
+ * (confirmed against their docs -- "live" is NOT a value PayTech
+ * understands and gets rejected with an invalid-request-format error).
+ * Normalize reasonable-looking synonyms to the one value PayTech actually
+ * accepts, so a typo here can't silently wreck checkout again in either
+ * direction -- past a full sandbox fallback, or now an outright rejection.
  */
-export function resolvePaytechEnv(): "live" | "test" {
+export function resolvePaytechEnv(): "prod" | "test" {
   const raw = (process.env["PAYTECH_ENV"] ?? "").trim().toLowerCase();
-  return raw === "live" || raw === "prod" || raw === "production" ? "live" : "test";
+  return raw === "prod" || raw === "live" || raw === "production" ? "prod" : "test";
 }
 
 export type CreatePaytechSessionInput = {
