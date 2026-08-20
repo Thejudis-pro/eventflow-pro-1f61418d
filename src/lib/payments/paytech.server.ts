@@ -17,7 +17,7 @@ const PAYTECH_BASE_URL = "https://paytech.sn/api/payment/request-payment";
  * anywhere, which is exactly how this bit us once already. Normalize the
  * common synonyms instead of trusting the secret's exact spelling.
  */
-function resolvePaytechEnv(): "live" | "test" {
+export function resolvePaytechEnv(): "live" | "test" {
   const raw = (process.env["PAYTECH_ENV"] ?? "").trim().toLowerCase();
   return raw === "live" || raw === "prod" || raw === "production" ? "live" : "test";
 }
