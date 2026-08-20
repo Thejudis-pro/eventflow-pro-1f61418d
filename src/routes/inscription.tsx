@@ -18,6 +18,7 @@ import { RegistrationFooter, RegistrationHeader } from "@/components/fesa/Regist
 import { BadgePreview } from "@/components/fesa/BadgePreview";
 import { supabase } from "@/integrations/supabase/client";
 import { createCheckoutSession } from "@/lib/payments/checkout.functions";
+import { sendRegistrationEmail } from "@/lib/email/send-registration-email.functions";
 import {
   eventQuery,
   offersQuery,
@@ -270,6 +271,13 @@ function RegistrationPage() {
       if (needsPayment) {
         setStep(3);
       } else {
+        // Fire-and-forget: paid registrations send from the PayTech webhook
+        // instead (server-side, doesn't depend on this tab staying open),
+        // but free ones confirm immediately with no webhook to hang this
+        // off of, so this is the only trigger point for them.
+        void sendRegistrationEmail({ data: { participantId: result.id } }).catch((error) => {
+          console.error("[inscription] confirmation email", error);
+        });
         navigate({
           to: "/confirmation/$registrationId",
           params: { registrationId: result.registrationId },

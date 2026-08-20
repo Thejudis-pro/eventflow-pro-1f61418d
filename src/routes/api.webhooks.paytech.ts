@@ -31,11 +31,26 @@ export const Route = createFileRoute("/api/webhooks/paytech")({
         const paytechStatus = String(payload["type_event"] ?? payload["status"] ?? "").toLowerCase();
         const status = paytechStatus === "sale_complete" || paytechStatus === "success" ? "success" : "failed";
 
+        let confirmed: Awaited<ReturnType<typeof confirmPayment>>;
         try {
-          await confirmPayment({ providerSessionId, status, webhookPayload: payload as unknown as Json });
+          confirmed = await confirmPayment({ providerSessionId, status, webhookPayload: payload as unknown as Json });
         } catch (error) {
           console.error("[webhooks/paytech]", error);
           return new Response("processing error", { status: 500 });
+        }
+
+        if (confirmed.status === "success") {
+          // Best-effort and awaited (Workers can kill background promises
+          // once the response is sent, so this can't be fire-and-forget) --
+          // an email failure shouldn't make PayTech retry a webhook that
+          // already succeeded at its actual job of marking the payment paid.
+          try {
+            const { sendRegistrationConfirmationEmail } = await import("@/lib/email/send-registration-email.server");
+            const origin = new URL(request.url).origin;
+            await sendRegistrationConfirmationEmail({ participantId: confirmed.participantId, origin });
+          } catch (error) {
+            console.error("[webhooks/paytech] confirmation email", error);
+          }
         }
 
         return new Response("OK", { status: 200 });

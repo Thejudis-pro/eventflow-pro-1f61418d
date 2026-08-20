@@ -548,6 +548,25 @@ export type Database = {
           zone_label: string
         }[]
       }
+      get_registration_email_info: {
+        Args: { p_participant_id: string; p_secret: string }
+        Returns: {
+          city: string
+          company: string
+          country: string
+          email: string
+          event_end_date: string
+          event_location: string
+          event_name: string
+          event_start_date: string
+          full_name: string
+          profile_label: string
+          registration_id: string
+          sent_email: boolean
+          status: string
+          zone_label: string
+        }[]
+      }
       is_approved_staff: { Args: { _user_id: string }; Returns: boolean }
       list_delegation_names: {
         Args: { p_event_id: string }
@@ -558,6 +577,10 @@ export type Database = {
       }
       mark_badge_printed: {
         Args: { p_registration_id: string }
+        Returns: undefined
+      }
+      mark_registration_email_sent: {
+        Args: { p_participant_id: string }
         Returns: undefined
       }
       prepare_payment_session: {
