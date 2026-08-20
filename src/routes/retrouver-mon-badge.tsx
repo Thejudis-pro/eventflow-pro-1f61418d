@@ -9,10 +9,18 @@ import { eventQuery, findRegistrationsByEmail } from "@/lib/event";
 import { REG } from "@/lib/fesa-registration-theme";
 
 const TITLE = "Retrouver mon badge — FESA 2026";
+const DESCRIPTION =
+  "Retrouvez votre badge et votre référence d'inscription au FESA 2026 à partir de votre adresse email.";
 
 export const Route = createFileRoute("/retrouver-mon-badge")({
   head: () => ({
-    meta: [{ title: TITLE }, { name: "robots", content: "noindex" }],
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { name: "robots", content: "noindex" },
+    ],
   }),
   component: RetrouverMonBadgePage,
 });

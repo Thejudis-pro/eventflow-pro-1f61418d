@@ -53,6 +53,7 @@ function ThemeToggle({
         type="button"
         onClick={() => onChange("light")}
         aria-pressed={theme === "light"}
+        aria-label="Thème clair"
         className={`flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-colors sm:px-2.5 ${
           theme === "light" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
         }`}
@@ -63,6 +64,7 @@ function ThemeToggle({
         type="button"
         onClick={() => onChange("dark")}
         aria-pressed={theme === "dark"}
+        aria-label="Thème sombre"
         className={`flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-colors sm:px-2.5 ${
           theme === "dark" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
         }`}

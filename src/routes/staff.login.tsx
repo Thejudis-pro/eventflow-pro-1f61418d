@@ -8,9 +8,18 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage, useAttemptThrottle } from "@/lib/auth";
 
+const TITLE = "Connexion organisateur — FESA 2026";
+const DESCRIPTION = "Connexion à l'espace organisateurs du FESA 2026.";
+
 export const Route = createFileRoute("/staff/login")({
   head: () => ({
-    meta: [{ title: "Connexion organisateur" }, { name: "robots", content: "noindex" }],
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { name: "robots", content: "noindex" },
+    ],
   }),
   component: StaffLoginPage,
 });

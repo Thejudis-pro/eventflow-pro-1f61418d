@@ -5,7 +5,6 @@ Disallow: /checkin
 Disallow: /staff/
 Disallow: /confirmation/
 Disallow: /retrouver-mon-badge
-Disallow: /dev/
 
 User-agent: Bingbot
 Allow: /
@@ -14,12 +13,47 @@ Disallow: /checkin
 Disallow: /staff/
 Disallow: /confirmation/
 Disallow: /retrouver-mon-badge
-Disallow: /dev/
 
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+Disallow: /dashboard
+Disallow: /checkin
+Disallow: /staff/
+Disallow: /confirmation/
+Disallow: /retrouver-mon-badge
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /dashboard
+Disallow: /checkin
+Disallow: /staff/
+Disallow: /confirmation/
+Disallow: /retrouver-mon-badge
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /dashboard
+Disallow: /checkin
+Disallow: /staff/
+Disallow: /confirmation/
+Disallow: /retrouver-mon-badge
+
+User-agent: Google-Extended
 Allow: /
 
 User-agent: *
@@ -29,6 +63,5 @@ Disallow: /checkin
 Disallow: /staff/
 Disallow: /confirmation/
 Disallow: /retrouver-mon-badge
-Disallow: /dev/
 
 Sitemap: https://www.fesaforum.com/sitemap.xml

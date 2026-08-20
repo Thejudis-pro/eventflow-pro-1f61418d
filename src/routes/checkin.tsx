@@ -13,10 +13,17 @@ import { useStaffSession } from "@/lib/auth";
 import { eventQuery, participantsQuery, profileTypesQuery } from "@/lib/event";
 
 const TITLE = "Check-in sur site — FESA 2026";
+const DESCRIPTION = "Scanner d'accréditation pour l'équipe organisatrice du FESA 2026.";
 
 export const Route = createFileRoute("/checkin")({
   head: () => ({
-    meta: [{ title: TITLE }, { name: "robots", content: "noindex" }],
+    meta: [
+      { title: TITLE },
+      { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
+      { name: "robots", content: "noindex" },
+    ],
   }),
   component: CheckinPage,
 });

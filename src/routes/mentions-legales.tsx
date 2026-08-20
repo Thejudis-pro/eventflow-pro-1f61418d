@@ -10,6 +10,8 @@ export const Route = createFileRoute("/mentions-legales")({
     meta: [
       { title: TITLE },
       { name: "description", content: DESCRIPTION },
+      { property: "og:title", content: TITLE },
+      { property: "og:description", content: DESCRIPTION },
       { name: "robots", content: "noindex" },
     ],
   }),
