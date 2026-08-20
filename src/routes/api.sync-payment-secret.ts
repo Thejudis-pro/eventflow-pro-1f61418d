@@ -13,7 +13,12 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/api/sync-payment-secret")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        const { isAuthorizedAdminRequest } = await import("@/lib/admin-auth.server");
+        if (!isAuthorizedAdminRequest(request)) {
+          return new Response("Unauthorized", { status: 401 });
+        }
+
         const secret = process.env["INTERNAL_PAYMENT_SECRET"];
         if (!secret) {
           return Response.json(

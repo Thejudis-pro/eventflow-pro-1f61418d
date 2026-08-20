@@ -19,7 +19,12 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute("/api/payments-diagnostics")({
   server: {
     handlers: {
-      GET: async () => {
+      GET: async ({ request }) => {
+        const { isAuthorizedAdminRequest } = await import("@/lib/admin-auth.server");
+        if (!isAuthorizedAdminRequest(request)) {
+          return new Response("Unauthorized", { status: 401 });
+        }
+
         const { resolvePaytechEnv } = await import("@/lib/payments/paytech.server");
 
         const paytechApiKeyConfigured = Boolean(process.env["PAYTECH_API_KEY"]);
