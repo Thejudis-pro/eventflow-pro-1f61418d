@@ -25,6 +25,10 @@ export const Route = createFileRoute("/api/payments-diagnostics")({
         const paytechApiKeyConfigured = Boolean(process.env["PAYTECH_API_KEY"]);
         const paytechApiSecretConfigured = Boolean(process.env["PAYTECH_API_SECRET"]);
         const paytechEnvResolvesTo = resolvePaytechEnv();
+        // PAYTECH_ENV is a mode flag, not a credential -- safe to echo back
+        // raw (JSON.stringify so stray quotes/whitespace/newlines are visible
+        // instead of silently swallowed by the response).
+        const paytechEnvRaw = JSON.stringify(process.env["PAYTECH_ENV"] ?? null);
 
         const internalSecret = process.env["INTERNAL_PAYMENT_SECRET"];
         let internalPaymentSecretMatchesDatabase: boolean | null = null;
@@ -42,6 +46,7 @@ export const Route = createFileRoute("/api/payments-diagnostics")({
 
         return Response.json({
           paytechEnvResolvesTo,
+          paytechEnvRaw,
           paytechApiKeyConfigured,
           paytechApiSecretConfigured,
           internalPaymentSecretConfigured: Boolean(internalSecret),
