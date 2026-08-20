@@ -548,6 +548,22 @@ export type Database = {
           zone_label: string
         }[]
       }
+      get_bulk_registration_email_info: {
+        Args: { p_event_id: string; p_secret: string }
+        Returns: {
+          event_end_date: string
+          event_location: string
+          event_name: string
+          event_start_date: string
+          full_name: string
+          email: string
+          participant_id: string
+          profile_label: string
+          registration_id: string
+          status: string
+          zone_label: string
+        }[]
+      }
       get_registration_email_info: {
         Args: { p_participant_id: string; p_secret: string }
         Returns: {
@@ -581,6 +597,10 @@ export type Database = {
       }
       mark_registration_email_sent: {
         Args: { p_participant_id: string }
+        Returns: undefined
+      }
+      mark_registration_emails_sent: {
+        Args: { p_participant_ids: string[] }
         Returns: undefined
       }
       prepare_payment_session: {
