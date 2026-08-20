@@ -19,6 +19,9 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as InscriptionRouteImport } from './routes/inscription'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as RetrouverMonBadgeRouteImport } from './routes/retrouver-mon-badge'
+import { Route as ApiEmailDiagnosticsRouteImport } from './routes/api.email-diagnostics'
+import { Route as ApiPaymentsDiagnosticsRouteImport } from './routes/api.payments-diagnostics'
+import { Route as ApiSendBulkConfirmationEmailsRouteImport } from './routes/api.send-bulk-confirmation-emails'
 import { Route as ApiSyncPaymentSecretRouteImport } from './routes/api.sync-payment-secret'
 import { Route as ConfirmationRegistrationIdRouteImport } from './routes/confirmation.$registrationId'
 import { Route as StaffLoginRouteImport } from './routes/staff.login'
@@ -75,6 +78,22 @@ const RetrouverMonBadgeRoute = RetrouverMonBadgeRouteImport.update({
   path: '/retrouver-mon-badge',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiEmailDiagnosticsRoute = ApiEmailDiagnosticsRouteImport.update({
+  id: '/api/email-diagnostics',
+  path: '/api/email-diagnostics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaymentsDiagnosticsRoute = ApiPaymentsDiagnosticsRouteImport.update({
+  id: '/api/payments-diagnostics',
+  path: '/api/payments-diagnostics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSendBulkConfirmationEmailsRoute =
+  ApiSendBulkConfirmationEmailsRouteImport.update({
+    id: '/api/send-bulk-confirmation-emails',
+    path: '/api/send-bulk-confirmation-emails',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiSyncPaymentSecretRoute = ApiSyncPaymentSecretRouteImport.update({
   id: '/api/sync-payment-secret',
   path: '/api/sync-payment-secret',
@@ -113,6 +132,9 @@ export interface FileRoutesByFullPath {
   '/inscription': typeof InscriptionRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/retrouver-mon-badge': typeof RetrouverMonBadgeRoute
+  '/api/email-diagnostics': typeof ApiEmailDiagnosticsRoute
+  '/api/payments-diagnostics': typeof ApiPaymentsDiagnosticsRoute
+  '/api/send-bulk-confirmation-emails': typeof ApiSendBulkConfirmationEmailsRoute
   '/api/sync-payment-secret': typeof ApiSyncPaymentSecretRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
@@ -130,6 +152,9 @@ export interface FileRoutesByTo {
   '/inscription': typeof InscriptionRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/retrouver-mon-badge': typeof RetrouverMonBadgeRoute
+  '/api/email-diagnostics': typeof ApiEmailDiagnosticsRoute
+  '/api/payments-diagnostics': typeof ApiPaymentsDiagnosticsRoute
+  '/api/send-bulk-confirmation-emails': typeof ApiSendBulkConfirmationEmailsRoute
   '/api/sync-payment-secret': typeof ApiSyncPaymentSecretRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
@@ -148,6 +173,9 @@ export interface FileRoutesById {
   '/inscription': typeof InscriptionRoute
   '/mentions-legales': typeof MentionsLegalesRoute
   '/retrouver-mon-badge': typeof RetrouverMonBadgeRoute
+  '/api/email-diagnostics': typeof ApiEmailDiagnosticsRoute
+  '/api/payments-diagnostics': typeof ApiPaymentsDiagnosticsRoute
+  '/api/send-bulk-confirmation-emails': typeof ApiSendBulkConfirmationEmailsRoute
   '/api/sync-payment-secret': typeof ApiSyncPaymentSecretRoute
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
@@ -167,6 +195,9 @@ export interface FileRouteTypes {
     | '/inscription'
     | '/mentions-legales'
     | '/retrouver-mon-badge'
+    | '/api/email-diagnostics'
+    | '/api/payments-diagnostics'
+    | '/api/send-bulk-confirmation-emails'
     | '/api/sync-payment-secret'
     | '/confirmation/$registrationId'
     | '/staff/login'
@@ -184,6 +215,9 @@ export interface FileRouteTypes {
     | '/inscription'
     | '/mentions-legales'
     | '/retrouver-mon-badge'
+    | '/api/email-diagnostics'
+    | '/api/payments-diagnostics'
+    | '/api/send-bulk-confirmation-emails'
     | '/api/sync-payment-secret'
     | '/confirmation/$registrationId'
     | '/staff/login'
@@ -201,6 +235,9 @@ export interface FileRouteTypes {
     | '/inscription'
     | '/mentions-legales'
     | '/retrouver-mon-badge'
+    | '/api/email-diagnostics'
+    | '/api/payments-diagnostics'
+    | '/api/send-bulk-confirmation-emails'
     | '/api/sync-payment-secret'
     | '/confirmation/$registrationId'
     | '/staff/login'
@@ -219,6 +256,9 @@ export interface RootRouteChildren {
   InscriptionRoute: typeof InscriptionRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
   RetrouverMonBadgeRoute: typeof RetrouverMonBadgeRoute
+  ApiEmailDiagnosticsRoute: typeof ApiEmailDiagnosticsRoute
+  ApiPaymentsDiagnosticsRoute: typeof ApiPaymentsDiagnosticsRoute
+  ApiSendBulkConfirmationEmailsRoute: typeof ApiSendBulkConfirmationEmailsRoute
   ApiSyncPaymentSecretRoute: typeof ApiSyncPaymentSecretRoute
   ConfirmationRegistrationIdRoute: typeof ConfirmationRegistrationIdRoute
   StaffLoginRoute: typeof StaffLoginRoute
@@ -298,6 +338,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RetrouverMonBadgeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/email-diagnostics': {
+      id: '/api/email-diagnostics'
+      path: '/api/email-diagnostics'
+      fullPath: '/api/email-diagnostics'
+      preLoaderRoute: typeof ApiEmailDiagnosticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/payments-diagnostics': {
+      id: '/api/payments-diagnostics'
+      path: '/api/payments-diagnostics'
+      fullPath: '/api/payments-diagnostics'
+      preLoaderRoute: typeof ApiPaymentsDiagnosticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/send-bulk-confirmation-emails': {
+      id: '/api/send-bulk-confirmation-emails'
+      path: '/api/send-bulk-confirmation-emails'
+      fullPath: '/api/send-bulk-confirmation-emails'
+      preLoaderRoute: typeof ApiSendBulkConfirmationEmailsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/sync-payment-secret': {
       id: '/api/sync-payment-secret'
       path: '/api/sync-payment-secret'
@@ -347,6 +408,9 @@ const rootRouteChildren: RootRouteChildren = {
   InscriptionRoute: InscriptionRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
   RetrouverMonBadgeRoute: RetrouverMonBadgeRoute,
+  ApiEmailDiagnosticsRoute: ApiEmailDiagnosticsRoute,
+  ApiPaymentsDiagnosticsRoute: ApiPaymentsDiagnosticsRoute,
+  ApiSendBulkConfirmationEmailsRoute: ApiSendBulkConfirmationEmailsRoute,
   ApiSyncPaymentSecretRoute: ApiSyncPaymentSecretRoute,
   ConfirmationRegistrationIdRoute: ConfirmationRegistrationIdRoute,
   StaffLoginRoute: StaffLoginRoute,
