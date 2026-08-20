@@ -10,6 +10,18 @@
 
 const PAYTECH_BASE_URL = "https://paytech.sn/api/payment/request-payment";
 
+/**
+ * PayTech's API only recognizes the literal string "live" for production --
+ * anything else (including reasonable-looking values like "prod" or
+ * "production") silently falls through to sandbox mode with no error
+ * anywhere, which is exactly how this bit us once already. Normalize the
+ * common synonyms instead of trusting the secret's exact spelling.
+ */
+function resolvePaytechEnv(): "live" | "test" {
+  const raw = (process.env["PAYTECH_ENV"] ?? "").trim().toLowerCase();
+  return raw === "live" || raw === "prod" || raw === "production" ? "live" : "test";
+}
+
 export type CreatePaytechSessionInput = {
   amount: number;
   currency?: string;
@@ -28,7 +40,7 @@ export async function createPaytechSession(
 ): Promise<PaytechSessionResult> {
   const apiKey = process.env["PAYTECH_API_KEY"];
   const apiSecret = process.env["PAYTECH_API_SECRET"];
-  const env = process.env["PAYTECH_ENV"] ?? "test";
+  const env = resolvePaytechEnv();
   if (!apiKey || !apiSecret) {
     throw new Error("PayTech credentials are not configured (PAYTECH_API_KEY / PAYTECH_API_SECRET).");
   }
