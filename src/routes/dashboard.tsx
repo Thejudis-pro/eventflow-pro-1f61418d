@@ -224,319 +224,295 @@ function DashboardContent() {
       event={event}
       search={{ value: search, onChange: setSearch, placeholder: "Rechercher un participant…" }}
     >
-      <div className="grid gap-4 sm:gap-6 xl:grid-cols-[2fr_1fr]">
-        <div className="min-w-0 space-y-4 sm:space-y-6">
-          {/* Hero */}
-          <section className="rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="min-w-0">
-                <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Inscriptions totales
-                </p>
-                <p className="mt-2 font-display text-3xl font-bold tabular-nums text-foreground sm:text-4xl">
-                  {total}
-                </p>
-                <p className="mt-1 truncate text-xs text-muted-foreground">
-                  {event?.name ?? "Événement"} · {event?.location ?? ""}
-                </p>
-              </div>
-              <div className="min-w-40 flex-1 basis-40 sm:max-w-xs">
-                <TrendSparkline data={trendData} />
-              </div>
+      <div className="min-w-0 space-y-4 sm:space-y-6">
+        {/* Hero */}
+        <section className="rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                Inscriptions totales
+              </p>
+              <p className="mt-2 font-display text-3xl font-bold tabular-nums text-foreground sm:text-4xl">
+                {total}
+              </p>
+              <p className="mt-1 truncate text-xs text-muted-foreground">
+                {event?.name ?? "Événement"} · {event?.location ?? ""}
+              </p>
             </div>
-            <div className="mt-4 flex flex-wrap gap-3 border-t border-border pt-4">
-              <Button variant="institutional" onClick={exportCsv}>
-                <Download className="size-4" /> Export CSV
-              </Button>
-              <BulkBadgePrint participants={rows} profiles={profiles} event={event} />
-              <Button asChild variant="outline">
-                <Link to="/checkin">
-                  <QrCode className="size-4" /> Check-in sur site
-                </Link>
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => toast.info("Création d'un nouvel événement — bientôt disponible.")}
-              >
-                <Plus className="size-4" /> Nouvel événement
-              </Button>
+            <div className="min-w-40 flex-1 basis-40 sm:max-w-xs">
+              <TrendSparkline data={trendData} />
             </div>
-          </section>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3 border-t border-border pt-4">
+            <Button variant="institutional" onClick={exportCsv}>
+              <Download className="size-4" /> Export CSV
+            </Button>
+            <BulkBadgePrint participants={rows} profiles={profiles} event={event} />
+            <Button asChild variant="outline">
+              <Link to="/checkin">
+                <QrCode className="size-4" /> Check-in sur site
+              </Link>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => toast.info("Création d'un nouvel événement — bientôt disponible.")}
+            >
+              <Plus className="size-4" /> Nouvel événement
+            </Button>
+          </div>
+        </section>
 
-          {/* Secondary tiles */}
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            <Tile label="Chiffre d'affaires" value={`${revenue.toLocaleString("fr-FR")} FCFA`} />
-            <Tile label="Participants confirmés" value={String(confirmedOnly)} />
-            <Tile label="Taux de conversion" value={`${conversion}%`} />
-            <Tile label="Enregistrés sur site" value={`${checkedIn} (${attendanceRate}%)`} />
-            <Tile label="Participants absents" value={String(absent)} />
-            <Tile label="Badges gratuits" value={String(freeBadges)} />
-            <Tile label="Inscriptions sénégalaises" value={String(senegaleseCount)} />
-            <Tile label="Inscriptions non sénégalaises" value={String(nonSenegaleseCount)} />
+        {/* Secondary tiles */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <Tile label="Chiffre d'affaires" value={`${revenue.toLocaleString("fr-FR")} FCFA`} />
+          <Tile label="Participants confirmés" value={String(confirmedOnly)} />
+          <Tile label="Taux de conversion" value={`${conversion}%`} />
+          <Tile label="Enregistrés sur site" value={`${checkedIn} (${attendanceRate}%)`} />
+          <Tile label="Participants absents" value={String(absent)} />
+          <Tile label="Badges gratuits" value={String(freeBadges)} />
+          <Tile label="Inscriptions sénégalaises" value={String(senegaleseCount)} />
+          <Tile label="Inscriptions non sénégalaises" value={String(nonSenegaleseCount)} />
+        </div>
+
+        {/* Profile breakdown */}
+        <section className="min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
+          <h2 className="text-sm font-semibold text-foreground">Répartition par profil</h2>
+          <ProfileBarChart data={profileBarData} />
+        </section>
+
+        {/* Participants table */}
+        <section
+          id="participants"
+          className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card shadow-card"
+        >
+          <div className="flex flex-wrap items-center gap-3 border-b border-border p-4">
+            <h2 className="mr-auto text-sm font-semibold text-foreground">Participants</h2>
+            <Select value={profileFilter} onValueChange={setProfileFilter}>
+              <SelectTrigger className="w-full sm:w-48">
+                <SelectValue placeholder="Profil" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les profils</SelectItem>
+                {(profiles ?? []).map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
+                    {p.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-44">
+                <SelectValue placeholder="Statut" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les statuts</SelectItem>
+                {Object.entries(STATUS_LABEL).map(([k, v]) => (
+                  <SelectItem key={k} value={k}>
+                    {v}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Profile breakdown */}
-          <section className="min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
-            <h2 className="text-sm font-semibold text-foreground">Répartition par profil</h2>
-            <ProfileBarChart data={profileBarData} />
-          </section>
-
-          {/* Participants table */}
-          <section
-            id="participants"
-            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card shadow-card"
-          >
-            <div className="flex flex-wrap items-center gap-3 border-b border-border p-4">
-              <h2 className="mr-auto text-sm font-semibold text-foreground">Participants</h2>
-              <Select value={profileFilter} onValueChange={setProfileFilter}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Profil" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les profils</SelectItem>
-                  {(profiles ?? []).map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      {p.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full sm:w-44">
-                  <SelectValue placeholder="Statut" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les statuts</SelectItem>
-                  {Object.entries(STATUS_LABEL).map(([k, v]) => (
-                    <SelectItem key={k} value={k}>
-                      {v}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-secondary/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
-                  <tr>
-                    <th className="px-4 py-3">Identifiant</th>
-                    <th className="px-4 py-3">Participant</th>
-                    <th className="px-4 py-3">Profil</th>
-                    <th className="px-4 py-3">Statut</th>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-secondary/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-3">Identifiant</th>
+                  <th className="px-4 py-3">Participant</th>
+                  <th className="px-4 py-3">Profil</th>
+                  <th className="px-4 py-3">Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr
+                    key={r.id}
+                    onClick={() => setSelectedParticipant(r)}
+                    className="cursor-pointer border-t border-border hover:bg-secondary/40"
+                  >
+                    <td className="px-4 py-3 font-mono text-xs">{r.registration_id}</td>
+                    <td className="px-4 py-3">
+                      <span className="block font-medium text-foreground">{r.full_name}</span>
+                      <span className="block text-xs text-muted-foreground">
+                        {r.company || r.email}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                      <Select
+                        {...(r.profile_type_id ? { value: r.profile_type_id } : {})}
+                        onValueChange={(v) => void assignCategory(r.id, v)}
+                      >
+                        <SelectTrigger className="h-8 w-44 border-none bg-transparent px-2 shadow-none">
+                          <span className="inline-flex items-center gap-2">
+                            <span
+                              className="size-2.5 shrink-0 rounded-full"
+                              style={{ backgroundColor: profileColor(r.profile_type_id) }}
+                            />
+                            <SelectValue placeholder="—" />
+                          </span>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {(profiles ?? []).map((p) => (
+                            <SelectItem key={p.id} value={p.id}>
+                              <span className="inline-flex items-center gap-2">
+                                <span
+                                  className="size-2.5 rounded-full"
+                                  style={{ backgroundColor: p.color_code }}
+                                />
+                                {p.label}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground">
+                        {STATUS_LABEL[r.status] ?? r.status}
+                      </span>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {rows.map((r) => (
-                    <tr
-                      key={r.id}
-                      onClick={() => setSelectedParticipant(r)}
-                      className="cursor-pointer border-t border-border hover:bg-secondary/40"
-                    >
-                      <td className="px-4 py-3 font-mono text-xs">{r.registration_id}</td>
-                      <td className="px-4 py-3">
-                        <span className="block font-medium text-foreground">{r.full_name}</span>
-                        <span className="block text-xs text-muted-foreground">
-                          {r.company || r.email}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-                        <Select
-                          {...(r.profile_type_id ? { value: r.profile_type_id } : {})}
-                          onValueChange={(v) => void assignCategory(r.id, v)}
-                        >
-                          <SelectTrigger className="h-8 w-44 border-none bg-transparent px-2 shadow-none">
-                            <span className="inline-flex items-center gap-2">
-                              <span
-                                className="size-2.5 shrink-0 rounded-full"
-                                style={{ backgroundColor: profileColor(r.profile_type_id) }}
-                              />
-                              <SelectValue placeholder="—" />
-                            </span>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {(profiles ?? []).map((p) => (
-                              <SelectItem key={p.id} value={p.id}>
-                                <span className="inline-flex items-center gap-2">
-                                  <span
-                                    className="size-2.5 rounded-full"
-                                    style={{ backgroundColor: p.color_code }}
-                                  />
-                                  {p.label}
-                                </span>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground">
-                          {STATUS_LABEL[r.status] ?? r.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                  {rows.length === 0 && (
-                    <tr>
-                      <td className="px-4 py-10 text-center text-muted-foreground" colSpan={4}>
-                        Aucune inscription pour ces filtres.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </section>
+                ))}
+                {rows.length === 0 && (
+                  <tr>
+                    <td className="px-4 py-10 text-center text-muted-foreground" colSpan={4}>
+                      Aucune inscription pour ces filtres.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-          {/* Manual free badge creation */}
-          <section
-            id="creer"
-            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
-          >
-            <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <BadgePlus className="size-4 text-accent" /> Créer un badge gratuit
-            </h2>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Pour la presse, le staff, les VIP ou toute personne à accréditer sans passer par le
-              formulaire d'inscription payant.
-            </p>
-            <div className="mt-4">
-              <CreateFreeBadgeForm eventId={event?.id} />
-            </div>
-          </section>
+        {/* Manual free badge creation */}
+        <section
+          id="creer"
+          className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
+        >
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <BadgePlus className="size-4 text-accent" /> Créer un badge gratuit
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Pour la presse, le staff, les VIP ou toute personne à accréditer sans passer par le
+            formulaire d'inscription payant.
+          </p>
+          <div className="mt-4">
+            <CreateFreeBadgeForm eventId={event?.id} />
+          </div>
+        </section>
 
-          {/* CSV import */}
-          <section
-            id="import"
-            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
-          >
-            <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Upload className="size-4 text-accent" /> Import de délégations (CSV)
-            </h2>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Téléchargez le modèle, remplissez-le, puis importez-le pour créer une délégation et
-              ses participants en un lot.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <DelegationCsvImport eventId={event?.id} />
-            </div>
-          </section>
+        {/* CSV import */}
+        <section
+          id="import"
+          className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
+        >
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <Upload className="size-4 text-accent" /> Import de délégations (CSV)
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Téléchargez le modèle, remplissez-le, puis importez-le pour créer une délégation et ses
+            participants en un lot.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <DelegationCsvImport eventId={event?.id} />
+          </div>
+        </section>
 
-          {/* Segmentation */}
-          <section
-            id="segmentation"
-            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
-          >
-            <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Send className="size-4 text-accent" /> Segmentation pour communication ciblée
-            </h2>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Sélectionnez un profil et envoyez un email à tous les participants du segment
-              (WhatsApp reste manuel pour l'instant).
-            </p>
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <Select value={segmentProfile} onValueChange={setSegmentProfile}>
-                <SelectTrigger className="w-full sm:w-56">
-                  <SelectValue placeholder="Segment" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tous les profils ({total})</SelectItem>
-                  {(profiles ?? []).map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      {p.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <span className="text-sm text-muted-foreground">
-                {segmentCount} participant{segmentCount > 1 ? "s" : ""} dans ce segment
-              </span>
-              <SendSegmentEmailDialog
-                eventId={event?.id}
-                profileTypeId={segmentProfile === "all" ? null : segmentProfile}
-                segmentLabel={segmentProfile === "all" ? "Tous les profils" : profileLabel(segmentProfile)}
-                segmentCount={segmentCount}
-              />
-            </div>
-          </section>
-
-          {/* Staff access management */}
-          <section
-            id="acces"
-            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
-          >
-            <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <ShieldCheck className="size-4 text-accent" /> Accès organisateurs
-            </h2>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Validez ou révoquez l'accès des comptes qui se sont inscrits à l'espace organisateur.
-            </p>
-            <div className="mt-2">
-              <StaffAccessManager />
-            </div>
-          </section>
-
-          {/* Badge access levels */}
-          <section
-            id="niveaux-acces"
-            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
-          >
-            <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <KeyRound className="size-4 text-accent" /> Niveaux d'accès badges
-            </h2>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Chaque catégorie de badge a un niveau d'accès affiché dans la zone du badge : Accès
-              total ou Accès limité.
-            </p>
-            <div className="mt-2">
-              <AccessLevelManager eventId={event?.id} />
-            </div>
-            <div className="mt-4 border-t border-border pt-4">
-              <CreateBadgeCategoryForm eventId={event?.id} />
-            </div>
-          </section>
-
-          {/* Danger zone */}
-          <section
-            id="danger"
-            className="scroll-mt-6 min-w-0 rounded-2xl border border-destructive/30 bg-destructive/5 p-4 shadow-card sm:p-6"
-          >
-            <h2 className="flex items-center gap-2 text-sm font-semibold text-destructive">
-              <AlertOctagon className="size-4" /> Zone de danger
-            </h2>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Fin de la phase de test : supprime toutes les inscriptions, badges, paiements et
-              statistiques pour repartir de zéro. Les formules, prix et catégories restent
-              configurés.
-            </p>
-            <div className="mt-4">
-              <ResetEventDataButton eventId={event?.id} />
-            </div>
-          </section>
-        </div>
-
-        {/* Right rail */}
-        <div className="min-w-0 space-y-4 sm:space-y-6">
-          <section className="min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
-            <h2 className="text-sm font-semibold text-foreground">Segments</h2>
-            <ul className="mt-4 space-y-2">
-              {profileBarData.map((p) => (
-                <li
-                  key={p.label}
-                  className="flex items-center justify-between gap-3 rounded-lg border-l-4 bg-secondary/40 py-2.5 pl-3 pr-4"
-                  style={{ borderColor: p.color }}
-                >
-                  <span className="min-w-0 truncate text-sm font-medium text-foreground">
+        {/* Segmentation */}
+        <section
+          id="segmentation"
+          className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
+        >
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <Send className="size-4 text-accent" /> Segmentation pour communication ciblée
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Sélectionnez un profil et envoyez un email à tous les participants du segment (WhatsApp
+            reste manuel pour l'instant).
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <Select value={segmentProfile} onValueChange={setSegmentProfile}>
+              <SelectTrigger className="w-full sm:w-56">
+                <SelectValue placeholder="Segment" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les profils ({total})</SelectItem>
+                {(profiles ?? []).map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
                     {p.label}
-                  </span>
-                  <span className="shrink-0 font-display text-sm font-bold tabular-nums text-foreground">
-                    {p.value}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <span className="text-sm text-muted-foreground">
+              {segmentCount} participant{segmentCount > 1 ? "s" : ""} dans ce segment
+            </span>
+            <SendSegmentEmailDialog
+              eventId={event?.id}
+              profileTypeId={segmentProfile === "all" ? null : segmentProfile}
+              segmentLabel={
+                segmentProfile === "all" ? "Tous les profils" : profileLabel(segmentProfile)
+              }
+              segmentCount={segmentCount}
+            />
+          </div>
+        </section>
+
+        {/* Staff access management */}
+        <section
+          id="acces"
+          className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
+        >
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <ShieldCheck className="size-4 text-accent" /> Accès organisateurs
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Validez ou révoquez l'accès des comptes qui se sont inscrits à l'espace organisateur.
+          </p>
+          <div className="mt-2">
+            <StaffAccessManager />
+          </div>
+        </section>
+
+        {/* Badge access levels */}
+        <section
+          id="niveaux-acces"
+          className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
+        >
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <KeyRound className="size-4 text-accent" /> Niveaux d'accès badges
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Chaque catégorie de badge a un niveau d'accès affiché dans la zone du badge : Accès
+            total ou Accès limité.
+          </p>
+          <div className="mt-2">
+            <AccessLevelManager eventId={event?.id} />
+          </div>
+          <div className="mt-4 border-t border-border pt-4">
+            <CreateBadgeCategoryForm eventId={event?.id} />
+          </div>
+        </section>
+
+        {/* Danger zone */}
+        <section
+          id="danger"
+          className="scroll-mt-6 min-w-0 rounded-2xl border border-destructive/30 bg-destructive/5 p-4 shadow-card sm:p-6"
+        >
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-destructive">
+            <AlertOctagon className="size-4" /> Zone de danger
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Fin de la phase de test : supprime toutes les inscriptions, badges, paiements et
+            statistiques pour repartir de zéro. Les formules, prix et catégories restent configurés.
+          </p>
+          <div className="mt-4">
+            <ResetEventDataButton eventId={event?.id} />
+          </div>
+        </section>
       </div>
 
       <ParticipantDetailSheet
