@@ -6,16 +6,31 @@ import { SiteFooter, SiteHeader } from "@/components/fesa/SiteChrome";
 import { useStaffSession, signOutStaff } from "@/lib/auth";
 
 /** Wraps staff-only pages (dashboard, check-in): redirects to /staff/login
- * when signed out, and blocks access until an admin approves the account. */
-export function StaffGate({ children }: { children: ReactNode }) {
+ * when signed out, and blocks access until an admin approves the account.
+ * Pass requireAdmin on admin-only pages (the dashboard) -- a "checkin"-role
+ * account gets bounced to /checkin instead of seeing the full dashboard. */
+export function StaffGate({
+  children,
+  requireAdmin,
+}: {
+  children: ReactNode;
+  requireAdmin?: boolean;
+}) {
   const navigate = useNavigate();
-  const { loading, session, approved, email } = useStaffSession();
+  const { loading, session, approved, role, email } = useStaffSession();
+  const restricted = Boolean(requireAdmin) && role !== "admin";
 
   useEffect(() => {
     if (!loading && !session) {
       void navigate({ to: "/staff/login" });
     }
   }, [loading, session, navigate]);
+
+  useEffect(() => {
+    if (!loading && session && approved && restricted) {
+      void navigate({ to: "/checkin" });
+    }
+  }, [loading, session, approved, restricted, navigate]);
 
   if (loading || !session) {
     return (
@@ -41,6 +56,14 @@ export function StaffGate({ children }: { children: ReactNode }) {
           </Button>
         </main>
         <SiteFooter />
+      </div>
+    );
+  }
+
+  if (restricted) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-surface">
+        <Loader2 className="size-6 animate-spin text-muted-foreground" />
       </div>
     );
   }

@@ -2,6 +2,13 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ShieldCheck, ShieldOff } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useStaffSession } from "@/lib/auth";
 
@@ -11,7 +18,13 @@ type StaffRow = {
   email: string | null;
   full_name: string | null;
   approved: boolean;
+  role: string;
   created_at: string;
+};
+
+const ROLE_LABELS: Record<string, string> = {
+  admin: "Admin",
+  checkin: "Check-in uniquement",
 };
 
 export function StaffAccessManager() {
@@ -22,7 +35,7 @@ export function StaffAccessManager() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("staff_profiles")
-        .select("id, user_id, email, full_name, approved, created_at")
+        .select("id, user_id, email, full_name, approved, role, created_at")
         .order("created_at", { ascending: true });
       if (error) throw error;
       return data as StaffRow[];
@@ -45,6 +58,17 @@ export function StaffAccessManager() {
     void queryClient.invalidateQueries({ queryKey: ["staff-profiles"] });
   }
 
+  async function setRole(row: StaffRow, role: string) {
+    const { error } = await supabase.from("staff_profiles").update({ role }).eq("id", row.id);
+    if (error) {
+      console.error(error);
+      toast.error("Impossible de modifier ce rôle.");
+      return;
+    }
+    toast.success(`Rôle mis à jour pour ${row.email}.`);
+    void queryClient.invalidateQueries({ queryKey: ["staff-profiles"] });
+  }
+
   if (isLoading) return null;
 
   return (
@@ -62,23 +86,41 @@ export function StaffAccessManager() {
                 {isSelf && " · vous"}
               </p>
             </div>
-            <Button
-              size="sm"
-              variant={row.approved ? "outline" : "institutional"}
-              disabled={isSelf}
-              title={isSelf ? "Vous ne pouvez pas modifier votre propre accès" : undefined}
-              onClick={() => void toggleApproved(row)}
-            >
-              {row.approved ? (
-                <>
-                  <ShieldOff className="size-4" /> Révoquer
-                </>
-              ) : (
-                <>
-                  <ShieldCheck className="size-4" /> Valider l'accès
-                </>
-              )}
-            </Button>
+            <div className="flex flex-wrap items-center gap-2">
+              <Select
+                value={row.role}
+                disabled={isSelf}
+                onValueChange={(v) => void setRole(row, v)}
+              >
+                <SelectTrigger className="h-8 w-44" title={isSelf ? "Vous ne pouvez pas modifier votre propre rôle" : undefined}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(ROLE_LABELS).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                size="sm"
+                variant={row.approved ? "outline" : "institutional"}
+                disabled={isSelf}
+                title={isSelf ? "Vous ne pouvez pas modifier votre propre accès" : undefined}
+                onClick={() => void toggleApproved(row)}
+              >
+                {row.approved ? (
+                  <>
+                    <ShieldOff className="size-4" /> Révoquer
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="size-4" /> Valider l'accès
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         );
       })}

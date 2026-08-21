@@ -131,10 +131,18 @@ function BrandMark() {
   );
 }
 
-function NavLinks({ active, onNavigate }: { active: AdminNavKey; onNavigate?: () => void }) {
+function NavLinks({
+  active,
+  items,
+  onNavigate,
+}: {
+  active: AdminNavKey;
+  items: typeof NAV_ITEMS;
+  onNavigate?: () => void;
+}) {
   return (
     <nav className="mt-8 flex flex-1 flex-col gap-1">
-      {NAV_ITEMS.map((item) => {
+      {items.map((item) => {
         const isActive = item.key === active;
         return (
           <Link
@@ -197,16 +205,19 @@ export function AdminShell({
   search?: { value: string; onChange: (v: string) => void; placeholder?: string } | undefined;
   children: ReactNode;
 }) {
-  const { email } = useStaffSession();
+  const { email, role } = useStaffSession();
   const { theme, set: setTheme } = useAdminTheme();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  // Check-in-only staff get a single nav entry -- no participants list,
+  // payments, staff access, or badge access-level controls.
+  const navItems = role === "admin" ? NAV_ITEMS : NAV_ITEMS.filter((item) => item.key === "checkin");
 
   return (
     <div className={`admin-shell flex min-h-screen ${theme === "light" ? "light" : ""}`}>
       {/* Desktop sidebar */}
       <aside className="hidden w-56 shrink-0 flex-col border-r border-sidebar-border bg-sidebar px-3 py-6 lg:flex xl:w-64 xl:px-4">
         <BrandMark />
-        <NavLinks active={active} />
+        <NavLinks active={active} items={navItems} />
         <EventBadge event={event} />
         <AccountFooter email={email} />
       </aside>
@@ -218,7 +229,7 @@ export function AdminShell({
           className="flex w-72 max-w-[85vw] flex-col bg-sidebar px-3 py-6 text-sidebar-foreground"
         >
           <BrandMark />
-          <NavLinks active={active} onNavigate={() => setMobileNavOpen(false)} />
+          <NavLinks active={active} items={navItems} onNavigate={() => setMobileNavOpen(false)} />
           <EventBadge event={event} />
           <AccountFooter email={email} />
         </SheetContent>

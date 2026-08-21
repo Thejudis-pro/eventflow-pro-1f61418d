@@ -101,7 +101,7 @@ export function useStaffSession() {
       await supabase.rpc("ensure_staff_profile");
       const { data, error } = await supabase
         .from("staff_profiles")
-        .select("approved, email, full_name")
+        .select("approved, email, full_name, role")
         .eq("user_id", userId!)
         .maybeSingle();
       if (error) throw error;
@@ -113,6 +113,7 @@ export function useStaffSession() {
     loading: session === undefined || (Boolean(session) && profileLoading),
     session,
     approved: profile?.approved ?? false,
+    role: (profile?.role as "admin" | "checkin" | undefined) ?? "admin",
     email: profile?.email ?? session?.user.email ?? null,
   };
 }

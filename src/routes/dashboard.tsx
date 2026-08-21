@@ -70,7 +70,7 @@ const STATUS_LABEL: Record<string, string> = {
 
 function Dashboard() {
   return (
-    <StaffGate>
+    <StaffGate requireAdmin>
       <DashboardContent />
     </StaffGate>
   );

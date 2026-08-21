@@ -461,6 +461,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          role: string
           user_id: string
         }
         Insert: {
@@ -469,6 +470,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          role?: string
           user_id: string
         }
         Update: {
@@ -477,6 +479,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          role?: string
           user_id?: string
         }
         Relationships: []
@@ -583,6 +586,7 @@ export type Database = {
           zone_label: string
         }[]
       }
+      is_admin_staff: { Args: { _user_id: string }; Returns: boolean }
       is_approved_staff: { Args: { _user_id: string }; Returns: boolean }
       list_delegation_names: {
         Args: { p_event_id: string }
