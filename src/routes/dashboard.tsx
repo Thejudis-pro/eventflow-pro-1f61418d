@@ -29,6 +29,7 @@ import { CreateFreeBadgeForm } from "@/components/fesa/CreateFreeBadgeForm";
 import { DelegationCsvImport } from "@/components/fesa/DelegationCsvImport";
 import { ParticipantDetailSheet } from "@/components/fesa/ParticipantDetailSheet";
 import { ResetEventDataButton } from "@/components/fesa/ResetEventDataButton";
+import { SendSegmentEmailDialog } from "@/components/fesa/SendSegmentEmailDialog";
 import { StaffAccessManager } from "@/components/fesa/StaffAccessManager";
 import { StaffGate } from "@/components/fesa/StaffGate";
 import { ProfileBarChart, TrendSparkline } from "@/components/fesa/admin-charts";
@@ -430,8 +431,8 @@ function DashboardContent() {
               <Send className="size-4 text-accent" /> Segmentation pour communication ciblée
             </h2>
             <p className="mt-1 text-xs text-muted-foreground">
-              Sélectionnez un profil pour préparer un envoi ciblé (email/WhatsApp — intégration
-              provider à venir).
+              Sélectionnez un profil et envoyez un email à tous les participants du segment
+              (WhatsApp reste manuel pour l'instant).
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <Select value={segmentProfile} onValueChange={setSegmentProfile}>
@@ -450,14 +451,12 @@ function DashboardContent() {
               <span className="text-sm text-muted-foreground">
                 {segmentCount} participant{segmentCount > 1 ? "s" : ""} dans ce segment
               </span>
-              <Button
-                variant="institutional"
-                onClick={() =>
-                  toast.info(`Envoi ciblé à ${segmentCount} participant(s) — bientôt disponible.`)
-                }
-              >
-                <Send className="size-4" /> Envoyer un message à ce segment
-              </Button>
+              <SendSegmentEmailDialog
+                eventId={event?.id}
+                profileTypeId={segmentProfile === "all" ? null : segmentProfile}
+                segmentLabel={segmentProfile === "all" ? "Tous les profils" : profileLabel(segmentProfile)}
+                segmentCount={segmentCount}
+              />
             </div>
           </section>
 
