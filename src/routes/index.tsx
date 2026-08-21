@@ -227,7 +227,7 @@ const FOOTER_COLS = [
     title: "PARTICIPER",
     links: [
       { label: "S'inscrire", to: "/inscription" as const },
-      { label: "Réserver un stand", href: "#tarifs" },
+      { label: "Réserver un stand", to: "/inscription" as const, search: { intent: "stand" as const } },
     ],
   },
   {
@@ -454,12 +454,13 @@ function Landing() {
               Je m'inscris
               {ARROW}
             </Link>
-            <a
-              href="#tarifs"
+            <Link
+              to="/inscription"
+              search={{ intent: "stand" }}
               className="flex h-[58px] items-center gap-[10px] rounded-2xl border border-[#ddd2c2] bg-white px-[26px] text-[16px] font-extrabold text-[#0d3d21] transition hover:bg-[#f4ece0]"
             >
               Réserver un stand
-            </a>
+            </Link>
           </div>
           <dl className="mt-11 grid max-w-[600px] grid-cols-4">
             {[
@@ -533,12 +534,12 @@ function Landing() {
         ref={motReveal.ref}
         className={`mx-auto mt-16 max-w-[1440px] px-5 sm:px-8 lg:mt-[78px] lg:px-16 ${motReveal.className}`}
       >
-        <div className="grid gap-8 rounded-[28px] border border-[#e0d6c6] bg-white p-6 sm:p-8 md:grid-cols-[220px_1fr] md:items-center lg:p-10">
+        <div className="grid gap-8 rounded-[28px] border border-[#e0d6c6] bg-white p-6 sm:p-8 md:grid-cols-[260px_1fr] md:items-center lg:p-10">
           <img
             src={presidentePhoto}
             alt="La Présidente de la PAAF, organisatrice du FESA 2026"
             loading="lazy"
-            className="mx-auto w-[180px] rounded-[20px] object-cover md:w-full"
+            className="mx-auto w-[210px] rounded-[20px] object-cover md:w-full"
           />
           <div>
             <div
@@ -554,7 +555,7 @@ function Landing() {
               « Transformer l&rsquo;informel en opportunité, structurer les femmes en puissance
               économique et faire de la coopération un levier de stabilité durable. »
             </blockquote>
-            <div className="mt-4 max-w-[620px] space-y-3 text-justify text-[14.5px] leading-[1.7] text-[#5a6b62]">
+            <div className="mt-4 space-y-3 text-justify text-[14.5px] leading-[1.7] text-[#5a6b62]">
               <p>
                 Depuis plus de deux décennies, mon engagement se situe à l&rsquo;interface des
                 politiques publiques, du secteur privé et des dynamiques communautaires, avec une
@@ -928,12 +929,13 @@ function Landing() {
             >
               Je m'inscris
             </Link>
-            <a
-              href="#tarifs"
+            <Link
+              to="/inscription"
+              search={{ intent: "stand" }}
               className="flex h-[58px] items-center rounded-2xl bg-[rgba(255,255,255,.18)] px-[26px] text-[16px] font-extrabold text-white transition hover:bg-[rgba(255,255,255,.32)]"
             >
               Réserver un stand
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -959,6 +961,7 @@ function Landing() {
                     <Link
                       key={l.label}
                       to={l.to}
+                      {...("search" in l ? { search: l.search } : {})}
                       className="text-[13.5px] font-medium text-[rgba(251,247,240,.72)] transition hover:text-[#f0913f]"
                     >
                       {l.label}
