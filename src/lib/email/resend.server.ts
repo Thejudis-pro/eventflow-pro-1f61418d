@@ -96,6 +96,9 @@ export async function checkFromDomainStatus(): Promise<{ domain: string; status:
   const res = await fetch(`${GATEWAY_URL}/domains`, { headers: gatewayHeaders() });
   if (!res.ok) {
     const body = await res.text().catch(() => "");
+    if (res.status === 401 && body.includes("restricted_api_key")) {
+      return { domain, status: "unknown (send-only key, domain list not readable)" };
+    }
     return { domain, status: `lookup failed (HTTP ${res.status}) ${body}` };
   }
 
