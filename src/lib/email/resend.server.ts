@@ -1,25 +1,33 @@
 /**
- * Thin Resend adapter, routed through the Lovable connector gateway. Only
- * ever imported dynamically inside a server function/route handler, so the
- * keys never reach the client bundle.
+ * Thin Resend (resend.com) adapter, calling their API directly. Only ever
+ * imported dynamically inside a server function/route handler, so
+ * RESEND_API_KEY never reaches the client bundle.
  *
- * RESEND_API_KEY is the connection key for the gateway (set automatically by
- * the linked Resend connector); LOVABLE_API_KEY authenticates the project.
- * RESEND_FROM_EMAIL must be an address on a domain verified in Resend
- * (e.g. "FESA 2026 <contact@fesaforum.com>").
+ * Was briefly routed through Lovable's connector-gateway proxy
+ * (https://connector-gateway.lovable.dev/resend), which needs a
+ * LOVABLE_API_KEY alongside the Resend key -- but that key is only ever
+ * injected automatically inside Lovable's own preview/editor environment,
+ * never in the published Cloudflare Worker, so production sends always
+ * failed with "Resend is not configured (LOVABLE_API_KEY / RESEND_API_KEY)"
+ * no matter how the connector was set up. Calling Resend directly with a
+ * real API key from resend.com/api-keys needs no Lovable-specific secret
+ * and works identically in preview and production.
+ *
+ * RESEND_API_KEY: a real API key from resend.com/api-keys (not a Lovable
+ * connector key). RESEND_FROM_EMAIL must be an address on a domain verified
+ * in the Resend dashboard (e.g. "FESA 2026 <contact@fesaforum.com>"). Set
+ * both as plain Lovable secrets, same panel as PAYTECH_API_KEY.
  */
 
-const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
+const RESEND_URL = "https://api.resend.com";
 
-function gatewayHeaders(): Record<string, string> {
-  const lovableKey = process.env["LOVABLE_API_KEY"];
-  const connectionKey = process.env["RESEND_API_KEY"];
-  if (!lovableKey || !connectionKey) {
-    throw new Error("Resend is not configured (LOVABLE_API_KEY / RESEND_API_KEY).");
+function authHeaders(): Record<string, string> {
+  const apiKey = process.env["RESEND_API_KEY"];
+  if (!apiKey) {
+    throw new Error("Resend is not configured (RESEND_API_KEY).");
   }
   return {
-    Authorization: `Bearer ${lovableKey}`,
-    "X-Connection-Api-Key": connectionKey,
+    Authorization: `Bearer ${apiKey}`,
     "Content-Type": "application/json",
   };
 }
@@ -39,9 +47,9 @@ export async function sendEmail(input: {
   text: string;
   replyTo?: string;
 }): Promise<void> {
-  const res = await fetch(`${GATEWAY_URL}/emails`, {
+  const res = await fetch(`${RESEND_URL}/emails`, {
     method: "POST",
-    headers: gatewayHeaders(),
+    headers: authHeaders(),
     body: JSON.stringify({
       from: fromAddress(),
       to: [input.to],
@@ -70,9 +78,9 @@ export async function sendBatchEmails(
   }
   const from = fromAddress();
 
-  const res = await fetch(`${GATEWAY_URL}/emails/batch`, {
+  const res = await fetch(`${RESEND_URL}/emails/batch`, {
     method: "POST",
-    headers: gatewayHeaders(),
+    headers: authHeaders(),
     body: JSON.stringify(emails.map((e) => ({ from, ...e, to: [e.to] }))),
   });
 
@@ -87,13 +95,13 @@ export async function sendBatchEmails(
  * -- an unverified domain is the most common reason sends silently fail. */
 export async function checkFromDomainStatus(): Promise<{ domain: string; status: string } | null> {
   const from = process.env["RESEND_FROM_EMAIL"];
-  if (!from || !process.env["RESEND_API_KEY"] || !process.env["LOVABLE_API_KEY"]) return null;
+  if (!from || !process.env["RESEND_API_KEY"]) return null;
 
   const emailMatch = /<?([^<\s]+@([^<>\s]+))>?$/.exec(from.trim());
   const domain = emailMatch?.[2]?.toLowerCase();
   if (!domain) return null;
 
-  const res = await fetch(`${GATEWAY_URL}/domains`, { headers: gatewayHeaders() });
+  const res = await fetch(`${RESEND_URL}/domains`, { headers: authHeaders() });
   if (!res.ok) {
     const body = await res.text().catch(() => "");
     if (res.status === 401 && body.includes("restricted_api_key")) {
