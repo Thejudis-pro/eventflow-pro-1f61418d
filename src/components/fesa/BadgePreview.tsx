@@ -70,8 +70,12 @@ export function BadgePreview({ data }: { data: BadgeData }) {
       className="flex flex-col overflow-hidden bg-white shadow-[0_3px_10px_rgba(45,43,43,0.16)]"
       style={{ width: 359, height: 530 }}
     >
-      <div className="flex-none leading-none">
-        <img src={headerBand} alt="FESA 2026" className="block h-auto w-full" />
+      <div className="flex-none overflow-hidden leading-none">
+        <img
+          src={headerBand}
+          alt="FESA 2026"
+          className="block h-auto w-full scale-[1.06]"
+        />
       </div>
       <div className="h-[2px] flex-none" style={{ background: BADGE.gold }} />
 

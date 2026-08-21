@@ -18,7 +18,7 @@ import { badgeQuery, type EventRow, type Participant, type Payment, type Profile
 const STATUS_LABEL: Record<string, string> = {
   pending: "En attente",
   paid: "Payé",
-  confirmed: "Confirmé",
+  confirmed: "Gratuit",
   checked_in: "Enregistré",
 };
 

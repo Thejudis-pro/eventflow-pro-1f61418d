@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, Printer } from "lucide-react";
 import { toast } from "sonner";
@@ -33,9 +33,17 @@ export function BulkBadgePrint({
   const [renderBatch, setRenderBatch] = useState<Participant[] | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Only participants who are actually confirmed/paid have a badge row at
+  // all (create_badge_for_participant only fires on paid/confirmed/checked_in)
+  // -- the button count has to reflect that, not the raw selection size,
+  // otherwise it promises more badges than can actually be generated.
+  const eligible = useMemo(
+    () => participants.filter((p) => badges?.some((b) => b.participant_id === p.id)),
+    [participants, badges],
+  );
+
   function handlePrint() {
     if (!event) return;
-    const eligible = participants.filter((p) => badges?.some((b) => b.participant_id === p.id));
     if (eligible.length === 0) {
       toast.error("Aucun badge généré pour cette sélection pour le moment.");
       return;
@@ -109,9 +117,9 @@ export function BulkBadgePrint({
 
   return (
     <>
-      <Button variant="outline" onClick={handlePrint} disabled={generating || participants.length === 0}>
+      <Button variant="outline" onClick={handlePrint} disabled={generating || eligible.length === 0}>
         {generating ? <Loader2 className="size-4 animate-spin" /> : <Printer className="size-4" />}
-        Imprimer les badges ({participants.length})
+        Imprimer les badges ({eligible.length})
       </Button>
       {renderBatch && (
         <div ref={containerRef} style={{ position: "fixed", left: -9999, top: 0 }} aria-hidden>

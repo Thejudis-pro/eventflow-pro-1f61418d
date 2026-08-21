@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import {
   Gauge,
   Users,
-  CreditCard,
   QrCode,
   Upload,
   Target,
@@ -79,7 +78,6 @@ export type AdminNavKey =
   | "overview"
   | "participants"
   | "create"
-  | "payments"
   | "checkin"
   | "import"
   | "segments"
@@ -102,7 +100,6 @@ const NAV_ITEMS: {
     icon: Users,
   },
   { key: "create", label: "Créer un badge", to: "/dashboard", hash: "creer", icon: BadgePlus },
-  { key: "payments", label: "Paiements", to: "/dashboard", hash: "paiements", icon: CreditCard },
   { key: "checkin", label: "Check-in sur site", to: "/checkin", icon: QrCode },
   { key: "import", label: "Import CSV", to: "/dashboard", hash: "import", icon: Upload },
   { key: "segments", label: "Segmentation", to: "/dashboard", hash: "segmentation", icon: Target },

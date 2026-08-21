@@ -30,15 +30,9 @@ import { ParticipantDetailSheet } from "@/components/fesa/ParticipantDetailSheet
 import { ResetEventDataButton } from "@/components/fesa/ResetEventDataButton";
 import { StaffAccessManager } from "@/components/fesa/StaffAccessManager";
 import { StaffGate } from "@/components/fesa/StaffGate";
-import {
-  EventHealthRadar,
-  PaymentsDonut,
-  ProfileBarChart,
-  TrendSparkline,
-} from "@/components/fesa/admin-charts";
+import { ProfileBarChart, TrendSparkline } from "@/components/fesa/admin-charts";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  badgesQuery,
   eventQuery,
   participantsQuery,
   paymentsQuery,
@@ -66,13 +60,12 @@ export const Route = createFileRoute("/dashboard")({
 const STATUS_LABEL: Record<string, string> = {
   pending: "En attente",
   paid: "Payé",
-  confirmed: "Confirmé",
+  // "confirmed" is only ever reached without a payment ever happening (paid
+  // tiers go pending -> paid via confirm_payment_secure; this is the
+  // free-tier/staff-comp-badge path) -- labeling it plainly as "free" is
+  // what actually distinguishes it from "paid" at a glance.
+  confirmed: "Gratuit",
   checked_in: "Enregistré",
-};
-
-const PROVIDER_LABEL: Record<string, string> = {
-  paytech: "PayTech",
-  paydunya: "PayDunya",
 };
 
 function Dashboard() {
@@ -89,7 +82,6 @@ function DashboardContent() {
   const { data: profiles } = useQuery(profileTypesQuery(event?.id));
   const { data: participants } = useQuery(participantsQuery(event?.id));
   const { data: payments } = useQuery(paymentsQuery(event?.id));
-  const { data: badges } = useQuery(badgesQuery(event?.id));
 
   async function assignCategory(participantId: string, profileTypeId: string) {
     const { error } = await supabase
@@ -130,12 +122,19 @@ function DashboardContent() {
   const attendanceRate = total ? Math.round((checkedIn / total) * 100) : 0;
   const confirmedOnly = (participants ?? []).filter((p) => p.status === "confirmed").length;
   const absent = Math.max(total - checkedIn, 0);
-  const badgesGenerated = badges?.length ?? 0;
-  const badgesPrinted = (badges ?? []).filter((b) => b.printed_at !== null).length;
-  const pendingPayments = (payments ?? []).filter((p) => p.status === "pending").length;
-  const confirmedPayments = (payments ?? []).filter((p) => p.status === "success").length;
   const senegaleseCount = (participants ?? []).filter((p) => p.country === "Sénégal").length;
   const nonSenegaleseCount = Math.max(total - senegaleseCount, 0);
+  // "confirmed" is only ever reached without a payment (paid tiers go
+  // pending -> paid via confirm_payment_secure; confirmed is the free-tier/
+  // staff-comp-badge path) -- checked_in can come from either, so those are
+  // only counted as free if they genuinely never had a payment row.
+  const paidParticipantIds = new Set((payments ?? []).map((p) => p.participant_id));
+  const freeBadges = (participants ?? []).filter(
+    (p) => (p.status === "confirmed" || p.status === "checked_in") && !paidParticipantIds.has(p.id),
+  ).length;
+  const revenue = (payments ?? [])
+    .filter((p) => p.status === "success")
+    .reduce((sum, p) => sum + p.amount, 0);
 
   const segmentCount = useMemo(() => {
     if (segmentProfile === "all") return total;
@@ -176,41 +175,6 @@ function DashboardContent() {
       })),
     [profiles, participants],
   );
-
-  const paymentsDonutData = useMemo(() => {
-    const groups = new Map<string, number>();
-    for (const tx of payments ?? []) groups.set(tx.provider, (groups.get(tx.provider) ?? 0) + 1);
-    const colors: Record<string, string> = { paytech: "var(--chart-1)", paydunya: "var(--accent)" };
-    return Array.from(groups.entries()).map(([provider, value]) => ({
-      label: PROVIDER_LABEL[provider] ?? provider,
-      value,
-      color: colors[provider] ?? "var(--muted-foreground)",
-    }));
-  }, [payments]);
-
-  const healthData = useMemo(() => {
-    const paymentsSuccessRate = payments?.length
-      ? Math.round((payments.filter((p) => p.status === "success").length / payments.length) * 100)
-      : 0;
-    const profileCoverage = profiles?.length
-      ? Math.round(
-          (new Set((participants ?? []).map((p) => p.profile_type_id).filter(Boolean)).size /
-            profiles.length) *
-            100,
-        )
-      : 0;
-    const last24h = (participants ?? []).filter(
-      (p) => Date.now() - new Date(p.created_at).getTime() < 24 * 60 * 60 * 1000,
-    ).length;
-    const momentum = total ? Math.min(100, Math.round((last24h / total) * 100)) : 0;
-    return [
-      { metric: "Conversion", value: conversion },
-      { metric: "Présence", value: attendanceRate },
-      { metric: "Paiements", value: paymentsSuccessRate },
-      { metric: "Profils", value: profileCoverage },
-      { metric: "Dynamique", value: momentum },
-    ];
-  }, [payments, profiles, participants, total, conversion, attendanceRate]);
 
   function exportCsv() {
     const header = [
@@ -299,14 +263,12 @@ function DashboardContent() {
 
           {/* Secondary tiles */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            <Tile label="Paiements confirmés" value={String(confirmedPayments)} />
-            <Tile label="Paiements en attente" value={String(pendingPayments)} />
+            <Tile label="Chiffre d'affaires" value={`${revenue.toLocaleString("fr-FR")} FCFA`} />
             <Tile label="Participants confirmés" value={String(confirmedOnly)} />
             <Tile label="Taux de conversion" value={`${conversion}%`} />
             <Tile label="Enregistrés sur site" value={`${checkedIn} (${attendanceRate}%)`} />
             <Tile label="Participants absents" value={String(absent)} />
-            <Tile label="Badges générés" value={String(badgesGenerated)} />
-            <Tile label="Badges imprimés" value={String(badgesPrinted)} />
+            <Tile label="Badges gratuits" value={String(freeBadges)} />
             <Tile label="Inscriptions sénégalaises" value={String(senegaleseCount)} />
             <Tile label="Inscriptions non sénégalaises" value={String(nonSenegaleseCount)} />
           </div>
@@ -552,22 +514,6 @@ function DashboardContent() {
 
         {/* Right rail */}
         <div className="min-w-0 space-y-4 sm:space-y-6">
-          <section
-            id="paiements"
-            className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
-          >
-            <h2 className="text-sm font-semibold text-foreground">Paiements</h2>
-            <p className="mt-1 text-xs text-muted-foreground">Par prestataire, ce mois-ci</p>
-            <div className="mt-4">
-              <PaymentsDonut data={paymentsDonutData} />
-            </div>
-          </section>
-
-          <section className="min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
-            <h2 className="text-sm font-semibold text-foreground">Santé de l'événement</h2>
-            <EventHealthRadar data={healthData} />
-          </section>
-
           <section className="min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
             <h2 className="text-sm font-semibold text-foreground">Segments</h2>
             <ul className="mt-4 space-y-2">

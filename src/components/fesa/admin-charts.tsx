@@ -65,19 +65,40 @@ export function TrendSparkline({ data }: { data: { label: string; value: number 
   );
 }
 
+function ProfileBarTick(props: {
+  x?: number;
+  y?: number;
+  payload?: { value: string };
+  data: { label: string; value: number; color: string }[];
+}) {
+  const { x = 0, y = 0, payload, data } = props;
+  const value = data.find((d) => d.label === payload?.value)?.value ?? 0;
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={0} dy={12} textAnchor="middle" fill="var(--muted-foreground)" fontSize={11}>
+        {payload?.value}
+      </text>
+      <text x={0} y={0} dy={28} textAnchor="middle" fill="var(--foreground)" fontSize={13} fontWeight={700}>
+        {value}
+      </text>
+    </g>
+  );
+}
+
 export function ProfileBarChart({
   data,
 }: {
   data: { label: string; value: number; color: string }[];
 }) {
   return (
-    <ResponsiveContainer width="100%" height={200}>
+    <ResponsiveContainer width="100%" height={220}>
       <BarChart data={data} margin={{ top: 16, right: 8, bottom: 0, left: 8 }} barCategoryGap="28%">
         <XAxis
           dataKey="label"
           axisLine={false}
           tickLine={false}
-          tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
+          height={44}
+          tick={(props) => <ProfileBarTick {...props} data={data} />}
         />
         <YAxis hide />
         <Tooltip content={<ChartTooltip />} cursor={{ fill: "var(--secondary)" }} />

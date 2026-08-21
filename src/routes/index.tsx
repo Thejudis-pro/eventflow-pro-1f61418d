@@ -176,7 +176,7 @@ const TIERS: Tier[] = [
     kicker: "MARCHÉ FORAIN",
     title: ["Stand exposant", "9 m²"],
     price: "300 000",
-    note: "Emplacement pour les deux jours",
+    note: "Emplacement pour les deux jours · 10 stands disponibles",
     cta: "Réserver un stand",
     included: [
       "Stand équipé avec mobilier de base (table + 2 chaises + panneau nom)",
@@ -195,7 +195,7 @@ const TIERS: Tier[] = [
     kicker: "ESPACE INSTITUTIONNEL",
     title: ["Stand institutionnel", "9 m²"],
     price: "1 500 000",
-    note: "Visibilité sur tous les supports",
+    note: "Visibilité sur tous les supports · 25 stands disponibles",
     cta: "Réserver un stand institutionnel",
     highlight: true,
     included: [
