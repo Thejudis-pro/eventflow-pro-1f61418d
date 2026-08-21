@@ -554,12 +554,27 @@ function Landing() {
               « Transformer l&rsquo;informel en opportunité, structurer les femmes en puissance
               économique et faire de la coopération un levier de stabilité durable. »
             </blockquote>
-            <p className="mt-4 max-w-[620px] text-[14.5px] leading-[1.7] text-[#5a6b62]">
-              En tant que Présidente de la Plateforme Africaine pour l&rsquo;Autonomisation des
-              Femmes (PAAF), je porte une vision panafricaine fondée sur la coopération, la mise en
-              réseau et la création d&rsquo;opportunités — c&rsquo;est dans cette dynamique que
-              s&rsquo;inscrit le FESA.
-            </p>
+            <div className="mt-4 max-w-[620px] space-y-3 text-justify text-[14.5px] leading-[1.7] text-[#5a6b62]">
+              <p>
+                Depuis plus de deux décennies, mon engagement se situe à l&rsquo;interface des
+                politiques publiques, du secteur privé et des dynamiques communautaires, avec une
+                conviction forte : l&rsquo;autonomisation économique des femmes est un puissant
+                levier de transformation durable de l&rsquo;Afrique.
+              </p>
+              <p>
+                Formatrice certifiée par l&rsquo;OIT/CIF et la GIZ, j&rsquo;ai contribué à
+                l&rsquo;autonomisation de plus de 21 000 femmes rurales en Afrique de l&rsquo;Ouest,
+                en les accompagnant dans la structuration de leurs activités, le développement des
+                chaînes de valeur et leur accès à des modèles économiques plus formels, compétitifs
+                et durables.
+              </p>
+              <p>
+                En tant que Présidente de la Plateforme Africaine pour l&rsquo;Autonomisation des
+                Femmes (PAAF), je porte une vision panafricaine fondée sur la coopération, la mise en
+                réseau et la création d&rsquo;opportunités — c&rsquo;est dans cette dynamique que
+                s&rsquo;inscrit le FESA.
+              </p>
+            </div>
             <Link
               to="/a-propos"
               hash="mot-presidente"
