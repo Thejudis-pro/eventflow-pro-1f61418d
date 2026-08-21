@@ -37,8 +37,17 @@ export function StaffAccessManager() {
         .from("staff_profiles")
         .select("id, user_id, email, full_name, approved, role, created_at")
         .order("created_at", { ascending: true });
-      if (error) throw error;
-      return data as StaffRow[];
+      if (!error) return data as StaffRow[];
+
+      // Same fallback as useStaffSession: the role column may not exist on
+      // this database yet (migration not republished).
+      console.error("[staff-access] query with role failed, falling back", error);
+      const fallback = await supabase
+        .from("staff_profiles")
+        .select("id, user_id, email, full_name, approved, created_at")
+        .order("created_at", { ascending: true });
+      if (fallback.error) throw fallback.error;
+      return (fallback.data ?? []).map((row) => ({ ...row, role: "admin" })) as StaffRow[];
     },
   });
 

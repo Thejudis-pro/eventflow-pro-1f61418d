@@ -104,8 +104,20 @@ export function useStaffSession() {
         .select("approved, email, full_name, role")
         .eq("user_id", userId!)
         .maybeSingle();
-      if (error) throw error;
-      return data;
+      if (!error) return data;
+
+      // The role column may not exist on this database yet (migration not
+      // republished) -- selecting it makes the whole query fail, which must
+      // never lock an already-approved account out of the dashboard. Fall
+      // back to the query that's guaranteed to work either way.
+      console.error("[auth] staff profile query with role failed, falling back", error);
+      const fallback = await supabase
+        .from("staff_profiles")
+        .select("approved, email, full_name")
+        .eq("user_id", userId!)
+        .maybeSingle();
+      if (fallback.error) throw fallback.error;
+      return fallback.data ? { ...fallback.data, role: "admin" as const } : null;
     },
   });
 
