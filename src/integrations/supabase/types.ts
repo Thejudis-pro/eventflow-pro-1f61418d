@@ -593,6 +593,26 @@ export type Database = {
           zone_label: string
         }[]
       }
+      get_registration_email_info_by_registration_id: {
+        Args: { p_registration_id: string; p_secret: string }
+        Returns: {
+          city: string
+          company: string
+          country: string
+          email: string
+          event_end_date: string
+          event_location: string
+          event_name: string
+          event_start_date: string
+          full_name: string
+          participant_id: string
+          profile_label: string
+          registration_id: string
+          sent_email: boolean
+          status: string
+          zone_label: string
+        }[]
+      }
       is_admin_staff: { Args: { _user_id: string }; Returns: boolean }
       is_approved_staff: { Args: { _user_id: string }; Returns: boolean }
       list_delegation_names: {

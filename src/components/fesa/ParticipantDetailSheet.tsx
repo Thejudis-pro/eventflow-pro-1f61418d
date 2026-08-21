@@ -163,7 +163,8 @@ export function ParticipantDetailSheet({
       toast.success(`Email de confirmation renvoyé à ${participant.email}.`);
     } catch (error) {
       console.error(error);
-      toast.error("L'email n'a pas pu être envoyé.");
+      const detail = error instanceof Error ? error.message : String(error);
+      toast.error(`L'email n'a pas pu être envoyé : ${detail}`);
     } finally {
       setBusy(null);
     }

@@ -1,13 +1,14 @@
 import { useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarPlus, Download, Loader2, MessageCircle } from "lucide-react";
+import { CalendarPlus, Download, Loader2, Mail, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { RegistrationFooter, RegistrationHeader } from "@/components/fesa/RegistrationChrome";
 import { BadgePreview } from "@/components/fesa/BadgePreview";
 import { supabase } from "@/integrations/supabase/client";
 import { eventQuery, registrationQuery } from "@/lib/event";
 import { downloadBadgePdf, downloadIcs } from "@/lib/badge-export";
+import { sendBadgeEmail } from "@/lib/email/send-badge-email.functions";
 import { ARCHIVO_FONT_HREF, REG } from "@/lib/fesa-registration-theme";
 
 const TITLE = "Inscription confirmée — FESA 2026";
@@ -44,6 +45,7 @@ function ConfirmationPage() {
 
   const badgeRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   const isPendingPayment = registration?.payment_status === "pending";
   const firstName = (registration?.full_name ?? "").split(" ")[0] ?? "";
@@ -72,6 +74,20 @@ function ConfirmationPage() {
       toast.error("Le badge n'a pas pu être téléchargé.");
     } finally {
       setDownloading(false);
+    }
+  }
+
+  async function handleSendEmail() {
+    setSendingEmail(true);
+    try {
+      await sendBadgeEmail({ data: { registrationId } });
+      toast.success("Badge envoyé par e-mail.");
+    } catch (error) {
+      console.error(error);
+      const detail = error instanceof Error ? error.message : String(error);
+      toast.error(`L'e-mail n'a pas pu être envoyé : ${detail}`);
+    } finally {
+      setSendingEmail(false);
     }
   }
 
@@ -209,6 +225,16 @@ function ConfirmationPage() {
                     Envoyer le badge sur WhatsApp
                     <MessageCircle className="size-[18px]" />
                   </a>
+                  <button
+                    type="button"
+                    onClick={() => void handleSendEmail()}
+                    disabled={sendingEmail}
+                    className="flex h-14 items-center justify-between rounded-2xl px-[22px]"
+                    style={{ background: REG.creamLight, font: "800 15px/1 Manrope, sans-serif" }}
+                  >
+                    Envoyer le badge par e-mail
+                    {sendingEmail ? <Loader2 className="size-[18px] animate-spin" /> : <Mail className="size-[18px]" />}
+                  </button>
                 </div>
 
                 <div
