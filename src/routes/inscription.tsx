@@ -21,6 +21,7 @@ import { createCheckoutSession } from "@/lib/payments/checkout.functions";
 import { sendRegistrationEmail } from "@/lib/email/send-registration-email.functions";
 import {
   eventQuery,
+  offerAvailabilityQuery,
   offersQuery,
   profileTypesQuery,
   publicDelegationNamesQuery,
@@ -127,6 +128,12 @@ function RegistrationPage() {
     refetch: refetchProfileTypes,
   } = useQuery(profileTypesQuery(event?.id));
   const { data: delegations } = useQuery(publicDelegationNamesQuery(event?.id));
+  const { data: offerAvailability } = useQuery(offerAvailabilityQuery(event?.id));
+
+  function remainingFor(offer: { id: string; total_quantity?: number | null }): number | null {
+    if (offer.total_quantity == null) return null;
+    return Math.max(0, offer.total_quantity - (offerAvailability?.[offer.id] ?? 0));
+  }
 
   // While the event itself is still loading, the offer/profile queries are
   // disabled (isLoading === false) — count that as loading too, otherwise the
@@ -163,6 +170,7 @@ function RegistrationPage() {
           is_public: true,
           sort_order: p.sort_order,
           perks: [],
+          total_quantity: null,
           profile_types: { color_code: p.color_code, label: p.label },
         }));
     }
@@ -463,15 +471,18 @@ function RegistrationPage() {
                 <div className="mt-8 flex flex-col gap-3">
                   {visibleOffers.map((o) => {
                     const on = o.id === offerId;
+                    const remaining = remainingFor(o);
+                    const soldOut = remaining === 0;
                     return (
                       <button
                         key={o.id}
                         type="button"
+                        disabled={soldOut}
                         onClick={() => {
                           setOfferId(o.id);
                           setRegistered(null);
                         }}
-                        className="flex w-full items-center justify-between gap-8 rounded-[18px] px-6 py-[22px] text-left"
+                        className="flex w-full items-center justify-between gap-8 rounded-[18px] px-6 py-[22px] text-left disabled:cursor-not-allowed disabled:opacity-50"
                         style={{
                           background: "#fff",
                           border: on ? `2px solid ${REG.green}` : `1px solid ${REG.lineDark}`,
@@ -500,6 +511,16 @@ function RegistrationPage() {
                           >
                             {o.description}
                           </span>
+                          {remaining !== null && (
+                            <span
+                              style={{
+                                font: "800 12px/1 Manrope, sans-serif",
+                                color: soldOut ? REG.orange : REG.green,
+                              }}
+                            >
+                              {soldOut ? "Complet" : `${remaining} place${remaining > 1 ? "s" : ""} restante${remaining > 1 ? "s" : ""}`}
+                            </span>
+                          )}
                         </span>
                         <span className="flex flex-none items-center gap-[22px]">
                           <span className="flex flex-col items-end gap-1">

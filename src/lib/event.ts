@@ -62,6 +62,7 @@ export type Offer = {
   is_public: boolean;
   sort_order: number;
   perks: string[];
+  total_quantity: number | null;
 };
 
 export type Participant = {
@@ -208,6 +209,20 @@ export const offersQuery = (eventId?: string) => ({
     );
     if (error) throw error;
     return (data ?? []) as Offer[];
+  },
+});
+
+/** Aggregate-only spot counts per offer (offer_id -> sold_count), used to
+ * show "X restants" and disable a sold-out offer. Public/anon-safe -- the
+ * underlying RPC never returns participant data, just counts. */
+export const offerAvailabilityQuery = (eventId?: string) => ({
+  queryKey: ["offer-availability", eventId],
+  enabled: Boolean(eventId),
+  staleTime: 30_000,
+  queryFn: async (): Promise<Record<string, number>> => {
+    const { data, error } = await supabase.rpc("get_offer_sold_counts", { p_event_id: eventId! });
+    if (error) throw error;
+    return Object.fromEntries((data ?? []).map((row) => [row.offer_id, Number(row.sold_count)]));
   },
 });
 

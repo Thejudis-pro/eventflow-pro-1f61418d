@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AccessLevelManager } from "@/components/fesa/AccessLevelManager";
+import { CreateBadgeCategoryForm } from "@/components/fesa/CreateBadgeCategoryForm";
 import { AdminShell } from "@/components/fesa/AdminShell";
 import { BulkBadgePrint } from "@/components/fesa/BulkBadgePrint";
 import { CreateFreeBadgeForm } from "@/components/fesa/CreateFreeBadgeForm";
@@ -490,6 +491,9 @@ function DashboardContent() {
             </p>
             <div className="mt-2">
               <AccessLevelManager eventId={event?.id} />
+            </div>
+            <div className="mt-4 border-t border-border pt-4">
+              <CreateBadgeCategoryForm eventId={event?.id} />
             </div>
           </section>
 

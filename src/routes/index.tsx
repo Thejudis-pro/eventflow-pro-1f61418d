@@ -28,7 +28,7 @@ import fesaLogo from "@/assets/logo-fesa.png";
 import paafLogo from "@/assets/logo-paaf.png";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useReveal } from "@/components/fesa/Reveal";
-import { eventQuery, subscribeToNewsletter } from "@/lib/event";
+import { eventQuery, offerAvailabilityQuery, offersQuery, subscribeToNewsletter } from "@/lib/event";
 import { AXES, OBJECTIVES, PAAF_STATS } from "@/lib/forum-content";
 
 const TITLE = "FESA 2026 — Forum entrepreneuriat & souveraineté alimentaire | Dakar";
@@ -176,7 +176,7 @@ const TIERS: Tier[] = [
     kicker: "MARCHÉ FORAIN",
     title: ["Stand exposant", "9 m²"],
     price: "300 000",
-    note: "Emplacement pour les deux jours · 10 stands disponibles",
+    note: "Emplacement pour les deux jours",
     cta: "Réserver un stand",
     included: [
       "Stand équipé avec mobilier de base (table + 2 chaises + panneau nom)",
@@ -195,7 +195,7 @@ const TIERS: Tier[] = [
     kicker: "ESPACE INSTITUTIONNEL",
     title: ["Stand institutionnel", "9 m²"],
     price: "1 500 000",
-    note: "Visibilité sur tous les supports · 25 stands disponibles",
+    note: "Visibilité sur tous les supports",
     cta: "Réserver un stand institutionnel",
     highlight: true,
     included: [
@@ -238,6 +238,17 @@ const FOOTER_COLS = [
 
 function Landing() {
   const { data: event } = useQuery(eventQuery);
+  const { data: offers } = useQuery(offersQuery(event?.id));
+  const { data: offerAvailability } = useQuery(offerAvailabilityQuery(event?.id));
+
+  function standAvailabilityNote(kicker: string, fallback: string): string {
+    const offer = offers?.find((o) => o.kicker === kicker);
+    if (!offer || offer.total_quantity == null) return fallback;
+    const remaining = Math.max(0, offer.total_quantity - (offerAvailability?.[offer.id] ?? 0));
+    return remaining === 0
+      ? `${fallback} · Complet`
+      : `${fallback} · ${remaining} place${remaining > 1 ? "s" : ""} restante${remaining > 1 ? "s" : ""}`;
+  }
 
   const countdownTarget = useMemo(() => {
     if (event?.start_date) {
@@ -803,7 +814,7 @@ function Landing() {
                   <span className="text-[14px] font-bold text-[#7a8b81]">FCFA</span>
                 </div>
                 <div className="mt-2 text-[12.5px] font-medium leading-[1.5] text-[#7a8b81]">
-                  {tier.note}
+                  {standAvailabilityNote(tier.kicker, tier.note)}
                 </div>
                 <Link
                   to="/inscription"

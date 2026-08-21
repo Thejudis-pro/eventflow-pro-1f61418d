@@ -216,6 +216,7 @@ export type Database = {
           price: number
           profile_type_id: string
           sort_order: number
+          total_quantity: number | null
           unit_label: string
         }
         Insert: {
@@ -231,6 +232,7 @@ export type Database = {
           price: number
           profile_type_id: string
           sort_order?: number
+          total_quantity?: number | null
           unit_label?: string
         }
         Update: {
@@ -246,6 +248,7 @@ export type Database = {
           price?: number
           profile_type_id?: string
           sort_order?: number
+          total_quantity?: number | null
           unit_label?: string
         }
         Relationships: [
@@ -534,6 +537,10 @@ export type Database = {
           status: string
           zone_label: string
         }[]
+      }
+      get_offer_sold_counts: {
+        Args: { p_event_id: string }
+        Returns: { offer_id: string; sold_count: number }[]
       }
       get_mock_payment_details: {
         Args: { p_payment_id: string }
