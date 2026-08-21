@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Download, IdCard, Loader2, Pencil, Printer, Trash2, X } from "lucide-react";
+import { Download, IdCard, Loader2, Mail, Pencil, Printer, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import {
   Sheet,
@@ -26,6 +26,7 @@ import {
 import { BadgePreview } from "./BadgePreview";
 import { supabase } from "@/integrations/supabase/client";
 import { downloadBadgePdf, renderBadgePdfBlob } from "@/lib/badge-export";
+import { sendRegistrationEmail } from "@/lib/email/send-registration-email.functions";
 import { badgeQuery, type EventRow, type Participant, type Payment, type ProfileType } from "@/lib/event";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -108,7 +109,7 @@ export function ParticipantDetailSheet({
   const queryClient = useQueryClient();
   const { data: badge } = useQuery({ ...badgeQuery(participant?.id), enabled: participant !== null });
   const badgeRef = useRef<HTMLDivElement>(null);
-  const [busy, setBusy] = useState<"download" | "print" | null>(null);
+  const [busy, setBusy] = useState<"download" | "print" | "email" | null>(null);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<EditForm | null>(null);
   const [saving, setSaving] = useState(false);
@@ -149,6 +150,20 @@ export function ParticipantDetailSheet({
     } catch (error) {
       console.error(error);
       toast.error("Le badge n'a pas pu être préparé pour l'impression.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function handleResendEmail() {
+    if (!participant) return;
+    setBusy("email");
+    try {
+      await sendRegistrationEmail({ data: { participantId: participant.id, force: true } });
+      toast.success(`Email de confirmation renvoyé à ${participant.email}.`);
+    } catch (error) {
+      console.error(error);
+      toast.error("L'email n'a pas pu être envoyé.");
     } finally {
       setBusy(null);
     }
@@ -383,6 +398,19 @@ export function ParticipantDetailSheet({
                           <Printer className="size-4" />
                         )}
                         Imprimer
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={busy !== null}
+                        onClick={() => void handleResendEmail()}
+                      >
+                        {busy === "email" ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <Mail className="size-4" />
+                        )}
+                        Renvoyer par email
                       </Button>
                     </div>
                     {badge.printed_at && (

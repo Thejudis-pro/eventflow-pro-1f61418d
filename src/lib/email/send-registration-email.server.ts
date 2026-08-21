@@ -14,6 +14,10 @@
 export async function sendRegistrationConfirmationEmail(params: {
   participantId: string;
   origin: string;
+  /** Staff-initiated resend (e.g. "I never got it" or a failed automatic
+   * send) -- bypasses the sent_email idempotency check below, which exists
+   * to stop the *automatic* triggers (webhook, wizard) from double-sending. */
+  force?: boolean | undefined;
 }): Promise<void> {
   const secret = process.env["INTERNAL_PAYMENT_SECRET"];
   if (!secret) {
@@ -27,7 +31,7 @@ export async function sendRegistrationConfirmationEmail(params: {
   if (error) throw error;
   if (!info) return; // participant not found -- nothing to send
 
-  if (info.sent_email) return; // already sent, idempotent no-op
+  if (info.sent_email && !params.force) return; // already sent, idempotent no-op
   if (!["paid", "confirmed", "checked_in"].includes(info.status)) return; // not confirmed yet
 
   const { buildRegistrationEmail } = await import("./registration-email.template");
