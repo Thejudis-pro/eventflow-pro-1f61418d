@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { delegationsQuery, profileTypesQuery } from "@/lib/event";
+import { sendRegistrationEmail } from "@/lib/email/send-registration-email.functions";
 
 type CsvRow = {
   full_name?: string;
@@ -121,7 +122,10 @@ export function DelegationCsvImport({ eventId }: { eventId?: string | undefined 
         status: "confirmed",
       }));
 
-      const { error: insertError } = await supabase.from("participants").insert(toInsert);
+      const { data: inserted, error: insertError } = await supabase
+        .from("participants")
+        .insert(toInsert)
+        .select("id");
       if (insertError) throw insertError;
 
       toast.success(
@@ -129,6 +133,18 @@ export function DelegationCsvImport({ eventId }: { eventId?: string | undefined 
       );
       queryClient.invalidateQueries({ queryKey: ["participants", eventId] });
       queryClient.invalidateQueries({ queryKey: ["delegations", eventId] });
+
+      // A CSV import skips the public wizard entirely, so nothing else
+      // triggers the confirmation email for these participants -- send it
+      // here, same as the free-registration path in inscription.tsx.
+      void Promise.allSettled(
+        (inserted ?? []).map((row) => sendRegistrationEmail({ data: { participantId: row.id } })),
+      ).then((results) => {
+        const failed = results.filter((r) => r.status === "rejected").length;
+        if (failed > 0) {
+          console.error(`[delegation-import] ${failed} confirmation email(s) failed to send`);
+        }
+      });
     } catch (e) {
       console.error(e);
       toast.error("L'import CSV a échoué. Vérifiez le format du fichier.");

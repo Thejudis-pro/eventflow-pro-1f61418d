@@ -16,6 +16,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { profileTypesQuery } from "@/lib/event";
 import { COUNTRIES } from "@/lib/countries";
+import { sendRegistrationEmail } from "@/lib/email/send-registration-email.functions";
 
 const EMPTY = {
   firstName: "",
@@ -83,6 +84,12 @@ export function CreateFreeBadgeForm({ eventId }: { eventId?: string | undefined 
       setLastCreated({ registrationId: created.registration_id, fullName });
       setForm(EMPTY);
       void queryClient.invalidateQueries({ queryKey: ["participants", eventId] });
+      // Comp badges skip the public wizard entirely, so nothing else triggers
+      // the confirmation email for them -- fire it here the same way the
+      // free-registration path in inscription.tsx does.
+      void sendRegistrationEmail({ data: { participantId: created.id } }).catch((error) => {
+        console.error("[create-free-badge] confirmation email", error);
+      });
     } catch (err) {
       console.error(err);
       toast.error("Impossible de créer ce badge. Réessayez.");
