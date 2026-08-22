@@ -55,10 +55,64 @@ async function sendFromInfo(params: {
   });
 
   const { sendEmail } = await import("./resend.server");
-  await sendEmail({ to: info.email, subject, html, text });
+  try {
+    await sendEmail({ to: info.email, subject, html, text });
+  } catch (error) {
+    // Automatic sends (webhook, free-registration flow) have no user watching
+    // for a toast -- without this they fail into a server/browser console log
+    // nobody reads, and the participant just never gets their badge. Manual
+    // resends (force: true) already surface errors to the admin who clicked
+    // the button, so skip the alert there to avoid noise.
+    if (!params.force)
+      await notifyAdminOfSendFailure({ info, participantId: params.participantId, error });
+    throw error;
+  }
 
   const { supabase } = await import("@/integrations/supabase/client");
   await supabase.rpc("mark_registration_email_sent", { p_participant_id: params.participantId });
+}
+
+/** Best-effort admin alert for an automatic confirmation-email failure --
+ * never throws, so a Resend outage here can't mask the original error. */
+async function notifyAdminOfSendFailure(params: {
+  info: EmailInfo;
+  participantId: string;
+  error: unknown;
+}): Promise<void> {
+  try {
+    const { sendEmail } = await import("./resend.server");
+    const { info, participantId, error } = params;
+    const message = error instanceof Error ? error.message : String(error);
+    await sendEmail({
+      to: "contact@fesaforum.com",
+      subject: `[FESA 2026] Échec envoi email de confirmation — ${info.full_name}`,
+      text: [
+        `L'envoi automatique de l'email de confirmation a échoué pour :`,
+        ``,
+        `Participant : ${info.full_name} <${info.email}>`,
+        `Registration ID : ${info.registration_id}`,
+        `Participant ID : ${participantId}`,
+        `Statut : ${info.status}`,
+        ``,
+        `Erreur : ${message}`,
+        ``,
+        `Renvoyez manuellement depuis la fiche participant du dashboard admin ("Renvoyer par email").`,
+      ].join("\n"),
+      html: [
+        `<p>L'envoi automatique de l'email de confirmation a échoué pour :</p>`,
+        `<ul>`,
+        `<li>Participant : ${info.full_name} &lt;${info.email}&gt;</li>`,
+        `<li>Registration ID : ${info.registration_id}</li>`,
+        `<li>Participant ID : ${participantId}</li>`,
+        `<li>Statut : ${info.status}</li>`,
+        `</ul>`,
+        `<p>Erreur : ${message}</p>`,
+        `<p>Renvoyez manuellement depuis la fiche participant du dashboard admin ("Renvoyer par email").</p>`,
+      ].join(""),
+    });
+  } catch (alertError) {
+    console.error("[send-registration-email] failed to notify admin of send failure", alertError);
+  }
 }
 
 export async function sendRegistrationConfirmationEmail(params: {
@@ -76,12 +130,20 @@ export async function sendRegistrationConfirmationEmail(params: {
 
   const { supabase } = await import("@/integrations/supabase/client");
   const { data: info, error } = await supabase
-    .rpc("get_registration_email_info", { p_participant_id: params.participantId, p_secret: secret })
+    .rpc("get_registration_email_info", {
+      p_participant_id: params.participantId,
+      p_secret: secret,
+    })
     .maybeSingle();
   if (error) throw error;
   if (!info) return; // participant not found -- nothing to send
 
-  await sendFromInfo({ info, participantId: params.participantId, origin: params.origin, force: params.force });
+  await sendFromInfo({
+    info,
+    participantId: params.participantId,
+    origin: params.origin,
+    force: params.force,
+  });
 }
 
 /**
@@ -110,5 +172,10 @@ export async function sendRegistrationConfirmationEmailByRegistrationId(params: 
   if (error) throw error;
   if (!info || !info.participant_id) return; // registration not found -- nothing to send
 
-  await sendFromInfo({ info, participantId: info.participant_id, origin: params.origin, force: params.force });
+  await sendFromInfo({
+    info,
+    participantId: info.participant_id,
+    origin: params.origin,
+    force: params.force,
+  });
 }
