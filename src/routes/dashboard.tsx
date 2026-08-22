@@ -36,6 +36,8 @@ import { ProfileBarChart, TrendSparkline } from "@/components/fesa/admin-charts"
 import { supabase } from "@/integrations/supabase/client";
 import {
   eventQuery,
+  offerAvailabilityQuery,
+  offersQuery,
   participantsQuery,
   paymentsQuery,
   profileTypesQuery,
@@ -84,6 +86,8 @@ function DashboardContent() {
   const { data: profiles } = useQuery(profileTypesQuery(event?.id));
   const { data: participants } = useQuery(participantsQuery(event?.id));
   const { data: payments } = useQuery(paymentsQuery(event?.id));
+  const { data: offers } = useQuery(offersQuery(event?.id));
+  const { data: offerAvailability } = useQuery(offerAvailabilityQuery(event?.id));
 
   async function assignCategory(participantId: string, profileTypeId: string) {
     const { error } = await supabase
@@ -137,6 +141,25 @@ function DashboardContent() {
   const revenue = (payments ?? [])
     .filter((p) => p.status === "success")
     .reduce((sum, p) => sum + p.amount, 0);
+
+  // "Stand" offers (exposant/institutionnel) are physical inventory, not
+  // badge categories -- worth tracking separately since a sold-out stand
+  // type needs action (raise the cap or turn off sales), unlike a badge tier.
+  const standOffers = (offers ?? []).filter((o) => o.name.toLowerCase().startsWith("stand"));
+  const participantOfferById = new Map((participants ?? []).map((p) => [p.id, p.offer_id]));
+  const standStats = standOffers.map((offer) => {
+    const sold = offerAvailability?.[offer.id] ?? 0;
+    const remaining =
+      offer.total_quantity != null ? Math.max(offer.total_quantity - sold, 0) : null;
+    const standRevenue = (payments ?? [])
+      .filter(
+        (p) => p.status === "success" && participantOfferById.get(p.participant_id) === offer.id,
+      )
+      .reduce((sum, p) => sum + p.amount, 0);
+    return { offer, sold, remaining, revenue: standRevenue };
+  });
+  const standsSoldTotal = standStats.reduce((sum, s) => sum + s.sold, 0);
+  const standsRevenueTotal = standStats.reduce((sum, s) => sum + s.revenue, 0);
 
   const segmentCount = useMemo(() => {
     if (segmentProfile === "all") return total;
@@ -273,6 +296,50 @@ function DashboardContent() {
           <Tile label="Inscriptions sénégalaises" value={String(senegaleseCount)} />
           <Tile label="Inscriptions non sénégalaises" value={String(nonSenegaleseCount)} />
         </div>
+
+        {/* Stands */}
+        {standStats.length > 0 && (
+          <section className="min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-sm font-semibold text-foreground">Stands</h2>
+              <span className="text-xs text-muted-foreground">
+                {standsSoldTotal} vendu{standsSoldTotal > 1 ? "s" : ""} ·{" "}
+                {standsRevenueTotal.toLocaleString("fr-FR")} FCFA
+              </span>
+            </div>
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {standStats.map(({ offer, sold, remaining, revenue: standRevenue }) => {
+                const pct =
+                  offer.total_quantity != null
+                    ? Math.min(Math.round((sold / offer.total_quantity) * 100), 100)
+                    : 0;
+                return (
+                  <div key={offer.id} className="min-w-0 rounded-xl border border-border p-4">
+                    <p className="truncate text-sm font-medium text-foreground">{offer.name}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {sold} vendu{sold > 1 ? "s" : ""}
+                      {offer.total_quantity != null ? ` / ${offer.total_quantity}` : ""}
+                      {remaining != null
+                        ? ` · ${remaining} restant${remaining > 1 ? "s" : ""}`
+                        : ""}
+                    </p>
+                    {offer.total_quantity != null && (
+                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+                        <div
+                          className="h-full rounded-full"
+                          style={{ width: `${pct}%`, backgroundColor: "var(--chart-1)" }}
+                        />
+                      </div>
+                    )}
+                    <p className="mt-2 text-xs font-semibold tabular-nums text-primary-deep">
+                      {standRevenue.toLocaleString("fr-FR")} FCFA
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         {/* Profile breakdown */}
         <section className="min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6">
