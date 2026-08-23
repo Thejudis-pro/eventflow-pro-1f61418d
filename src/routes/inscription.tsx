@@ -138,7 +138,8 @@ function RegistrationPage() {
   // While the event itself is still loading, the offer/profile queries are
   // disabled (isLoading === false) — count that as loading too, otherwise the
   // page shows neither a spinner nor an error.
-  const isLoadingFormules = eventLoading || (!eventErrored && (offersLoading || profileTypesLoading));
+  const isLoadingFormules =
+    eventLoading || (!eventErrored && (offersLoading || profileTypesLoading));
   const formulesErrored = eventErrored || offersErrored || profileTypesErrored;
 
   // The "offers" table joined to its profile_type for color/label. If it's
@@ -438,35 +439,35 @@ function RegistrationPage() {
                 )}
 
                 {!isLoadingFormules && offersMerged.length === 0 && (
-                    <div
-                      className="mt-8 rounded-[18px] px-6 py-5"
-                      style={{
-                        border: `1px solid ${REG.line}`,
-                        background: "#fff",
-                        font: "500 14px/1.6 Manrope, sans-serif",
-                        color: REG.muted,
+                  <div
+                    className="mt-8 rounded-[18px] px-6 py-5"
+                    style={{
+                      border: `1px solid ${REG.line}`,
+                      background: "#fff",
+                      font: "500 14px/1.6 Manrope, sans-serif",
+                      color: REG.muted,
+                    }}
+                  >
+                    <p>
+                      {formulesErrored
+                        ? "Les formules n'ont pas pu être chargées. Vérifiez votre connexion puis réessayez, ou contactez le secrétariat technique au +221 77 477 83 60."
+                        : "Aucune formule n'est disponible pour le moment. Réessayez dans un instant ou contactez le secrétariat technique au +221 77 477 83 60."}
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="mt-3"
+                      onClick={() => {
+                        refetchEvent();
+                        refetchOffers();
+                        refetchProfileTypes();
                       }}
                     >
-                      <p>
-                        {formulesErrored
-                          ? "Les formules n'ont pas pu être chargées. Vérifiez votre connexion puis réessayez, ou contactez le secrétariat technique au +221 77 477 83 60."
-                          : "Aucune formule n'est disponible pour le moment. Réessayez dans un instant ou contactez le secrétariat technique au +221 77 477 83 60."}
-                      </p>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="mt-3"
-                        onClick={() => {
-                          refetchEvent();
-                          refetchOffers();
-                          refetchProfileTypes();
-                        }}
-                      >
-                        Réessayer
-                      </Button>
-                    </div>
-                  )}
+                      Réessayer
+                    </Button>
+                  </div>
+                )}
 
                 <div className="mt-8 flex flex-col gap-3">
                   {visibleOffers.map((o) => {
@@ -518,7 +519,9 @@ function RegistrationPage() {
                                 color: soldOut ? REG.orange : REG.green,
                               }}
                             >
-                              {soldOut ? "Complet" : `${remaining} place${remaining > 1 ? "s" : ""} restante${remaining > 1 ? "s" : ""}`}
+                              {soldOut
+                                ? "Complet"
+                                : `${remaining} place${remaining > 1 ? "s" : ""} restante${remaining > 1 ? "s" : ""}`}
                             </span>
                           )}
                         </span>
@@ -681,7 +684,12 @@ function RegistrationPage() {
                     {errors["phone"] ? (
                       <p className="text-xs text-destructive">{errors["phone"]}</p>
                     ) : (
-                      <p style={{ font: "500 11.5px/1.4 Manrope, sans-serif", color: REG.mutedLight }}>
+                      <p
+                        style={{
+                          font: "500 11.5px/1.4 Manrope, sans-serif",
+                          color: REG.mutedLight,
+                        }}
+                      >
                         Numéro WhatsApp de préférence — l'indicatif est ajouté automatiquement.
                       </p>
                     )}
@@ -848,6 +856,19 @@ function RegistrationPage() {
                     {offer?.name}
                   </div>
                 </div>
+
+                <p
+                  className="mt-3 rounded-[12px] px-4 py-3"
+                  style={{
+                    font: "500 13px/1.6 Manrope, sans-serif",
+                    color: REG.orange,
+                    background: REG.creamLight,
+                  }}
+                >
+                  Des frais de transaction d&rsquo;environ 2&nbsp;% s&rsquo;appliquent sur la page
+                  de paiement PayTech. Le montant final affiché à cette étape peut donc être
+                  légèrement supérieur au montant ci-dessus.
+                </p>
 
                 <div className="mt-6 flex flex-col gap-3">
                   <Button
