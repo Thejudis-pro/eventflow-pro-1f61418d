@@ -199,44 +199,42 @@ function DashboardContent() {
     [profiles, participants],
   );
 
-  function exportCsv() {
-    const header = [
-      "registration_id",
-      "full_name",
-      "email",
-      "phone",
-      "company",
-      "function",
-      "sector",
-      "profile",
-      "status",
-      "created_at",
+  // A real .xlsx (not CSV) -- staff who aren't technical kept struggling
+  // with CSVs opened in Excel: comma vs. locale-semicolon confusion mashing
+  // everything into one column, and accented characters (é, è...) garbling
+  // without a UTF-8 BOM. An actual workbook has neither problem and opens
+  // straight into a normal-looking table. Loaded lazily since it's only
+  // needed on this one click.
+  async function exportExcel() {
+    const XLSX = await import("xlsx");
+    const data = rows.map((r) => ({
+      Identifiant: r.registration_id,
+      "Nom complet": r.full_name,
+      Email: r.email,
+      Téléphone: r.phone ?? "",
+      Société: r.company ?? "",
+      Fonction: r.function ?? "",
+      Secteur: r.sector ?? "",
+      Profil: profileLabel(r.profile_type_id),
+      Statut: STATUS_LABEL[r.status] ?? r.status,
+      "Date d'inscription": new Date(r.created_at).toLocaleDateString("fr-FR"),
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    worksheet["!cols"] = [
+      { wch: 16 },
+      { wch: 24 },
+      { wch: 28 },
+      { wch: 16 },
+      { wch: 22 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 18 },
+      { wch: 12 },
+      { wch: 16 },
     ];
-    const lines = rows.map((r) =>
-      [
-        r.registration_id,
-        r.full_name,
-        r.email,
-        r.phone ?? "",
-        r.company ?? "",
-        r.function ?? "",
-        r.sector ?? "",
-        profileLabel(r.profile_type_id),
-        r.status,
-        r.created_at,
-      ]
-        .map((v) => `"${String(v).replace(/"/g, '""')}"`)
-        .join(","),
-    );
-    const blob = new Blob([[header.join(","), ...lines].join("\n")], {
-      type: "text/csv;charset=utf-8;",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `participants-${event?.slug ?? "event"}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Participants");
+    XLSX.writeFile(workbook, `participants-${event?.slug ?? "event"}.xlsx`);
   }
 
   return (
@@ -265,8 +263,8 @@ function DashboardContent() {
             </div>
           </div>
           <div className="mt-4 flex flex-wrap gap-3 border-t border-border pt-4">
-            <Button variant="institutional" onClick={exportCsv}>
-              <Download className="size-4" /> Export CSV
+            <Button variant="institutional" onClick={() => void exportExcel()}>
+              <Download className="size-4" /> Exporter (Excel)
             </Button>
             <BulkBadgePrint participants={rows} profiles={profiles} event={event} />
             <Button asChild variant="outline">
