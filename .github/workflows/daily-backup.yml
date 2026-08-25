@@ -1,0 +1,27 @@
+name: Daily admin data backup
+
+# This app has no scheduler of its own (no Supabase Edge Functions, no
+# Vercel/Cloudflare cron) -- the only reliable "run this once a day" hook
+# available is GitHub Actions, so it's the trigger for
+# /api/backups/run-daily, which stores a snapshot in event_backups and
+# emails a CSV of it. Requires a repo secret BACKUP_ADMIN_SECRET set to the
+# same value as this deployment's INTERNAL_PAYMENT_SECRET.
+on:
+  schedule:
+    - cron: "0 3 * * *" # 03:00 UTC daily
+  workflow_dispatch: {}
+
+jobs:
+  run-backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger daily backup
+        run: |
+          status=$(curl -sS -o /tmp/response.json -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer ${{ secrets.BACKUP_ADMIN_SECRET }}" \
+            "https://www.fesaforum.com/api/backups/run-daily")
+          cat /tmp/response.json
+          if [ "$status" -ge 300 ]; then
+            echo "Backup request failed with status $status"
+            exit 1
+          fi

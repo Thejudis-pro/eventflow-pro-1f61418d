@@ -40,12 +40,23 @@ function fromAddress(): string {
   return from;
 }
 
+/** UTF-8-safe base64 -- btoa() alone mangles anything outside Latin1 (accented
+ * French text), and this runs on nitro's default Cloudflare target, so no
+ * Buffer either. */
+function toBase64(input: string): string {
+  const bytes = new TextEncoder().encode(input);
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary);
+}
+
 export async function sendEmail(input: {
   to: string;
   subject: string;
   html: string;
   text: string;
   replyTo?: string;
+  attachments?: { filename: string; content: string }[];
 }): Promise<void> {
   const res = await fetch(`${RESEND_URL}/emails`, {
     method: "POST",
@@ -57,6 +68,14 @@ export async function sendEmail(input: {
       html: input.html,
       text: input.text,
       ...(input.replyTo ? { reply_to: input.replyTo } : {}),
+      ...(input.attachments?.length
+        ? {
+            attachments: input.attachments.map((a) => ({
+              filename: a.filename,
+              content: toBase64(a.content),
+            })),
+          }
+        : {}),
     }),
   });
 
@@ -110,7 +129,9 @@ export async function checkFromDomainStatus(): Promise<{ domain: string; status:
     return { domain, status: `lookup failed (HTTP ${res.status}) ${body}` };
   }
 
-  const body = (await res.json().catch(() => null)) as { data?: { name: string; status: string }[] } | null;
+  const body = (await res.json().catch(() => null)) as {
+    data?: { name: string; status: string }[];
+  } | null;
   const match = body?.data?.find((d) => d.name.toLowerCase() === domain);
   return { domain, status: match?.status ?? "not found in Resend account" };
 }

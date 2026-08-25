@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  AlertOctagon,
   BadgePlus,
   Download,
   KeyRound,
@@ -28,7 +27,6 @@ import { BulkBadgePrint } from "@/components/fesa/BulkBadgePrint";
 import { CreateFreeBadgeForm } from "@/components/fesa/CreateFreeBadgeForm";
 import { DelegationCsvImport } from "@/components/fesa/DelegationCsvImport";
 import { ParticipantDetailSheet } from "@/components/fesa/ParticipantDetailSheet";
-import { ResetEventDataButton } from "@/components/fesa/ResetEventDataButton";
 import { SendSegmentEmailDialog } from "@/components/fesa/SendSegmentEmailDialog";
 import { StaffAccessManager } from "@/components/fesa/StaffAccessManager";
 import { StaffGate } from "@/components/fesa/StaffGate";
@@ -561,23 +559,6 @@ function DashboardContent() {
           </div>
           <div className="mt-4 border-t border-border pt-4">
             <CreateBadgeCategoryForm eventId={event?.id} />
-          </div>
-        </section>
-
-        {/* Danger zone */}
-        <section
-          id="danger"
-          className="scroll-mt-6 min-w-0 rounded-2xl border border-destructive/30 bg-destructive/5 p-4 shadow-card sm:p-6"
-        >
-          <h2 className="flex items-center gap-2 text-sm font-semibold text-destructive">
-            <AlertOctagon className="size-4" /> Zone de danger
-          </h2>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Fin de la phase de test : supprime toutes les inscriptions, badges, paiements et
-            statistiques pour repartir de zéro. Les formules, prix et catégories restent configurés.
-          </p>
-          <div className="mt-4">
-            <ResetEventDataButton eventId={event?.id} />
           </div>
         </section>
       </div>

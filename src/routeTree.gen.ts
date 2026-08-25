@@ -26,6 +26,7 @@ import { Route as ApiSyncPaymentSecretRouteImport } from './routes/api.sync-paym
 import { Route as ConfirmationRegistrationIdRouteImport } from './routes/confirmation.$registrationId'
 import { Route as StaffLoginRouteImport } from './routes/staff.login'
 import { Route as StaffSignupRouteImport } from './routes/staff.signup'
+import { Route as ApiBackupsRunDailyRouteImport } from './routes/api.backups.run-daily'
 import { Route as ApiWebhooksPaytechRouteImport } from './routes/api.webhooks.paytech'
 
 const IndexRoute = IndexRouteImport.update({
@@ -115,6 +116,11 @@ const StaffSignupRoute = StaffSignupRouteImport.update({
   path: '/staff/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiBackupsRunDailyRoute = ApiBackupsRunDailyRouteImport.update({
+  id: '/api/backups/run-daily',
+  path: '/api/backups/run-daily',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiWebhooksPaytechRoute = ApiWebhooksPaytechRouteImport.update({
   id: '/api/webhooks/paytech',
   path: '/api/webhooks/paytech',
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
+  '/api/backups/run-daily': typeof ApiBackupsRunDailyRoute
   '/api/webhooks/paytech': typeof ApiWebhooksPaytechRoute
 }
 export interface FileRoutesByTo {
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
+  '/api/backups/run-daily': typeof ApiBackupsRunDailyRoute
   '/api/webhooks/paytech': typeof ApiWebhooksPaytechRoute
 }
 export interface FileRoutesById {
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/confirmation/$registrationId': typeof ConfirmationRegistrationIdRoute
   '/staff/login': typeof StaffLoginRoute
   '/staff/signup': typeof StaffSignupRoute
+  '/api/backups/run-daily': typeof ApiBackupsRunDailyRoute
   '/api/webhooks/paytech': typeof ApiWebhooksPaytechRoute
 }
 export interface FileRouteTypes {
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
+    | '/api/backups/run-daily'
     | '/api/webhooks/paytech'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
+    | '/api/backups/run-daily'
     | '/api/webhooks/paytech'
   id:
     | '__root__'
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/confirmation/$registrationId'
     | '/staff/login'
     | '/staff/signup'
+    | '/api/backups/run-daily'
     | '/api/webhooks/paytech'
   fileRoutesById: FileRoutesById
 }
@@ -263,6 +275,7 @@ export interface RootRouteChildren {
   ConfirmationRegistrationIdRoute: typeof ConfirmationRegistrationIdRoute
   StaffLoginRoute: typeof StaffLoginRoute
   StaffSignupRoute: typeof StaffSignupRoute
+  ApiBackupsRunDailyRoute: typeof ApiBackupsRunDailyRoute
   ApiWebhooksPaytechRoute: typeof ApiWebhooksPaytechRoute
 }
 
@@ -387,6 +400,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StaffSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/backups/run-daily': {
+      id: '/api/backups/run-daily'
+      path: '/api/backups/run-daily'
+      fullPath: '/api/backups/run-daily'
+      preLoaderRoute: typeof ApiBackupsRunDailyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/webhooks/paytech': {
       id: '/api/webhooks/paytech'
       path: '/api/webhooks/paytech'
@@ -415,6 +435,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConfirmationRegistrationIdRoute: ConfirmationRegistrationIdRoute,
   StaffLoginRoute: StaffLoginRoute,
   StaffSignupRoute: StaffSignupRoute,
+  ApiBackupsRunDailyRoute: ApiBackupsRunDailyRoute,
   ApiWebhooksPaytechRoute: ApiWebhooksPaytechRoute,
 }
 export const routeTree = rootRouteImport
