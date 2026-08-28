@@ -5,8 +5,10 @@ import {
   BadgePlus,
   Download,
   KeyRound,
+  Loader2,
   Plus,
   QrCode,
+  RefreshCw,
   Send,
   ShieldCheck,
   Upload,
@@ -32,6 +34,7 @@ import { StaffAccessManager } from "@/components/fesa/StaffAccessManager";
 import { StaffGate } from "@/components/fesa/StaffGate";
 import { ProfileBarChart, TrendSparkline } from "@/components/fesa/admin-charts";
 import { supabase } from "@/integrations/supabase/client";
+import { getErrorMessage } from "@/lib/get-error-message";
 import {
   eventQuery,
   offerAvailabilityQuery,
@@ -41,6 +44,7 @@ import {
   profileTypesQuery,
   type Participant,
 } from "@/lib/event";
+import { syncPaymentSecret } from "@/lib/payments/sync-payment-secret.functions";
 
 const TITLE = "Tableau de bord organisateur — FESA 2026";
 const DESCRIPTION =
@@ -105,6 +109,20 @@ function DashboardContent() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [segmentProfile, setSegmentProfile] = useState("all");
   const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
+  const [syncingSecret, setSyncingSecret] = useState(false);
+
+  async function handleSyncPaymentSecret() {
+    setSyncingSecret(true);
+    try {
+      await syncPaymentSecret();
+      toast.success("Secret de paiement resynchronisé avec la base de données.");
+    } catch (error) {
+      console.error(error);
+      toast.error(`Échec de la resynchronisation : ${getErrorMessage(error)}`);
+    } finally {
+      setSyncingSecret(false);
+    }
+  }
 
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -553,6 +571,35 @@ function DashboardContent() {
           </div>
           <div className="mt-4 border-t border-border pt-4">
             <CreateBadgeCategoryForm eventId={event?.id} />
+          </div>
+        </section>
+
+        {/* Maintenance */}
+        <section
+          id="maintenance"
+          className="scroll-mt-6 min-w-0 rounded-2xl border border-border bg-card p-4 shadow-card sm:p-6"
+        >
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <RefreshCw className="size-4 text-accent" /> Maintenance
+          </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Si un paiement confirmé par PayTech reste bloqué sur "En attente" et que renvoyer un
+            email échoue avec une erreur "unauthorized" ou "not configured", cliquez ici après avoir
+            mis à jour le secret de paiement dans les secrets Lovable.
+          </p>
+          <div className="mt-3">
+            <Button
+              variant="outline"
+              disabled={syncingSecret}
+              onClick={() => void handleSyncPaymentSecret()}
+            >
+              {syncingSecret ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <RefreshCw className="size-4" />
+              )}
+              Resynchroniser le secret de paiement
+            </Button>
           </div>
         </section>
       </div>
