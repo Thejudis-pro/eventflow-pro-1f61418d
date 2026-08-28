@@ -671,6 +671,10 @@ export type Database = {
         Args: { p_participant_ids: string[] };
         Returns: undefined;
       };
+      mark_registration_whatsapp_sent: {
+        Args: { p_participant_id: string };
+        Returns: undefined;
+      };
       prepare_payment_session: {
         Args: { p_participant_id: string; p_provider: string };
         Returns: {

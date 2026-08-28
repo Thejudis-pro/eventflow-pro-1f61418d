@@ -6,6 +6,7 @@ import {
   IdCard,
   Loader2,
   Mail,
+  MessageCircle,
   Pencil,
   Printer,
   Trash2,
@@ -82,6 +83,18 @@ type EditForm = {
   badge_quantity: string;
 };
 
+/** wa.me needs digits only (no "+", no spaces) -- phone is stored as
+ * "<dial code> <number>" e.g. "+221 771234567". Null if there's no number
+ * at all, so the button can be disabled instead of opening a broken link. */
+function buildWhatsappHref(participant: Participant): string | null {
+  const digits = (participant.phone ?? "").replace(/\D/g, "");
+  if (!digits) return null;
+  const firstName = participant.full_name.split(" ")[0] ?? participant.full_name;
+  const badgeUrl = `https://www.fesaforum.com/confirmation/${participant.registration_id}`;
+  const text = `Bonjour ${firstName}, voici votre badge FESA 2026 (réf. ${participant.registration_id}) : ${badgeUrl}`;
+  return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
+}
+
 function toEditForm(p: Participant): EditForm {
   return {
     full_name: p.full_name,
@@ -129,7 +142,7 @@ export function ParticipantDetailSheet({
     enabled: participant !== null,
   });
   const badgeRef = useRef<HTMLDivElement>(null);
-  const [busy, setBusy] = useState<"download" | "print" | "email" | null>(null);
+  const [busy, setBusy] = useState<"download" | "print" | "email" | "whatsapp" | null>(null);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<EditForm | null>(null);
   const [saving, setSaving] = useState(false);
@@ -185,6 +198,25 @@ export function ParticipantDetailSheet({
     } catch (error) {
       console.error(error);
       toast.error(`L'email n'a pas pu être envoyé : ${getErrorMessage(error)}`);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function handleSendWhatsapp() {
+    if (!participant) return;
+    const href = buildWhatsappHref(participant);
+    if (!href) {
+      toast.error("Ce participant n'a pas de numéro de téléphone enregistré.");
+      return;
+    }
+    setBusy("whatsapp");
+    try {
+      window.open(href, "_blank", "noopener,noreferrer");
+      const { error } = await supabase.rpc("mark_registration_whatsapp_sent", {
+        p_participant_id: participant.id,
+      });
+      if (error) console.error(error);
     } finally {
       setBusy(null);
     }
@@ -473,6 +505,19 @@ export function ParticipantDetailSheet({
                           <Mail className="size-4" />
                         )}
                         Renvoyer par email
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={busy !== null || !participant.phone}
+                        onClick={() => void handleSendWhatsapp()}
+                      >
+                        {busy === "whatsapp" ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <MessageCircle className="size-4" />
+                        )}
+                        Envoyer par WhatsApp
                       </Button>
                     </div>
                     {badge.printed_at && (
