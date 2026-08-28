@@ -124,8 +124,6 @@ function DashboardContent() {
   const conversion = total ? Math.round((paid / total) * 100) : 0;
   const checkedIn = (participants ?? []).filter((p) => p.status === "checked_in").length;
   const attendanceRate = total ? Math.round((checkedIn / total) * 100) : 0;
-  const confirmedOnly = (participants ?? []).filter((p) => p.status === "confirmed").length;
-  const absent = Math.max(total - checkedIn, 0);
   const senegaleseCount = (participants ?? []).filter((p) => p.country === "Sénégal").length;
   const nonSenegaleseCount = Math.max(total - senegaleseCount, 0);
   // "confirmed" is only ever reached without a payment (paid tiers go
@@ -284,10 +282,8 @@ function DashboardContent() {
         {/* Secondary tiles */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           <Tile label="Chiffre d'affaires" value={`${revenue.toLocaleString("fr-FR")} FCFA`} />
-          <Tile label="Participants confirmés" value={String(confirmedOnly)} />
           <Tile label="Taux de conversion" value={`${conversion}%`} />
           <Tile label="Enregistrés sur site" value={`${checkedIn} (${attendanceRate}%)`} />
-          <Tile label="Participants absents" value={String(absent)} />
           <Tile label="Badges gratuits" value={String(freeBadges)} />
           <Tile label="Inscriptions sénégalaises" value={String(senegaleseCount)} />
           <Tile label="Inscriptions non sénégalaises" value={String(nonSenegaleseCount)} />
