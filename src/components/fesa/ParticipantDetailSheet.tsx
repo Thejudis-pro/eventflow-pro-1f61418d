@@ -213,7 +213,8 @@ export function ParticipantDetailSheet({
       );
     } catch (error) {
       console.error(error);
-      toast.error("Impossible de marquer ce paiement comme reçu.");
+      const detail = error instanceof Error ? error.message : String(error);
+      toast.error(`Impossible de marquer ce paiement comme reçu : ${detail}`);
     } finally {
       setMarkingPaidId(null);
     }
