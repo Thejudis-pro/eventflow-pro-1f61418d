@@ -1,0 +1,28 @@
+name: Payments config health check
+
+# Catches INTERNAL_PAYMENT_SECRET drift between the deployment env and the
+# database proactively -- the exact failure that silently left two paid
+# registrations stuck on "pending" until a customer complained. Runs every
+# 30 minutes and fails the job (which GitHub emails/notifies on) if
+# /api/payments-diagnostics reports a mismatch, instead of waiting for the
+# next live payment to surface it. Requires the same BACKUP_ADMIN_SECRET
+# repo secret used by daily-backup.yml.
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check payment config consistency
+        run: |
+          response=$(curl -sS -H "Authorization: Bearer ${{ secrets.BACKUP_ADMIN_SECRET }}" \
+            "https://www.fesaforum.com/api/payments-diagnostics")
+          echo "$response"
+          ok=$(echo "$response" | grep -o '"internalPaymentSecretMatchesDatabase":true' || true)
+          if [ -z "$ok" ]; then
+            echo "Payment secret is not consistent between env and database -- payments will go through PayTech but never get marked paid. Run POST /api/sync-payment-secret after fixing INTERNAL_PAYMENT_SECRET."
+            exit 1
+          fi

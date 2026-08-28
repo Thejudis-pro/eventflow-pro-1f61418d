@@ -72,47 +72,27 @@ async function sendFromInfo(params: {
   await supabase.rpc("mark_registration_email_sent", { p_participant_id: params.participantId });
 }
 
-/** Best-effort admin alert for an automatic confirmation-email failure --
- * never throws, so a Resend outage here can't mask the original error. */
+/** Best-effort admin alert for an automatic confirmation-email failure. */
 async function notifyAdminOfSendFailure(params: {
   info: EmailInfo;
   participantId: string;
   error: unknown;
 }): Promise<void> {
-  try {
-    const { sendEmail } = await import("./resend.server");
-    const { info, participantId, error } = params;
-    const message = error instanceof Error ? error.message : String(error);
-    await sendEmail({
-      to: "contact@fesaforum.com",
-      subject: `[FESA 2026] Échec envoi email de confirmation — ${info.full_name}`,
-      text: [
-        `L'envoi automatique de l'email de confirmation a échoué pour :`,
-        ``,
-        `Participant : ${info.full_name} <${info.email}>`,
-        `Registration ID : ${info.registration_id}`,
-        `Participant ID : ${participantId}`,
-        `Statut : ${info.status}`,
-        ``,
-        `Erreur : ${message}`,
-        ``,
-        `Renvoyez manuellement depuis la fiche participant du dashboard admin ("Renvoyer par email").`,
-      ].join("\n"),
-      html: [
-        `<p>L'envoi automatique de l'email de confirmation a échoué pour :</p>`,
-        `<ul>`,
-        `<li>Participant : ${info.full_name} &lt;${info.email}&gt;</li>`,
-        `<li>Registration ID : ${info.registration_id}</li>`,
-        `<li>Participant ID : ${participantId}</li>`,
-        `<li>Statut : ${info.status}</li>`,
-        `</ul>`,
-        `<p>Erreur : ${message}</p>`,
-        `<p>Renvoyez manuellement depuis la fiche participant du dashboard admin ("Renvoyer par email").</p>`,
-      ].join(""),
-    });
-  } catch (alertError) {
-    console.error("[send-registration-email] failed to notify admin of send failure", alertError);
-  }
+  const { info, participantId, error } = params;
+  const message = error instanceof Error ? error.message : String(error);
+  const { notifyAdmin } = await import("../notify-admin.server");
+  await notifyAdmin({
+    subject: `[FESA 2026] Échec envoi email de confirmation — ${info.full_name}`,
+    lines: [
+      `L'envoi automatique de l'email de confirmation a échoué pour :`,
+      `Participant : ${info.full_name} <${info.email}>`,
+      `Registration ID : ${info.registration_id}`,
+      `Participant ID : ${participantId}`,
+      `Statut : ${info.status}`,
+      `Erreur : ${message}`,
+      `Renvoyez manuellement depuis la fiche participant du dashboard admin ("Renvoyer par email").`,
+    ],
+  });
 }
 
 export async function sendRegistrationConfirmationEmail(params: {
