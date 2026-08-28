@@ -50,7 +50,8 @@ export const Route = createFileRoute("/api/webhooks/paytech")({
           // (confirm_payment_secure rejects with "unauthorized"). Alert
           // immediately instead of only console.error, which nobody watches.
           const { notifyAdmin } = await import("@/lib/notify-admin.server");
-          const message = error instanceof Error ? error.message : String(error);
+          const { getErrorMessage } = await import("@/lib/get-error-message");
+          const message = getErrorMessage(error);
           await notifyAdmin({
             subject: "[FESA 2026] Échec de confirmation d'un paiement PayTech",
             lines: [

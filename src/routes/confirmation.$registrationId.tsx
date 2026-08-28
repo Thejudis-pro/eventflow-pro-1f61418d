@@ -10,6 +10,7 @@ import { eventQuery, registrationQuery } from "@/lib/event";
 import { downloadBadgePdf, downloadIcs } from "@/lib/badge-export";
 import { sendBadgeEmail } from "@/lib/email/send-badge-email.functions";
 import { ARCHIVO_FONT_HREF, REG } from "@/lib/fesa-registration-theme";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 const TITLE = "Inscription confirmée — FESA 2026";
 const DESCRIPTION =
@@ -84,8 +85,7 @@ function ConfirmationPage() {
       toast.success("Badge envoyé par e-mail.");
     } catch (error) {
       console.error(error);
-      const detail = error instanceof Error ? error.message : String(error);
-      toast.error(`L'e-mail n'a pas pu être envoyé : ${detail}`);
+      toast.error(`L'e-mail n'a pas pu être envoyé : ${getErrorMessage(error)}`);
     } finally {
       setSendingEmail(false);
     }
@@ -113,7 +113,14 @@ function ConfirmationPage() {
   }
 
   return (
-    <div style={{ background: REG.cream, color: REG.dark, fontFamily: "Manrope, system-ui, sans-serif" }} className="min-h-screen">
+    <div
+      style={{
+        background: REG.cream,
+        color: REG.dark,
+        fontFamily: "Manrope, system-ui, sans-serif",
+      }}
+      className="min-h-screen"
+    >
       <RegistrationHeader />
 
       <main className="mx-auto max-w-7xl px-4 py-14 lg:px-16">
@@ -129,35 +136,57 @@ function ConfirmationPage() {
           <div className="max-w-xl">
             <div
               className="inline-flex items-center gap-2.5 rounded-full px-4 py-2"
-              style={{ background: "#fdf3e7", color: "#8f3d10", font: "800 12px/1 Manrope, sans-serif", letterSpacing: "0.04em" }}
+              style={{
+                background: "#fdf3e7",
+                color: "#8f3d10",
+                font: "800 12px/1 Manrope, sans-serif",
+                letterSpacing: "0.04em",
+              }}
             >
               <Loader2 className="size-3.5 animate-spin" /> PAIEMENT EN COURS DE CONFIRMATION
             </div>
-            <h1 className="mt-5" style={{ font: "800 34px/1.15 Manrope, sans-serif", letterSpacing: "-0.03em" }}>
+            <h1
+              className="mt-5"
+              style={{ font: "800 34px/1.15 Manrope, sans-serif", letterSpacing: "-0.03em" }}
+            >
               Presque terminé, {firstName || "cher participant"}.
             </h1>
-            <p className="mt-4" style={{ font: "400 15.5px/1.7 Manrope, sans-serif", color: REG.muted }}>
-              Nous attendons la confirmation de votre prestataire de paiement. Cette page se met à jour
-              automatiquement dès que le paiement est validé — inutile de la recharger.
+            <p
+              className="mt-4"
+              style={{ font: "400 15.5px/1.7 Manrope, sans-serif", color: REG.muted }}
+            >
+              Nous attendons la confirmation de votre prestataire de paiement. Cette page se met à
+              jour automatiquement dès que le paiement est validé — inutile de la recharger.
             </p>
           </div>
         ) : (
           <>
             <div
               className="inline-flex items-center gap-2.5 rounded-full px-[15px] py-2"
-              style={{ background: "#e9f3ec", color: "#0b7a3c", font: "800 12px/1 Manrope, sans-serif", letterSpacing: "0.04em" }}
+              style={{
+                background: "#e9f3ec",
+                color: "#0b7a3c",
+                font: "800 12px/1 Manrope, sans-serif",
+                letterSpacing: "0.04em",
+              }}
             >
               <span className="size-1.5 rounded-full" style={{ background: "#0b7a3c" }} />
               INSCRIPTION CONFIRMÉE
             </div>
-            <h1 className="mt-[18px]" style={{ font: "800 40px/1.08 Manrope, sans-serif", letterSpacing: "-0.035em" }}>
+            <h1
+              className="mt-[18px]"
+              style={{ font: "800 40px/1.08 Manrope, sans-serif", letterSpacing: "-0.035em" }}
+            >
               Votre badge est prêt,
               <br />
               {firstName}.
             </h1>
-            <p className="mt-4 max-w-[520px]" style={{ font: "400 15.5px/1.7 Manrope, sans-serif", color: REG.muted }}>
-              Il est aussi parti par e-mail. Présentez le QR à l&rsquo;entrée du CICES — l&rsquo;impression
-              sur place reste possible au guichet accréditation.
+            <p
+              className="mt-4 max-w-[520px]"
+              style={{ font: "400 15.5px/1.7 Manrope, sans-serif", color: REG.muted }}
+            >
+              Il est aussi parti par e-mail. Présentez le QR à l&rsquo;entrée du CICES —
+              l&rsquo;impression sur place reste possible au guichet accréditation.
             </p>
 
             <div className="mt-8 grid gap-8 lg:grid-cols-[359px_minmax(0,1fr)]">
@@ -183,14 +212,26 @@ function ConfirmationPage() {
               </div>
 
               <div className="flex flex-col gap-3">
-                <div className="rounded-[18px] p-6" style={{ border: `1px solid ${REG.line}`, background: "#fff" }}>
-                  <div style={{ font: "800 11.5px/1 Manrope, sans-serif", letterSpacing: "0.1em", color: REG.mutedLight }}>
+                <div
+                  className="rounded-[18px] p-6"
+                  style={{ border: `1px solid ${REG.line}`, background: "#fff" }}
+                >
+                  <div
+                    style={{
+                      font: "800 11.5px/1 Manrope, sans-serif",
+                      letterSpacing: "0.1em",
+                      color: REG.mutedLight,
+                    }}
+                  >
                     RÉFÉRENCE
                   </div>
                   <div className="mt-2.5" style={{ font: "800 24px/1.1 Manrope, sans-serif" }}>
                     {registrationId}
                   </div>
-                  <div className="mt-2" style={{ font: "500 13px/1.6 Manrope, sans-serif", color: REG.muted }}>
+                  <div
+                    className="mt-2"
+                    style={{ font: "500 13px/1.6 Manrope, sans-serif", color: REG.muted }}
+                  >
                     {registration.offer_name ?? registration.profile_label}
                   </div>
                 </div>
@@ -201,16 +242,28 @@ function ConfirmationPage() {
                     onClick={() => void handleDownloadPdf()}
                     disabled={downloading}
                     className="flex h-14 items-center justify-between rounded-2xl px-[22px]"
-                    style={{ background: REG.green, color: "#fff", font: "800 15px/1 Manrope, sans-serif" }}
+                    style={{
+                      background: REG.green,
+                      color: "#fff",
+                      font: "800 15px/1 Manrope, sans-serif",
+                    }}
                   >
                     Télécharger le badge (PDF)
-                    {downloading ? <Loader2 className="size-[18px] animate-spin" /> : <Download className="size-[18px]" />}
+                    {downloading ? (
+                      <Loader2 className="size-[18px] animate-spin" />
+                    ) : (
+                      <Download className="size-[18px]" />
+                    )}
                   </button>
                   <button
                     type="button"
                     onClick={handleAddToCalendar}
                     className="flex h-14 items-center justify-between rounded-2xl px-[22px]"
-                    style={{ background: "#fff", border: `1px solid ${REG.lineDark}`, font: "800 15px/1 Manrope, sans-serif" }}
+                    style={{
+                      background: "#fff",
+                      border: `1px solid ${REG.lineDark}`,
+                      font: "800 15px/1 Manrope, sans-serif",
+                    }}
                   >
                     Ajouter au calendrier
                     <CalendarPlus className="size-[18px]" />
@@ -233,13 +286,21 @@ function ConfirmationPage() {
                     style={{ background: REG.creamLight, font: "800 15px/1 Manrope, sans-serif" }}
                   >
                     Envoyer le badge par e-mail
-                    {sendingEmail ? <Loader2 className="size-[18px] animate-spin" /> : <Mail className="size-[18px]" />}
+                    {sendingEmail ? (
+                      <Loader2 className="size-[18px] animate-spin" />
+                    ) : (
+                      <Mail className="size-[18px]" />
+                    )}
                   </button>
                 </div>
 
                 <div
                   className="py-1.5 pl-4"
-                  style={{ borderLeft: `3px solid ${REG.orange}`, font: "500 13.5px/1.7 Manrope, sans-serif", color: REG.muted }}
+                  style={{
+                    borderLeft: `3px solid ${REG.orange}`,
+                    font: "500 13.5px/1.7 Manrope, sans-serif",
+                    color: REG.muted,
+                  }}
                 >
                   Le badge est nominatif. Une copie reste disponible depuis « Retrouver mon badge ».
                 </div>

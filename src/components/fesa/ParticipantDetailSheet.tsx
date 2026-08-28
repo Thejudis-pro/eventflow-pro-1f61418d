@@ -36,6 +36,7 @@ import {
 import { BadgePreview } from "./BadgePreview";
 import { supabase } from "@/integrations/supabase/client";
 import { downloadBadgePdf, renderBadgePdfBlob } from "@/lib/badge-export";
+import { getErrorMessage } from "@/lib/get-error-message";
 import { sendRegistrationEmail } from "@/lib/email/send-registration-email.functions";
 import {
   badgeQuery,
@@ -183,8 +184,7 @@ export function ParticipantDetailSheet({
       toast.success(`Email de confirmation renvoyé à ${participant.email}.`);
     } catch (error) {
       console.error(error);
-      const detail = error instanceof Error ? error.message : String(error);
-      toast.error(`L'email n'a pas pu être envoyé : ${detail}`);
+      toast.error(`L'email n'a pas pu être envoyé : ${getErrorMessage(error)}`);
     } finally {
       setBusy(null);
     }
@@ -208,13 +208,14 @@ export function ParticipantDetailSheet({
       await sendRegistrationEmail({ data: { participantId: participant.id } }).catch(
         (emailError: unknown) => {
           console.error(emailError);
-          toast.error("Paiement confirmé, mais l'email n'a pas pu être envoyé automatiquement.");
+          toast.error(
+            `Paiement confirmé, mais l'email n'a pas pu être envoyé automatiquement : ${getErrorMessage(emailError)}`,
+          );
         },
       );
     } catch (error) {
       console.error(error);
-      const detail = error instanceof Error ? error.message : String(error);
-      toast.error(`Impossible de marquer ce paiement comme reçu : ${detail}`);
+      toast.error(`Impossible de marquer ce paiement comme reçu : ${getErrorMessage(error)}`);
     } finally {
       setMarkingPaidId(null);
     }

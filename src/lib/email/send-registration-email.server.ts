@@ -79,7 +79,8 @@ async function notifyAdminOfSendFailure(params: {
   error: unknown;
 }): Promise<void> {
   const { info, participantId, error } = params;
-  const message = error instanceof Error ? error.message : String(error);
+  const { getErrorMessage } = await import("../get-error-message");
+  const message = getErrorMessage(error);
   const { notifyAdmin } = await import("../notify-admin.server");
   await notifyAdmin({
     subject: `[FESA 2026] Échec envoi email de confirmation — ${info.full_name}`,
