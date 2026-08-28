@@ -651,6 +651,14 @@ export type Database = {
           primary_contact_name: string;
         }[];
       };
+      mark_payment_paid_by_staff: {
+        Args: { p_payment_id: string };
+        Returns: {
+          participant_id: string;
+          registration_id: string;
+          status: string;
+        }[];
+      };
       mark_badge_printed: {
         Args: { p_registration_id: string };
         Returns: undefined;

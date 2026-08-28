@@ -1,6 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Download, IdCard, Loader2, Mail, Pencil, Printer, Trash2, X } from "lucide-react";
+import {
+  BadgeCheck,
+  Download,
+  IdCard,
+  Loader2,
+  Mail,
+  Pencil,
+  Printer,
+  Trash2,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   Sheet,
@@ -27,7 +37,13 @@ import { BadgePreview } from "./BadgePreview";
 import { supabase } from "@/integrations/supabase/client";
 import { downloadBadgePdf, renderBadgePdfBlob } from "@/lib/badge-export";
 import { sendRegistrationEmail } from "@/lib/email/send-registration-email.functions";
-import { badgeQuery, type EventRow, type Participant, type Payment, type ProfileType } from "@/lib/event";
+import {
+  badgeQuery,
+  type EventRow,
+  type Participant,
+  type Payment,
+  type ProfileType,
+} from "@/lib/event";
 
 const STATUS_LABEL: Record<string, string> = {
   pending: "En attente",
@@ -107,13 +123,17 @@ export function ParticipantDetailSheet({
   onOpenChange: (open: boolean) => void;
 }) {
   const queryClient = useQueryClient();
-  const { data: badge } = useQuery({ ...badgeQuery(participant?.id), enabled: participant !== null });
+  const { data: badge } = useQuery({
+    ...badgeQuery(participant?.id),
+    enabled: participant !== null,
+  });
   const badgeRef = useRef<HTMLDivElement>(null);
   const [busy, setBusy] = useState<"download" | "print" | "email" | null>(null);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<EditForm | null>(null);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [markingPaidId, setMarkingPaidId] = useState<string | null>(null);
 
   useEffect(() => {
     setEditing(false);
@@ -167,6 +187,35 @@ export function ParticipantDetailSheet({
       toast.error(`L'email n'a pas pu être envoyé : ${detail}`);
     } finally {
       setBusy(null);
+    }
+  }
+
+  /** Manual override for when the PayTech/Wave payment actually went through
+   * but the IPN webhook never confirmed it here (never received, or errored)
+   * -- staff can see the real payment succeeded on their own PayTech/Wave
+   * side and unblock the participant instead of editing the DB by hand. */
+  async function handleMarkPaid(paymentId: string) {
+    if (!participant) return;
+    setMarkingPaidId(paymentId);
+    try {
+      const { error } = await supabase.rpc("mark_payment_paid_by_staff", {
+        p_payment_id: paymentId,
+      });
+      if (error) throw error;
+      toast.success(`Paiement confirmé pour ${participant.full_name}.`);
+      await queryClient.invalidateQueries({ queryKey: ["participants", event?.id] });
+      await queryClient.invalidateQueries({ queryKey: ["payments", event?.id] });
+      await sendRegistrationEmail({ data: { participantId: participant.id } }).catch(
+        (emailError: unknown) => {
+          console.error(emailError);
+          toast.error("Paiement confirmé, mais l'email n'a pas pu être envoyé automatiquement.");
+        },
+      );
+    } catch (error) {
+      console.error(error);
+      toast.error("Impossible de marquer ce paiement comme reçu.");
+    } finally {
+      setMarkingPaidId(null);
     }
   }
 
@@ -384,7 +433,12 @@ export function ParticipantDetailSheet({
                       </div>
                     </div>
                     <div className="mt-3 flex flex-wrap gap-2">
-                      <Button size="sm" variant="outline" disabled={busy !== null} onClick={() => void handleDownload()}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={busy !== null}
+                        onClick={() => void handleDownload()}
+                      >
                         {busy === "download" ? (
                           <Loader2 className="size-4 animate-spin" />
                         ) : (
@@ -392,7 +446,12 @@ export function ParticipantDetailSheet({
                         )}
                         Télécharger (PDF)
                       </Button>
-                      <Button size="sm" variant="outline" disabled={busy !== null} onClick={() => void handlePrint()}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={busy !== null}
+                        onClick={() => void handlePrint()}
+                      >
                         {busy === "print" ? (
                           <Loader2 className="size-4 animate-spin" />
                         ) : (
@@ -440,13 +499,30 @@ export function ParticipantDetailSheet({
                     {payments.map((p) => (
                       <div
                         key={p.id}
-                        className="flex items-center justify-between rounded-lg border border-border px-3 py-2 text-sm"
+                        className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-2 text-sm"
                       >
                         <span className="font-medium text-foreground">
                           {p.amount.toLocaleString("fr-FR")} FCFA · {p.provider}
                         </span>
-                        <span className="text-xs text-muted-foreground">
-                          {PAYMENT_STATUS_LABEL[p.status] ?? p.status}
+                        <span className="flex items-center gap-2">
+                          <span className="text-xs text-muted-foreground">
+                            {PAYMENT_STATUS_LABEL[p.status] ?? p.status}
+                          </span>
+                          {p.status === "pending" && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              disabled={markingPaidId !== null}
+                              onClick={() => void handleMarkPaid(p.id)}
+                            >
+                              {markingPaidId === p.id ? (
+                                <Loader2 className="size-3.5 animate-spin" />
+                              ) : (
+                                <BadgeCheck className="size-3.5" />
+                              )}
+                              Marquer comme reçu
+                            </Button>
+                          )}
                         </span>
                       </div>
                     ))}
