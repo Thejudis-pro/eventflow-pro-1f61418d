@@ -19,11 +19,13 @@ import { sendSegmentEmail } from "@/lib/email/send-segment-email.functions";
 export function SendSegmentEmailDialog({
   eventId,
   profileTypeId,
+  unpaidOnly = false,
   segmentLabel,
   segmentCount,
 }: {
   eventId: string | undefined;
   profileTypeId: string | null;
+  unpaidOnly?: boolean;
   segmentLabel: string;
   segmentCount: number;
 }) {
@@ -38,7 +40,13 @@ export function SendSegmentEmailDialog({
     setSending(true);
     try {
       const result = await sendSegmentEmail({
-        data: { eventId, profileTypeId, subject: subject.trim(), message: message.trim() },
+        data: {
+          eventId,
+          profileTypeId,
+          unpaidOnly,
+          subject: subject.trim(),
+          message: message.trim(),
+        },
       });
       toast.success(
         result.sent > 0

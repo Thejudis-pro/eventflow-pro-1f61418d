@@ -7,6 +7,7 @@ const BATCH_SIZE = 90; // stay under Resend's 100-per-call limit with margin
 const inputSchema = z.object({
   eventId: z.string().uuid(),
   profileTypeId: z.string().uuid().nullable(),
+  unpaidOnly: z.boolean().optional().default(false),
   subject: z.string().trim().min(1),
   message: z.string().trim().min(1),
 });
@@ -40,6 +41,11 @@ export const sendSegmentEmail = createServerFn({ method: "POST" })
       .eq("event_id", data.eventId);
     if (data.profileTypeId) {
       query = query.eq("profile_type_id", data.profileTypeId);
+    }
+    if (data.unpaidOnly) {
+      // "pending" is the only status reached without payment ever
+      // completing -- free/comp badges go straight to "confirmed".
+      query = query.eq("status", "pending");
     }
     const { data: rows, error } = await query;
     if (error) throw error;

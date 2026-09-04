@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { AccessLevelManager } from "@/components/fesa/AccessLevelManager";
 import { CreateBadgeCategoryForm } from "@/components/fesa/CreateBadgeCategoryForm";
 import { AdminShell } from "@/components/fesa/AdminShell";
@@ -108,6 +109,7 @@ function DashboardContent() {
   const [profileFilter, setProfileFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [segmentProfile, setSegmentProfile] = useState("all");
+  const [segmentUnpaidOnly, setSegmentUnpaidOnly] = useState(false);
   const [selectedParticipant, setSelectedParticipant] = useState<Participant | null>(null);
   const [syncingSecret, setSyncingSecret] = useState(false);
 
@@ -176,9 +178,12 @@ function DashboardContent() {
   const standsRevenueTotal = standStats.reduce((sum, s) => sum + s.revenue, 0);
 
   const segmentCount = useMemo(() => {
-    if (segmentProfile === "all") return total;
-    return (participants ?? []).filter((p) => p.profile_type_id === segmentProfile).length;
-  }, [participants, segmentProfile, total]);
+    return (participants ?? []).filter(
+      (p) =>
+        (segmentProfile === "all" || p.profile_type_id === segmentProfile) &&
+        (!segmentUnpaidOnly || p.status === "pending"),
+    ).length;
+  }, [participants, segmentProfile, segmentUnpaidOnly]);
 
   const profileLabel = (id: string | null) => profiles?.find((p) => p.id === id)?.label ?? "—";
   const profileColor = (id: string | null) =>
@@ -524,14 +529,23 @@ function DashboardContent() {
                 ))}
               </SelectContent>
             </Select>
+            <label className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Checkbox
+                checked={segmentUnpaidOnly}
+                onCheckedChange={(checked) => setSegmentUnpaidOnly(checked === true)}
+              />
+              Paiement non complété uniquement
+            </label>
             <span className="text-sm text-muted-foreground">
               {segmentCount} participant{segmentCount > 1 ? "s" : ""} dans ce segment
             </span>
             <SendSegmentEmailDialog
               eventId={event?.id}
               profileTypeId={segmentProfile === "all" ? null : segmentProfile}
+              unpaidOnly={segmentUnpaidOnly}
               segmentLabel={
-                segmentProfile === "all" ? "Tous les profils" : profileLabel(segmentProfile)
+                (segmentProfile === "all" ? "Tous les profils" : profileLabel(segmentProfile)) +
+                (segmentUnpaidOnly ? " · paiement non complété" : "")
               }
               segmentCount={segmentCount}
             />
